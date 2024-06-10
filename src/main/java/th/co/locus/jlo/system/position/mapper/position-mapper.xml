@@ -1,0 +1,78 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="position">
+	<select id="getPositionList" resultType="positionModelBean"> 
+       	SELECT
+		    A.POS_ID
+		    , A.POS_NAME
+		    , A.PARENT_POS_ID
+		    , B.POS_NAME AS PARENT_POS_NAME
+		    , A.BU_ID
+		    , A.CREATED_BY
+		    , A.CREATED_DATE
+		    , A.UPDATED_BY
+		    , A.UPDATED_DATE
+		FROM TB_POSITION A 
+		INNER JOIN TB_POSITION B ON A.PARENT_POS_ID = B.POS_ID
+		<where>
+			<if test="posName != null and posName != ''">
+				<bind name="pPosName" value="'%' + posName + '%'" />
+				AND A.POS_NAME LIKE #{pPosName}
+			</if>
+			<if test="parentPosName != null and parentPosName != ''">
+				<bind name="pParentPosName" value="'%' + parentPosName + '%'" />
+				AND B.POS_NAME LIKE #{pParentPosName}
+			</if>
+			<if test="buId != null">
+				AND A.BU_ID = #{buId}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'posName'">
+		  			order by A.POS_NAME ${sortDirection}	  	
+		  		</if>
+		  		<if test="sortColumn == 'parentPosName'">
+		  			order by B.POS_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by A.POS_ID ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	<select id="findPositionById" resultType="positionModelBean">
+		SELECT
+		    POS_ID
+		    , POS_NAME
+		    , PARENT_POS_ID
+		    , BU_ID
+		    , CREATED_BY
+		    , CREATED_DATE
+		    , UPDATED_BY
+		    , UPDATED_DATE
+		FROM TB_POSITION
+		WHERE
+			POS_ID = #{posId}
+	</select>
+	<insert id="createPosition"  keyColumn="POS_ID" keyProperty="posId" useGeneratedKeys="true">
+		INSERT INTO TB_POSITION (POS_NAME, PARENT_POS_ID, BU_ID, CREATED_BY, CREATED_DATE)
+		VALUES (#{posName}, #{parentPosId}, #{buId}, #{createdBy}, NOW())
+	</insert>
+	<update id="updatePosition">
+	UPDATE TB_POSITION
+	SET 
+		POS_NAME = #{posName}
+		, PARENT_POS_ID = #{parentPosId}
+		, BU_ID = #{buId}
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = NOW()
+	WHERE
+		POS_ID = #{posId}
+	</update>
+	<delete id="deletePosition">
+		DELETE FROM TB_POSITION WHERE POS_ID = #{posId} 
+	</delete>
+</mapper>

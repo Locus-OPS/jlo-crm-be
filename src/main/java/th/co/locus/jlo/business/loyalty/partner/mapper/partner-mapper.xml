@@ -1,0 +1,192 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="partner">
+	<select id="getPartnerList" resultType="PartnerModelBean"> 
+       		SELECT S.PARTNER_ID 
+		      , S.PARTNER_NAME AS PARTNER 
+		      , S.PARTNER_TYPE_ID 
+		      , S.PARTNER_NO
+			  , ST.PARTNER_TYPE_NAME  AS PARTNER_TYPE
+		      , S.ACTIVE_FLAG 
+		      , S.CREATED_DATE
+			  , S.CREATED_BY
+			  , S.UPDATED_DATE
+			  , S.UPDATED_BY 
+		  	FROM LOY_PARTNER S
+		  	LEFT JOIN LOY_PARTNER_TYPE ST ON ST.PARTNER_TYPE_ID = S.PARTNER_TYPE_ID
+				
+		<where>	
+			<if test="partnerId != null">
+		    	S.PARTNER_ID = #{partnerId}
+		  	</if>
+			<if test="partner != null">
+				<bind name="partner" value="'%' + partner + '%'" />
+		    	AND S.PARTNER_NAME LIKE #{partner}
+		  	</if>
+		  	<if test="partnerNo != null">
+				<bind name="partnerNo" value="'%' + partnerNo + '%'" />
+		    	AND S.PARTNER_NO LIKE #{partnerNo} 
+		  	</if>
+			<if test="partnerTypeId != null">
+		    	AND S.PARTNER_TYPE_ID = #{partnerTypeId}
+		  	</if>
+			<if test="activeFlag != null">
+		    	AND S.ACTIVE_FLAG = #{activeFlag} 
+		  	</if>
+			<if test="buId != null">
+		    	AND S.BU_ID = #{buId}
+		  	</if>
+	  	</where>	  	
+		<choose>
+			<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'partner'">
+		  			ORDER BY S.PARTNER_NAME ${sortDirection}	  	
+		  		</if>
+		  		
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY S.PARTNER_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="findPartnerById" resultType="PartnerModelBean">
+			SELECT S.PARTNER_ID 
+		      , S.PARTNER_NAME AS PARTNER 
+		      , S.PARTNER_TYPE_ID 
+		      , S.PARTNER_NO
+			  , ST.PARTNER_TYPE_NAME  AS PARTNER_TYPE
+		      , S.ACTIVE_FLAG 
+		      , S.CREATED_DATE
+			  , S.CREATED_BY
+			  , S.UPDATED_DATE
+			  , S.UPDATED_BY 
+		  	FROM LOY_PARTNER S
+		  	LEFT JOIN LOY_PARTNER_TYPE ST ON ST.PARTNER_TYPE_ID = S.PARTNER_TYPE_ID
+			WHERE S.PARTNER_ID = #{partnerId}
+	</select>
+	
+	<update id="updatePartner">
+			UPDATE LOY_PARTNER  SET 
+				  PARTNER_NAME = #{partner}
+				, PARTNER_TYPE_ID = #{partnerTypeId}
+				, PARTNER_NO = #{partnerNo}
+				, ACTIVE_FLAG = #{activeFlag}
+				, UPDATED_DATE = NOW()
+				, UPDATED_BY = #{updatedBy}
+			WHERE PARTNER_ID = #{partnerId}
+	</update>
+	
+	<insert id="createPartner" keyColumn="PARTNER_ID" keyProperty="partnerId" useGeneratedKeys="true">
+				INSERT INTO LOY_PARTNER(
+					  PARTNER_NAME
+					, PARTNER_TYPE_ID
+					, PARTNER_NO
+					, ACTIVE_FLAG
+					, CREATED_DATE
+					, CREATED_BY
+					, UPDATED_DATE
+					, UPDATED_BY
+					, BU_ID
+				) VALUES (
+				     #{partner}
+				   , #{partnerTypeId}
+				   , #{partnerNo}
+				   , #{activeFlag}
+		           , NOW()
+		           , #{createdBy}
+		           , NOW()
+		           , #{createdBy}
+		           , #{buId}
+		        )
+	</insert>
+	<delete id="deletePartner">
+				DELETE FROM LOY_PARTNER WHERE PARTNER_ID = #{partnerId}
+	</delete> 
+	
+	<!-- Partner Type -->
+	<select id="getPartnerTypeList" resultType="PartnerModelBean"> 
+       		SELECT S.PARTNER_TYPE_ID 
+		      , S.PARTNER_TYPE_NAME AS PARTNER_TYPE
+		      , S.ACTIVE_FLAG 
+		      , S.CREATED_DATE
+			  , S.CREATED_BY
+			  , S.UPDATED_DATE
+			  , S.UPDATED_BY 
+		  	FROM LOY_PARTNER_TYPE S
+		<where>	
+			<if test="partnerType != null">
+				<bind name="partnerType" value="'%' + partnerType + '%'" />
+		    	S.PARTNER_TYPE_NAME LIKE #{partnerType}
+		  	</if>
+			<if test="partnerTypeId != null">
+		    	AND S.PARTNER_TYPE_ID = #{partnerTypeId}
+		  	</if>
+			<if test="activeFlag != null">
+		    	AND S.ACTIVE_FLAG = #{activeFlag} 
+		  	</if>
+			<if test="buId != null">
+		    	AND S.BU_ID = #{buId}
+		  	</if>
+	  	</where>	  	
+		<choose>
+			<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'partnerType'">
+		  			ORDER BY S.PARTNER_TYPE_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY S.PARTNER_TYPE_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="findPartnerTypeById" resultType="PartnerModelBean">
+			SELECT S.PARTNER_TYPE_ID 
+		      , S.PARTNER_TYPE_NAME AS PARTNER_TYPE
+		      , S.ACTIVE_FLAG 
+		      , S.CREATED_DATE
+			  , S.CREATED_BY
+			  , S.UPDATED_DATE
+			  , S.UPDATED_BY 
+		  	FROM LOY_PARTNER_TYPE S
+		  	WHERE PARTNER_TYPE_ID = #{partnerTypeId}
+	</select>
+	
+	<update id="updatePartnerType">
+			UPDATE LOY_PARTNER_TYPE  
+			SET 
+				 PARTNER_TYPE_NAME = #{partnerType}
+				, ACTIVE_FLAG = #{activeFlag}
+				, UPDATED_DATE = NOW()
+				, UPDATED_BY = #{updatedBy}
+			WHERE 
+				PARTNER_TYPE_ID = #{partnerTypeId}
+	</update>
+	
+	<insert id="createPartnerType" keyColumn="PARTNER_TYPE_ID" keyProperty="partnerTypeId" useGeneratedKeys="true">
+				INSERT INTO LOY_PARTNER_TYPE(
+					PARTNER_TYPE_NAME
+					, ACTIVE_FLAG
+					, CREATED_DATE
+					, CREATED_BY
+					, UPDATED_DATE
+					, UPDATED_BY
+					, BU_ID
+				)VALUES(
+				     #{partnerType}
+				   , #{activeFlag}
+		           , NOW()
+		           , #{createdBy}
+		           , NOW()
+		           , #{createdBy}
+		           , #{buId}
+		          )
+	</insert>
+	<delete id="deletePartnerType">
+			DELETE FROM LOY_PARTNER WHERE PARTNER_TYPE_ID = #{partnerTypeId}
+			DELETE FROM LOY_PARTNER_TYPE WHERE PARTNER_TYPE_ID = #{partnerTypeId}
+	</delete> 
+	
+</mapper>

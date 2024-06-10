@@ -1,0 +1,86 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="role">
+	<select id="getRoleList" resultType="roleModelBean"> 
+       	SELECT
+		    ID
+		    , ROLE_CODE
+		    , ROLE_NAME
+		    , USE_YN
+		    , CREATED_BY
+		    , CREATED_DATE
+		    , UPDATED_BY
+		    , UPDATED_DATE
+		FROM TB_ROLE
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'roleName'">
+		  			order by ROLE_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by ROLE_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	<select id="findRoleById" resultType="roleModelBean">
+		SELECT
+		    ID
+		    , ROLE_CODE
+		    , ROLE_NAME
+		    , USE_YN
+		    , CREATED_BY
+		    , CREATED_DATE
+		    , UPDATED_BY
+		    , UPDATED_DATE
+		FROM TB_ROLE
+		WHERE
+			ID = #{id}
+	</select>
+	<insert id="createRole"  keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TB_ROLE (ROLE_CODE, ROLE_NAME, USE_YN, CREATED_BY, CREATED_DATE)
+		VALUES (#{roleCode}, #{roleName}, #{useYn}, #{createdBy}, NOW())
+	</insert>
+	<update id="updateRole">
+	UPDATE TB_ROLE
+	SET 
+		ROLE_NAME = #{roleName}
+		, USE_YN = #{useYn}
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = NOW()
+	WHERE
+		ID = #{id}
+	</update>
+	<delete id="deleteRole">
+		DELETE FROM TB_ROLE WHERE ID = #{id}
+	</delete>
+	<select id="getRespListByRole" resultType="respModelBean">
+		SELECT
+		    REPLACE(UPPER(B.NAME), ' ', '') AS RESP_CODE
+		    , B.NAME AS RESP_NAME
+		    , A.RESP_FLAG
+		    , CASE WHEN B.TYPE = '01' THEN 'sub' ELSE 'link' END AS TYPE
+		    , B.ID AS MENU_ID
+		    , B.PARENT_MENU_ID
+		    , A.CREATED_BY
+		    , A.CREATED_DATE
+		    , A.UPDATED_BY
+		    , A.UPDATED_DATE
+		FROM TB_MENU B 
+		LEFT JOIN TB_RESPONSIBILITIES A ON A.MENU_ID = B.ID AND A.ROLE_CODE = #{roleCode}
+		ORDER BY B.SEQ ASC
+	</select>
+	<delete id="deleteRespByRole">
+		DELETE FROM TB_RESPONSIBILITIES WHERE ROLE_CODE = #{roleCode};
+	</delete>
+	<update id="updateRespByRole">		
+		INSERT INTO TB_RESPONSIBILITIES (ROLE_CODE, RESP_CODE, RESP_FLAG, CREATED_BY, CREATED_DATE, UPDATED_BY, UPDATED_DATE, MENU_ID)
+		VALUES
+		<foreach collection="respList" item="item" separator=",">
+		( #{roleCode}, #{item.respCode}, #{item.respFlag}, #{createdBy}, now(), #{createdBy}, now(), #{item.menuId})
+		</foreach>
+		;
+	</update>
+</mapper>

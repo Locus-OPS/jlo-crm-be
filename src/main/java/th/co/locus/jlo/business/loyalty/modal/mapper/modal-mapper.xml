@@ -1,0 +1,115 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="modal">
+
+	<select id="searchMemberPopup" resultType="memberModalBean">
+		SELECT m.MEMBER_ID  AS memberId,
+			m.FIRST_NAME AS memberFirstName,
+			m.LAST_NAME AS memberLastName,
+			m.business_name as MEMBER_BUSINESS_NAME,
+			case
+				when member_type = 0 then m.business_name
+				else CONCAT(m.FIRST_NAME, ' ', m.LAST_NAME)
+				end as memberName,
+			m.CITIZEN_ID AS memberCitizenId,
+			m.PASSPORT_NO AS memberPassportNo,
+			m.PHONE_NO AS memberMobile,
+			m.MEMBER_TIER_ID AS memberTierId,
+			t.TIER_NAME AS memberTierName,
+			m.PROGRAM_ID AS programId,
+			c.MEMBER_CARD_NO as cardNumber,
+			m.member_type,
+			member_type_cd.code_name as member_type_name
+		FROM LOY_MEMBER m
+		INNER JOIN LOY_MEMBER_CARD c ON m.MEMBER_ID = c.MEMBER_ID and c.primary_yn = 'Y'
+		INNER JOIN LOY_TIER t ON m.MEMBER_TIER_ID = t.TIER_ID
+		LEFT JOIN TB_CODEBOOK member_type_cd
+			on member_type_cd.CODE_TYPE = 'MEMBER_TYPE'
+				and m.member_type = member_type_cd.CODE_ID
+                and member_type_cd.active_flag = 'Y'
+		<where>
+			<if test="buId != null">
+				AND m.BU_ID = #{buId}
+			</if>
+			<if test="memberFirstName != null and memberFirstName != ''">
+				<bind name="memberFirstName" value="'%' + memberFirstName + '%'" />
+				AND (TRIM(m.FIRST_NAME) like #{memberFirstName} or TRIM(m.BUSINESS_NAME) like #{memberFirstName})
+			</if>
+			<if test="memberLastName != null and memberLastName != ''">
+			    <bind name="memberLastName" value="'%' +  memberLastName + '%'" />
+				AND TRIM(m.LAST_NAME) LIKE #{memberLastName}
+			</if>
+			<if test="memberMobile != null and memberMobile != ''">
+				AND TRIM(m.PHONE_NO) = #{memberMobile}
+			</if>
+			<if test="cardNumber != null and cardNumber != ''">
+				AND TRIM(c.MEMBER_CARD_NO) = #{cardNumber}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'memberName'">
+		  			order by memberName ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'memberId'">
+		  			order by m.MEMBER_ID ${sortDirection}
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY memberName ASC
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="searchShopPopup" resultType="shopModalBean">
+		 SELECT s.SHOP_ID,
+				s.SHOP_NAME,
+				s.SHOP_TYPE_ID,
+				st.SHOP_TYPE_NAME,
+				s.LOCATION AS SHOP_LOCATION,
+				location.CODE_NAME as SHOP_LOCATION_NAME,
+				s.FLOOR AS SHOP_FLOOR,
+				s.SHOP_NO
+		FROM LOY_SHOP s
+		LEFT JOIN LOY_SHOP_TYPE st ON st.SHOP_TYPE_ID = s.SHOP_TYPE_ID
+		LEFT JOIN tb_codebook location on location.CODE_TYPE = 'LOCATION_CD' and s.LOCATION = location.CODE_ID
+		<where>
+			<if test="shopNo != null and shopNo != ''">
+				AND s.SHOP_NO = #{shopNo}
+			</if>
+			<if test="buId != null">
+				AND s.BU_ID = #{buId}
+			</if>
+			<if test="shopName != null and shopName != ''">
+				<bind name="shopName" value=" shopName + '%'" />
+				AND s.SHOP_NAME LIKE #{shopName}
+			</if>
+			<if test="shopTypeId != null and shopTypeId != ''">
+				AND s.SHOP_TYPE_ID = #{shopTypeId}
+			</if>
+			<if test="shopLocation != null and shopLocation != ''">
+				AND s.LOCATION = #{shopLocation}
+			</if>
+			<if test="shopFloor != null and shopFloor != ''">
+				AND s.FLOOR = #{shopFloor}
+			</if>
+			<if test="shopNo != null and shopNo != ''">
+				AND s.SHOP_NO = #{shopNo}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'shopNo'">
+		  			order by s.SHOP_NO ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'shopName'">
+		  			order by s.SHOP_NAME ${sortDirection}
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY s.SHOP_NAME
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	
+</mapper>

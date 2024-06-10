@@ -1,0 +1,90 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="caseAtt">
+    <select id="getCaseAttachmentListByCaseNumber" resultType="caseAttachmentModelBean">
+		SELECT
+			att.CASE_ATT_ID as caseAttId,
+			attach.ATT_ID as attachmentId,
+			att.CASE_NUMBER as caseNumber,
+			attach.FILE_NAME as fileName, 
+			attach.FILE_PATH as filePath,
+			CONCAT(attach.FILE_PATH,'\\', attach.FILE_NAME) as fullPath,
+			att.BU_ID as buId,
+			attach.FILE_EXTENSION as fileExtension,
+			attach.FILE_SIZE as fileSize,
+			att.CREATED_DATE as createdDate,
+			att.CREATED_BY as createdBy ,
+			att.UPDATED_DATE as updatedDate,
+			att.UPDATED_BY as updatedBy
+		FROM loy_case_attachment att
+		left outer join tb_att attach on att.ATTACHMENT_ID = attach.ATT_ID
+		WHERE att.CASE_NUMBER = #{caseNumber}
+		AND att.BU_ID = #{buId}
+		ORDER BY att.CREATED_DATE DESC 
+		 
+	</select>
+	
+	 <insert id="createCaseAttachment">
+	 
+		INSERT INTO loy_case_attachment
+		 (	 
+			ATTACHMENT_ID,
+			CASE_NUMBER,
+			BU_ID,
+			CREATED_DATE,
+			CREATED_BY,
+			UPDATED_DATE,
+			UPDATED_BY
+		)VALUES(
+			#{attachmentId},
+			#{caseNumber},
+			#{buId},
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+		)
+	</insert>
+	
+    <select id="getCaseAttachmentByAttachmentNumber" resultType="caseAttachmentModelBean">
+		
+		SELECT
+			att.CASE_ATT_ID as caseAttId,
+			attach.ATT_ID as attachmentId,
+			att.CASE_NUMBER as caseNumber,
+			attach.FILE_NAME as fileName, 
+			attach.FILE_PATH as filePath,
+			CONCAT(attach.FILE_PATH,'\\', attach.FILE_NAME) as fullPath,
+			att.BU_ID as buId,
+			attach.FILE_EXTENSION as fileExtension,
+			attach.FILE_SIZE as fileSize,
+			att.CREATED_DATE as createdDate,
+			att.CREATED_BY as createdBy ,
+			att.UPDATED_DATE as updatedDate,
+			att.UPDATED_BY as updatedBy
+		FROM loy_case_attachment att
+		left outer join tb_att attach on att.ATTACHMENT_ID =  attach.ATT_ID
+		WHERE att.CASE_ATT_ID = #{caseAttId} 
+		
+	</select>
+	
+   
+	
+    <update id="updateCaseAttachment">
+		UPDATE loy_case_attachment
+		SET
+			ATTACHMENT_ID = #{attachmentId}, 
+			UPDATED_DATE = NOW(),
+			UPDATED_BY = #{updatedBy}
+		WHERE 
+		(CASE_ATT_ID =  #{caseAttId}) 
+	</update>
+	
+    <delete id="deleteCaseAttachment">
+		DELETE FROM
+		  loy_case_attachment
+		WHERE
+		(CASE_ATT_ID =  #{caseAttId}) 
+	</delete>
+	
+</mapper>

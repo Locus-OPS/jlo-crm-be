@@ -1,0 +1,99 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="saleProduct">
+    <select id="getSaleProductList" resultType="saleProductModelBean">
+		SELECT
+		    sp.ITEM_CODE as itemCode,
+			sp.ITEM_NAME as itemName,
+			sp.ITEM_STATUS as itemStatus,
+			cb.CODE_NAME as statusName,
+			sp.PRICING  as pricing,
+			sp.CATEGORY_CODE as categoryCode,
+			spc.CATEGORY_NAME as categoryName,
+			sp.CREATED_BY as createdBy ,
+            sp.CREATED_DATE as createdDate,
+			sp.UPDATED_BY as updatedBy,
+			sp.UPDATED_DATE as updatedDate, 
+			sp.BU_ID as buId,
+			sp.UNIT as unit,
+			sp.REMARK as remark
+			
+		from loy_sale_product  sp
+		left outer join loy_sale_product_category spc on sp.CATEGORY_CODE = spc.CATEGORY_CODE
+		left outer join tb_codebook cb  on sp.ITEM_STATUS = cb.CODE_ID  and cb.CODE_TYPE ='ITEM_STATUS'
+		<where>
+			<if test="itemName != null and itemName != ''">
+				<bind name="_itemName" value="itemName + '%'" />
+				AND sp.ITEM_NAME like #{_itemName}
+			</if>
+			<if test="itemStatus != null and itemStatus != ''">
+				AND sp.ITEM_STATUS = #{itemStatus}
+			</if>
+			<if test="buId != null">
+				AND sp.BU_ID = #{buId}
+			</if>
+		</where>
+		ORDER BY sp.ITEM_CODE ASC 
+	</select>
+	
+    <select id="findSaleProductById" resultType="saleProductModelBean">
+		SELECT
+			sp.ITEM_CODE as itemCode,
+			sp.ITEM_NAME as itemName,
+			sp.ITEM_STATUS as itemStatus,
+			cb.CODE_NAME as statusName,
+			sp.PRICING  as pricing,
+			sp.CATEGORY_CODE as categoryCode,
+			spc.CATEGORY_NAME as categoryName,
+			sp.CREATED_BY as createdBy ,
+            sp.CREATED_DATE as createdDate,            
+			sp.UPDATED_BY as updatedBy,
+			sp.UPDATED_DATE as updatedDate, 
+			sp.BU_ID as buId,
+			sp.UNIT as unit,
+			sp.REMARK as remark
+		  
+		FROM loy_sale_product  sp
+		left outer join loy_sale_product_category spc on sp.CATEGORY_CODE = spc.CATEGORY_CODE
+		LEFT OUTER JOIN tb_codebook cb  on sp.ITEM_STATUS = cb.CODE_ID  and cb.CODE_TYPE ='ITEM_STATUS'
+		WHERE
+		  sp.ITEM_CODE = #{itemCode}
+	</select>
+	
+	<insert id="createSaleProduct" keyColumn="ITEM_CODE" keyProperty="itemCode" useGeneratedKeys="true">
+		INSERT INTO loy_sale_product ( 
+			ITEM_NAME,
+			ITEM_STATUS,
+			PRICING,
+			CATEGORY_CODE ,
+			CREATED_DATE ,
+			CREATED_BY ,
+			BU_ID ,
+			UNIT ,
+			REMARK
+	  	 ) 
+	  	 VALUES
+		 (#{itemName}, #{itemStatus}, #{pricing},#{categoryCode},NOW(),#{createdBy},#{buId},#{unit},#{remark})
+	</insert>
+	
+    <update id="updateSaleProduct">
+		UPDATE loy_sale_product
+		SET
+		ITEM_NAME = #{itemName},
+		ITEM_STATUS = #{itemStatus},
+		CATEGORY_CODE = #{categoryCode},
+		PRICING = #{pricing},
+		REMARK  = #{remark},
+		UPDATED_DATE = NOW() ,
+		UPDATED_BY = #{updatedBy}
+		WHERE
+		(ITEM_CODE = #{itemCode})
+	</update>
+	
+    <delete id="deleteSaleProduct">
+		DELETE FROM
+		  loy_sale_product
+		WHERE
+		  ( ITEM_CODE = #{itemCode})
+	</delete>
+</mapper>

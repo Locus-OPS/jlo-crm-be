@@ -1,0 +1,70 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="business-unit">
+    <select id="getBusinessUnitList" resultType="businessUnitModelBean">
+		SELECT BU_ID as ID
+			, BU_NAME
+			, ACTIVE_YN
+			, CREATED_BY
+			, CREATED_DATE
+			, UPDATED_BY
+			, UPDATED_DATE
+		FROM tb_business_unit
+		<where>
+			<if test="buName != null and buName != ''">
+				<bind name="_buName" value="buName + '%'" />
+				AND BU_NAME like #{_buName}
+			</if>
+			<if test="activeYn != null">
+				AND ACTIVE_YN = #{activeYn}
+			</if>
+		</where>
+		ORDER BY BU_ID ASC
+	</select>
+	
+    <select id="findBusinessUnitById" resultType="businessUnitModelBean">
+		SELECT BU_ID as ID
+			, BU_NAME
+			, ACTIVE_YN
+			, CREATED_BY
+			, CREATED_DATE
+			, UPDATED_BY
+			, UPDATED_DATE
+		FROM tb_business_unit
+		WHERE BU_ID = #{id}
+	</select>
+	
+    <insert id="createBusinessUnit" keyColumn="BU_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_business_unit (
+			BU_NAME
+			, ACTIVE_YN
+			, CREATED_BY
+			, CREATED_DATE
+			, UPDATED_BY
+			, UPDATED_DATE
+		)
+		VALUES (
+    		#{buName}
+    		, #{activeYn}
+    		, #{createdBy}
+    		, NOW()
+    		, #{createdBy}
+    		, NOW()
+    	)
+	</insert>
+	
+    <update id="updateBusinessUnit">
+		UPDATE tb_business_unit
+		SET
+			BU_NAME = #{buName}
+			, ACTIVE_YN = #{activeYn}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = NOW()
+		WHERE BU_ID = #{id}
+	</update>
+	
+    <delete id="deleteBusinessUnit">
+		DELETE FROM tb_business_unit
+		WHERE BU_ID = #{id}
+	</delete>
+</mapper>

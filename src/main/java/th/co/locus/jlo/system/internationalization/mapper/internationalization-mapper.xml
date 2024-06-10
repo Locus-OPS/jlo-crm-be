@@ -1,0 +1,66 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="internationalization">
+    <select id="getInternationalizationList" resultType="internationalizationModelBean">
+		select
+		  MSG_CODE
+		  , GROUP_CONCAT(MSG_VALUE) as MSG_VALUE
+		from tb_internationalization 
+		<where>
+			<if test="msgCode != null and msgCode != ''">
+				<bind name="_msgCode" value="'%' + msgCode + '%'" />
+				AND MSG_CODE like #{_msgCode}
+			</if>
+			<if test="msgValue != null and msgValue != ''">
+				<bind name="_msgValue" value="'%' + msgValue + '%'" />
+				AND MSG_VALUE like #{_msgValue}
+			</if>
+		</where>
+		GROUP BY MSG_CODE
+		ORDER BY MSG_CODE ASC
+	</select>
+	<select id="getInternationalizationByMsgCode" resultType="internationalizationModelBean">
+		SELECT
+		  #{msgCode} as MSG_CODE,
+		  MSG_VALUE,
+		  cb.CODE_ID as LANG_CD
+		FROM
+		  tb_codebook cb
+		left join tb_internationalization i on i.lang_cd = cb.code_id and msg_code = #{msgCode}
+		where cb.code_type = 'LANG'
+		order by cb.seq asc
+	</select>
+	<select id="getTranslation" resultType="internationalizationModelBean">
+		SELECT
+		  MSG_CODE,
+		  MSG_VALUE
+		FROM
+		  tb_internationalization
+		where lang_cd = #{language}
+	</select>
+    <select id="findInternationalizationById" resultType="internationalizationModelBean">
+	SELECT
+	  MSG_CODE,
+	  MSG_VALUE,
+	  LANG_CD
+	FROM
+	  tb_internationalization
+	WHERE
+	  (
+    MSG_CODE = #{msgCode} AND LANG_CD = #{langCd})
+	</select>
+    <insert id="createInternationalization">
+	INSERT INTO
+	  tb_internationalization (MSG_CODE, MSG_VALUE, LANG_CD)
+	VALUES
+	<foreach collection="translateList" item="item" separator=",">
+		( #{item.msgCode}, #{item.msgValue}, #{item.langCd} )
+	</foreach>	  
+	</insert>
+    <delete id="deleteInternationalization">
+	DELETE FROM
+	  tb_internationalization
+	WHERE
+	    MSG_CODE = #{msgCode}
+	</delete>
+</mapper>

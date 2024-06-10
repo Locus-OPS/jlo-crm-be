@@ -1,0 +1,155 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="manualPoint">
+
+ 	<select id="findProductIdByProductCodeEarn" resultType="manualPointModelBean">
+ 		 SELECT p.PRODUCT_ID , p.PRODUCT_CODE , p.PRODUCT_NAME , p.PRODUCT_TYPE , p.LOY_PRODUCT_TYPE
+		 FROM LOY_PRODUCT p 
+		 INNER JOIN TB_CODEBOOK c ON p.PROGRAM_ID = c.ETC1  AND c.code_type = 'MANUAL_ADD_POINT_PRODUCT_CODE' AND p.PRODUCT_CODE = c.CODE_ID
+		 INNER JOIN LOY_MEMBER m ON m.PROGRAM_ID = p.PROGRAM_ID
+ 		<where>
+ 			m.MEMBER_ID = #{memberId}
+ 		</where>
+ 	</select> 
+ 	
+ 	<select id="findProductIdByProductCodeBurn" resultType="manualPointModelBean">
+ 		 SELECT p.PRODUCT_ID , p.PRODUCT_CODE , p.PRODUCT_NAME , p.PRODUCT_TYPE , p.LOY_PRODUCT_TYPE
+		 FROM LOY_PRODUCT p 
+		 INNER JOIN TB_CODEBOOK c ON p.PROGRAM_ID = c.ETC1  AND c.code_type = 'MANUAL_DEDUCT_POINT_PRODUCT_CODE' AND p.PRODUCT_CODE = c.CODE_ID
+		 INNER JOIN LOY_MEMBER m ON m.PROGRAM_ID = p.PROGRAM_ID
+ 		<where>
+ 			m.MEMBER_ID = #{memberId}
+ 		</where>
+ 	</select> 
+
+ 
+	<select id="queryManualPoint" resultType="manualPointModelBean" >
+	
+		SELECT X.TXN_ID
+			, X.MEMBER_ID
+			, case
+				when M.MEMBER_TYPE = 1 then CONCAT(M.FIRST_NAME, ' ', M.LAST_NAME) -- Member type = Individual
+				else M.BUSINESS_NAME -- Member type = Corporate
+                end as MEMBER_NAME
+			, case
+				when M.MEMBER_TYPE = 1 then M.FIRST_NAME 
+		        else M.BUSINESS_NAME
+				end AS memberFirstName
+			, case
+				when M.MEMBER_TYPE = 1 then M.LAST_NAME 
+		        else ''
+		        end AS memberLastName
+			, C.MEMBER_CARD_NO AS cardNumber
+			, X.PRODUCT_NAME
+			, X.TXN_TYPE
+			, X.TXN_SUB_TYPE
+			, X.POINT_BEFORE
+			, X.REQUEST_POINT
+			, X.BALANCE_POINT
+			, X.STATUS
+			, X.CREATED_DATE
+			, X.CREATED_BY
+			, X.UPDATED_DATE
+			, X.UPDATED_BY 
+		FROM LOY_TXN X 
+		 INNER JOIN LOY_MEMBER M ON X.member_id = M.member_id
+		 INNER JOIN LOY_MEMBER_CARD C ON m.member_id = C.member_id and C.primary_yn = 'Y'
+		
+		<where>
+		 		<!--  default search manual adjust on txn -->
+				X.txn_sub_type = 'MANUAL_ADJUST'
+			
+			<if test="txnId != null and txnId != ''">
+				AND X.TXN_ID = #{txnId}
+			</if>
+			<if test="txnType != null and txnType != ''">
+				AND X.TXN_TYPE = #{txnType}
+			</if>
+			<if test="createStartDate != null and createEndDate != null">
+				AND CAST(X.CREATED_DATE AS DATE) between #{createStartDate} and #{createEndDate}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				AND X.MEMBER_ID = #{memberId}
+			</if>
+			<if test="memberMobile != null and memberMobile != ''">
+				AND M.PHONE_NO = #{memberMobile}
+			</if>
+			<if test="memberFirstName != null and memberFirstName != ''">
+				<bind name="memberFirstName" value=" memberFirstName + '%'" />
+				AND (M.FIRST_NAME like #{memberFirstName} or M.BUSINESS_NAME like #{memberFirstName})
+			</if>
+			<if test="memberLastName != null and memberLastName != ''">
+				<bind name="memberLastName" value=" memberLastName + '%'" />
+				AND M.LAST_NAME LIKE #{memberLastName}
+			</if>
+			<if test="cardNumber != null and cardNumber != ''">
+				AND X.CARD_NUMBER = #{memberCard}
+			</if>
+			<if test="buId != null">
+				AND X.BU_ID = #{buId}
+			</if>
+			
+		</where>
+		<choose>
+			<when test="sortColumn != null">
+		  		<if test="sortColumn == 'txnId'">
+		  			ORDER BY X.TXN_ID ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'status'">
+		  			ORDER BY X.STATUS ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'memberId'">
+		  			ORDER BY X.MEMBER_ID ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'memberName'">
+		  			ORDER BY MEMBER_NAME ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'cardNumber'">
+		  			ORDER BY X.CARD_NUMBER ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'createdDate'">
+		  			ORDER BY X.CREATED_DATE ${sortDirection}
+		  		</if>
+		  	</when>
+		  	<otherwise>
+				ORDER BY x.TXN_ID DESC
+		  	</otherwise>
+	  	</choose>
+	</select>
+  
+    <insert id="insertManualPoint" keyColumn="TXN_ID" keyProperty="txnId" useGeneratedKeys="true">
+    
+   		INSERT INTO LOY_TXN 
+   		( 
+			PROGRAM_ID , 
+			MEMBER_ID , 
+			MEMBER_TIER_ID , 
+			CARD_NUMBER , 
+			CARD_TIER , 
+			PRODUCT_ID , 
+			PROduCT_CODE ,
+			PRODUCT_TYPE, 
+			PRODUCT_NAME , 
+			LOY_PRODUCT_TYPE , 
+			CHANNEL , 
+			TXN_TYPE , 
+			TXN_SUB_TYPE , 
+			STATUS , 
+			REQUEST_POINT , 
+			CREATED_DATE , 
+			UPDATED_DATE, 
+			CREATED_BY , 
+			UPDATED_BY ,
+			BU_ID 
+		) 
+    	SELECT m.PROGRAM_ID , m.MEMBER_ID , m.MEMBER_TIER_ID , c.MEMBER_CARD_NO , c.CARD_TIER_ID , #{productId} , #{productCode} , #{productType} , #{productName} ,
+			    #{loyProductType} , 'LOYALTY_WEB_ADMIN' , #{txnType} , 'MANUAL_ADJUST', 'QUEUED' , #{pointAdjust} , NOW() , NOW() , #{createdBy} , #{updatedBy} ,  m.BU_ID
+	    FROM LOY_MEMBER m INNER JOIN LOY_MEMBER_CARD c ON m.MEMBER_ID = c.MEMBER_ID and c.primary_yn = 'Y'
+	    WHERE m.MEMBER_ID = #{memberId}
+		
+		
+	
+	</insert>
+	 
+
+	
+</mapper>

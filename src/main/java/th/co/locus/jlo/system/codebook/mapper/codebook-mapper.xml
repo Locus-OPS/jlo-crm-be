@@ -1,0 +1,75 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="codebook">
+	<select id="searchCodebook" resultType="codebookModelBean">
+		SELECT * FROM TB_CODEBOOK CB
+		WHERE 1=1 
+		<if test="codeId != null and codeId != ''">
+			<bind name="pCodeId" value="codeId + '%'" />
+	    	AND CB.CODE_ID like #{pCodeId}
+	  	</if>
+	  	<if test="codeType != null and codeType != ''">
+			<bind name="pCodeType" value="codeType + '%'" />
+	    	AND CB.CODE_TYPE like #{pCodeType}
+	  	</if>
+	  	<if test="codeName != null and codeName != ''">
+			<bind name="pCodeName" value="codeName + '%'" />
+	    	AND CB.CODE_NAME like #{pCodeName}
+	  	</if>
+	  	<if test="activeFlag != null and activeFlag != ''">
+	    	AND CB.ACTIVE_FLAG = #{activeFlag}
+	  	</if>
+	  	<if test="buId != null and buId != ''">
+	    	AND CB.BU_ID = #{buId}
+	  	</if>
+	  	<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'codeType'">
+		  			order by CB.CODE_TYPE ${sortDirection}	  	
+		  		</if>
+		  		<if test="sortColumn == 'codeId'">
+		  			order by CB.CODE_ID ${sortDirection}	  	
+		  		</if>
+		  		<if test="sortColumn == 'codeName'">
+		  			order by CB.CODE_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by CB.CODE_TYPE ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	<select id="findCodebookById" resultType="codebookModelBean">
+		SELECT * FROM TB_CODEBOOK CB
+		WHERE CODE_TYPE = #{codeType} AND CODE_ID = #{codeId} AND BU_ID = #{buId} 
+	</select>
+	<insert id="createCodebook">
+		INSERT INTO TB_CODEBOOK 
+		(CODE_TYPE, CODE_ID, CODE_NAME, PARENT_TYPE, PARENT_ID, ETC1, ETC2, ETC3, ETC4, ETC5, DESCRIPTION, SEQ, ACTIVE_FLAG, BU_ID, CREATED_BY, CREATED_DATE, UPDATED_BY, UPDATED_DATE)
+		VALUES 
+		(#{codeType}, #{codeId}, #{codeName}, #{parentType}, #{parentId}, #{etc1}, #{etc2}, #{etc3}, #{etc4}, #{etc5}, #{description}, #{seq}, #{activeFlag}, #{buId}, #{createdBy}, NOW(),#{createdBy}, NOW())
+	</insert>
+	<update id="updateCodebook">
+		UPDATE TB_CODEBOOK 
+		SET
+			CODE_NAME = #{codeName}
+			, PARENT_TYPE = #{parentType}
+			, PARENT_ID = #{parentId}
+			, ETC1 = #{etc1}
+			, ETC2 = #{etc2}
+			, ETC3 = #{etc3}
+			, ETC4 = #{etc4}
+			, ETC5 = #{etc5}
+			, SEQ = #{seq}
+			, DESCRIPTION = #{description} 
+			, ACTIVE_FLAG = #{activeFlag}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = NOW()
+		WHERE 
+			CODE_TYPE = #{codeType} 
+			AND CODE_ID = #{codeId} 
+			AND BU_ID = #{buId} 		
+	</update>
+</mapper>

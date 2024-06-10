@@ -1,0 +1,77 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="test">
+    <select id="selectTbMast" resultType="tbMast"> 
+    	<![CDATA[
+        	select * from tb_mast where nameid like '100000%' order by policyNo asc
+		]]>
+    </select>
+    <select id="selectTestProc" resultType="testTable">
+    	<![CDATA[
+        	CALL sp_test_read(#{username, jdbcType = VARCHAR, mode = IN}, #{result, mode=OUT, jdbcType=NUMERIC});
+		]]>
+    </select> 
+   <!--  
+    User Menu
+	<select id="USER_SQL_SEARCH" resultType="th.co.locus.jlo.web.system.beans.system.UserModelBean">
+			SELECT U.USER_ID
+			  ,U.ID
+		      ,U.FIRST_NAME
+		      ,U.LAST_NAME
+		      ,U.NICKNAME
+		      ,U.PASSWORD
+		      ,U.LOGIN_TYPE
+		      ,U.USE_YN 
+		      ,U.EMAIL
+		      ,U.POS_ID
+		      ,P.POS_NAME
+			  ,U.DIV_ID
+			  ,D.CODE_NAME AS divName
+		      ,U.ROLE_CODE
+			  ,R.ROLE_NAME AS roleName
+			  ,U.BU_ID
+			  ,B.BU_NAME AS buName
+		      ,U.LAST_SIGNON_DATE
+		      ,U.LAST_SIGNON_IP
+		      ,U.CREATED_DATE
+		      ,U.CREATED_BY
+		      ,U.UPDATED_DATE
+		      ,U.UPDATED_BY
+		  FROM TB_USER U
+		  LEFT JOIN TB_ROLE R ON R.ROLE_CODE = U.ROLE_CODE
+		  LEFT JOIN TB_USER RT ON RT.USER_ID = U.REPORT_TO_TYPE
+		  LEFT JOIN TB_CODEBOOK D ON D.CODE_TYPE = 'DIVISION' AND D.CODE_ID = U.DIV_ID
+		  LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		  LEFT JOIN TB_POSITION P ON P.POS_ID = U.POS_ID
+		  <where> 
+		  	<if test="userId != null"> AND U.USER_ID LIKE #{userId} </if> 
+		  	<if test="firstName != null"> AND U.FIRST_NAME LIKE #{firstName} </if> 
+		  	<if test="lastName != null"> AND U.LAST_NAME LIKE #{lastName} </if> 
+		  	<if test="useYn != null"> AND U.USE_YN = #{useYn} </if> 
+		  	<if test="buId != null"> AND U.BU_ID = #{buId} </if> 
+		  	<if test="roleCode != null"> AND U.ROLE_CODE = #{roleCode} </if> 
+		  	<if test="posId != null"> AND U.POS_ID = #{posId} </if> 
+		  	<if test="divId != null"> AND U.DIV_ID = #{divId} </if> 
+		  </where>	
+  	</select>
+  	
+    <insert id="testInsert">
+    	<![CDATA[
+    		insert into test_table (username, password, first_name, last_name) 
+    		values (#{username}, #{password}, #{firstName}, #{lastName})
+    	]]>
+    </insert>
+    <insert id="testInsertProc">
+    	<![CDATA[
+    		CALL sp_test_insert(
+    			#{username, jdbcType = VARCHAR, mode = IN}
+    			, #{password, jdbcType = VARCHAR, mode = IN}
+    			, #{firstName, jdbcType = VARCHAR, mode = IN}
+    			, #{lastName, jdbcType = VARCHAR, mode = IN}
+    			, #{birthDate, jdbcType = DATE, mode = IN}
+    		);
+    	]]>
+    </insert> -->
+</mapper>

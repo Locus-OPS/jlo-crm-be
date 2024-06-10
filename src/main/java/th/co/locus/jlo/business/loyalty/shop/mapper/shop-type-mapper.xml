@@ -1,0 +1,84 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shopType">
+	<select id="getShopTypeList" resultType="shopTypeModelBean"> 
+       			SELECT S.SHOP_TYPE_ID 
+		      	  , S.SHOP_TYPE_NAME
+			      , S.ACTIVE_FLAG 
+			      , S.CREATED_DATE
+				  , S.CREATED_BY
+				  , S.UPDATED_DATE
+				  , S.UPDATED_BY 
+			  	FROM LOY_SHOP_TYPE S
+		<where>	
+			<if test="activeFlag != null">
+		    	S.ACTIVE_FLAG = #{activeFlag}
+		  	</if>
+			<if test="shopType != null">
+				<bind name="shopType" value="'%'+shopType + '%'" />
+		    	AND S.SHOP_TYPE_NAME like #{shopType}
+		  	</if>
+		  	<if test="shopTypeId != null">
+		    	AND S.SHOP_TYPE_ID = #{shopTypeId}
+		  	</if>
+		  	<if test="buId != null">
+		    	AND S.BU_ID = #{buId}
+		  	</if>
+	  	</where>	  	
+		<choose>
+			<when test="sortColumn != null">
+		  		<if test="sortColumn == 'shopType'">
+		  			ORDER BY S.SHOP_TYPE_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY S.SHOP_TYPE_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="findShopTypeById" resultType="shopTypeModelBean">
+				SELECT S.SHOP_TYPE_ID 
+		      	  , S.SHOP_TYPE_NAME
+			      , S.ACTIVE_FLAG 
+			      , S.CREATED_DATE
+				  , S.CREATED_BY
+				  , S.UPDATED_DATE
+				  , S.UPDATED_BY 
+			  	FROM LOY_SHOP_TYPE S
+				WHERE SHOP_TYPE_ID = #{shopTypeId}
+	</select>
+	
+	<update id="updateShopType">
+			UPDATE LOY_SHOP_TYPE  SET 
+				 SHOP_TYPE_NAME = #{shopTypeName}
+				, ACTIVE_FLAG = #{activeFlag}
+				, UPDATED_DATE = NOW()
+				, UPDATED_BY = #{updatedBy}
+			WHERE SHOP_TYPE_ID = #{shopTypeId}
+	</update>
+	
+	<!-- DELETE FROM LOY_SHOP_TYPE WHERE SHOP_TYPE_ID =:shopTypeId -->
+	
+	<insert id="createShopType" keyColumn="SHOP_TYPE_ID" keyProperty="shopTypeId" useGeneratedKeys="true">
+			INSERT INTO LOY_SHOP_TYPE(
+					SHOP_TYPE_NAME
+					, ACTIVE_FLAG
+					, BU_ID
+					, CREATED_DATE
+					, CREATED_BY
+					, UPDATED_DATE
+					, UPDATED_BY
+			)VALUES(
+				    #{shopTypeName}
+				   ,#{activeFlag}
+				   ,#{buId}
+		           ,GETDATE()
+		           ,#{createdBy}
+		           ,GETDATE()
+		           ,#{createdBy}
+		    )
+	</insert>
+	
+</mapper>

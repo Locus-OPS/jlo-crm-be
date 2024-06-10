@@ -1,0 +1,123 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="caseAct">
+    <select id="getCaseActivityListByCaseNumber" resultType="caseActivityModelBean">
+		SELECT
+			act.ACTIVITY_NUMBER as activityNumber,
+		    act.CASE_NUMBER as caseNumber,
+		    act.TYPE as type, 
+		    cb1.CODE_NAME as typeName,
+		    act.STATUS as status,
+		    cb2.CODE_NAME as statusName,
+		    act.SUBJECT as subject,
+		    act.DETAIL as detail,
+		    act.BU_ID as buId,
+		    act.OWNER_CODE as ownerCode,
+		    act.DEPT_CODE as deptCode,
+		    CONCAT(u.FIRST_NAME, ' ', u.LAST_NAME) as ownerName ,
+		    act.CREATED_DATE as createdDate,
+		    act.CREATED_BY as createdBy ,
+		    act.UPDATED_DATE as updatedDate,
+    		act.UPDATED_BY as updatedBy
+		FROM loy_case_activity act    
+		 LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
+		LEFT OUTER JOIN tb_codebook cb1  on act.TYPE = cb1.CODE_ID  and cb1.CODE_TYPE ='ACT_TYPE'
+		LEFT OUTER JOIN tb_codebook cb2  on act.STATUS = cb2.CODE_ID  and cb2.CODE_TYPE ='ACT_STATUS'
+		WHERE act.CASE_NUMBER = #{caseNumber}	 
+		AND act.BU_ID = #{buId}
+		ORDER BY act.CREATED_DATE DESC 
+		 
+	</select>
+	
+	 <insert id="createCaseActivity">
+		INSERT INTO loy_case_activity
+		(
+			ACTIVITY_NUMBER,
+			CASE_NUMBER,
+			TYPE,
+			STATUS,
+			SUBJECT,
+			DETAIL,
+			OWNER_CODE,			 
+			BU_ID,
+			CREATED_DATE,
+			CREATED_BY,
+			UPDATED_DATE,
+			UPDATED_BY 
+		) VALUES (
+			#{activityNumber},
+			#{caseNumber},
+			#{type},
+			#{status},
+			#{subject},
+			#{detail},
+			#{ownerCode},		 
+			#{buId},
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+		) 
+				  	 
+	</insert>
+	
+    <select id="getCaseActivityByActivityNumber" resultType="caseActivityModelBean">
+		SELECT
+			act.ACTIVITY_NUMBER as activityNumber,
+		    act.CASE_NUMBER as caseNumber,
+		    act.TYPE as type, 
+		    cb1.CODE_NAME as typeName,
+		    act.STATUS as status,
+		    cb2.CODE_NAME as statusName,
+		    act.SUBJECT as subject,
+		    act.DETAIL as detail,
+	     	act.OWNER_CODE as ownerCode,
+		    act.DEPT_CODE as deptCode,
+		    CONCAT(u.FIRST_NAME, ' ', u.LAST_NAME) as ownerName ,
+		    act.BU_ID as buId,
+		    act.CREATED_DATE as createdDate,
+		    act.CREATED_BY as createdBy ,
+		    act.UPDATED_DATE as updatedDate,
+    		act.UPDATED_BY as updatedBy
+		FROM loy_case_activity act    
+		 LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
+		LEFT OUTER JOIN tb_codebook cb1  on act.TYPE = cb1.CODE_ID  and cb1.CODE_TYPE ='ACT_TYPE'
+		LEFT OUTER JOIN tb_codebook cb2  on act.STATUS = cb2.CODE_ID  and cb2.CODE_TYPE ='ACT_STATUS'
+		
+		WHERE act.ACTIVITY_NUMBER = #{activityNumber}
+		
+	</select>
+	
+   
+	
+    <update id="updateCaseActivity">
+		UPDATE  loy_case_activity
+		SET 
+			TYPE = #{type},
+			STATUS = #{status},
+			SUBJECT = #{subject},
+			DETAIL = #{detail},		
+			OWNER_CODE = #{ownerCode},
+		    DEPT_CODE = #{deptCode},	 
+			UPDATED_DATE = NOW(),
+			UPDATED_BY = #{updatedBy}
+		WHERE 
+		(ACTIVITY_NUMBER = #{activityNumber})
+	</update>
+	
+    <delete id="deleteCaseActivity">
+		DELETE FROM
+		  loy_case_activity
+		WHERE
+		 (ACTIVITY_NUMBER = #{activityNumber})
+	</delete>
+	
+	<select id="generateCaseActNumber" resultType="String" statementType="CALLABLE">
+		{ call GEN_NEW_SEQUENCE(
+	   		'ACT_SEQUENCE',
+	    	#{buId, jdbcType = INTEGER, mode = IN}
+	  		)
+	  	}
+	 </select>
+ 
+</mapper>

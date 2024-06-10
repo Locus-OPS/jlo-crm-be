@@ -1,0 +1,10 @@
+<html>
+    <body>
+    <div>
+        <br/>
+    	<p>${body}</p>
+    	<br/>
+    	<br/>
+    </div>
+    </body>
+</html>

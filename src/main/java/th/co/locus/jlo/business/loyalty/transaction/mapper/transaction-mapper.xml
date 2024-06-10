@@ -1,0 +1,361 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="transaction">
+	<select id="getTransactionList" resultType="transactionModelBean">
+		SELECT
+			T.TXN_ID
+			,T.PROGRAM_ID
+			,T.MEMBER_ID
+			,T.MEMBER_TIER_ID
+			,T.CARD_NUMBER
+			,T.CARD_TIER AS CARD_TIER_ID
+			,T.PRODUCT_ID
+			,T.PRODUCT_CODE
+			,T.PRODUCT_TYPE
+			,T.PRODUCT_NAME AS PRODUCT
+			,T.LOY_PRODUCT_TYPE
+			,T.CHANNEL
+			,T.RECEIPT_ID
+			,T.RECEIPT_DATE 
+			,T.AMOUNT
+			,T.TXN_TYPE AS TXN_TYPE_ID
+			,C5.CODE_NAME AS TXN_TYPE
+			,T.TXN_SUB_TYPE AS TXN_SUB_TYPE_ID 
+			,C6.CODE_NAME AS TXN_SUB_TYPE
+			,T.STATUS AS TXN_STATUS_ID
+			,C4.CODE_NAME AS TXN_STATUS
+			,T.SUB_STATUS
+			,T.QUANTITY
+			,T.REDEEM_METHOD
+			,T.POINT_BEFORE
+			,T.EARN_POINT
+			,T.BURN_POINT
+			,T.BALANCE_POINT
+			,T.REQUEST_POINT
+			,T.PROCESSED_DATE
+			,T.PROCESSED_DATE as PROCESSED_TIME
+			,T.REFERED_CARD_NO
+			,T.CANCELLED_TXN_ID
+			,T.STORE_SHOP_ID
+			, T.STORE_SHOP_NAME
+			,T.STORE_SHOP_TYPE
+			,T.STORE_SHOP_TYPE_NAME
+			,T.CREATED_DATE
+			,T.UPDATED_DATE
+			,T.CREATED_BY
+			,T.UPDATED_BY 
+			,P.PROGRAM_NAME AS PROGRAM
+			, CASE
+				WHEN M.MEMBER_TYPE = 1 THEN CONCAT(M.FIRST_NAME, ' ', M.LAST_NAME)
+				ELSE M.BUSINESS_NAME
+				END AS MEMBER_NAME
+			,T.PROCESSED_DTL
+		FROM LOY_TXN T
+		INNER JOIN LOY_PROGRAM P on T.PROGRAM_ID = P.PROGRAM_ID
+		INNER JOIN LOY_MEMBER M ON T.MEMBER_ID = M.MEMBER_ID
+		INNER JOIN TB_CODEBOOK C4  ON T.STATUS = C4.CODE_ID AND C4.CODE_TYPE = 'TXN_STATUS'
+		INNER JOIN TB_CODEBOOK C5  ON T.TXN_TYPE = C5.CODE_ID AND C5.CODE_TYPE = 'TXN_TYPE'
+		INNER JOIN TB_CODEBOOK C6  ON T.TXN_SUB_TYPE = C6.CODE_ID AND C6.CODE_TYPE = 'TXN_SUB_TYPE'
+		<where>
+			<if test="programId != null">
+		    	T.PROGRAM_ID = #{programId}
+		  	</if>
+			<if test="memberName != null">
+		    	<bind name="memberName" value="'%' + memberName + '%'" />
+		    	AND (M.FIRST_NAME like #{memberName} OR M.LAST_NAME like #{memberName} OR M.BUSINESS_NAME like #{memberName})
+		  	</if>
+		  	<if test="txnTypeId != null">
+		    	AND T.TXN_TYPE = #{txnTypeId}
+		  	</if>
+		  	<if test="txnStatusId != null">
+		    	AND T.STATUS = #{txnStatusId}
+		  	</if>
+		  	<if test="cardNumber != null">
+		    	<bind name="cardNumber" value="'%' + cardNumber + '%'" />
+		    	AND T.CARD_NUMBER like #{cardNumber}
+		  	</if>
+		  	<if test="memberId != null">
+		    	<bind name="memberId" value="'%' + memberId + '%'" />
+		    	AND T.MEMBER_ID like #{memberId}
+		  	</if>
+		  	<if test="cancelledTxnId != null">
+		    	<bind name="cancelledTxnId" value="'%' + cancelledTxnId + '%'" />
+		    	AND T.CANCELLED_TXN_ID like #{cancelledTxnId}
+		  	</if>
+		  	<if test="txnId != null">
+		    	<bind name="txnId" value="'%' + txnId + '%'" />
+		    	AND T.TXN_ID like #{txnId}
+		  	</if>
+		  	<if test="receiptId != null">
+		    	<bind name="receiptId" value="'%' + receiptId + '%'" />
+		    	AND T.RECEIPT_ID like #{receiptId}
+		  	</if>
+		  	<if test="receiptDate != null">
+				<![CDATA[ AND DATE(T.RECEIPT_DATE) = #{receiptDate, jdbcType=DATE} ]]>
+			</if>
+		  	<if test="buId != null">
+		    	AND T.BU_ID = #{buId}
+		  	</if>
+	  	</where>
+		<choose>
+			<when test="sortColumn != null">
+		  		<if test="sortColumn == 'txnId'">
+		  			ORDER BY T.TXN_ID ${sortDirection}
+		  		</if>
+		  		<if test="sortColumn == 'createdDate'">
+		  			ORDER BY T.CREATED_DATE ${sortDirection}
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY T.CREATED_DATE DESC
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="getEarnItemList" resultType="EarnItemModelBean"> 
+		SELECT TXN_ID
+				, E.EARN_ID 
+				, E.PROMOTION_ID 
+				, P.PROMOTION_NAME AS PROMOTION 
+				, E.RULE_ID 
+				, R.RULE_NAME AS RULE
+				, E.ACTION_ID 
+				, A.ACTION_DETAIL 
+				, E.EARN_VALUE 
+				, E.EXPIRATION_DT AS EXPIRY_DATE
+				, E.POINT_TYPE_ID
+				, PT.POINT_TYPE_NAME AS POINT_TYPE 
+			FROM LOY_EARN_ITM E 
+            INNER JOIN LOY_PROGRAM_POINT_TYPE PT  ON E.POINT_TYPE_ID =  PT.POINT_TYPE_ID
+			LEFT JOIN LOY_PROMOTION P  ON E.PROMOTION_ID = P.PROMOTION_ID
+			LEFT JOIN LOY_PROMOTION_RULES R  ON E.RULE_ID = R.RULE_ID
+			LEFT JOIN LOY_PROMOTION_ACTION A ON E.ACTION_ID = A.ACTION_ID
+			WHERE E.TXN_ID = #{txnId}
+			ORDER BY E.EARN_ID ASC
+	</select>
+	
+	<select id="getBurnItemList" resultType="BurnItemModelBean"> 
+		SELECT TXN_ID
+				, B.EARN_ID
+				, B.BURN_ID 
+				, B.VALUE 
+				, B.PROMOTION_ID 
+				, P.PROMOTION_NAME AS PROMOTION
+				, B.RULE_ID 
+				, R.RULE_NAME AS RULE
+				, B.ACTION_ID
+				, A.ACTION_DETAIL 
+			FROM LOY_BURN_ITM B 
+			LEFT JOIN LOY_PROMOTION P ON B.PROMOTION_ID = P.PROMOTION_ID
+			LEFT JOIN LOY_PROMOTION_RULES R  ON B.RULE_ID = R.RULE_ID
+			LEFT JOIN LOY_PROMOTION_ACTION A ON B.ACTION_ID = A.ACTION_ID
+			WHERE B.TXN_ID = #{txnId}
+			ORDER BY B.BURN_ID ASC
+	</select>
+	
+	<select id="getPromotionAttrList" resultType="PromotionAttrModelBean"> 
+			SELECT A.PROMOTION_ID
+				, P.PROMOTION_NAME AS PROMOTION
+				, A.MEMBER_ID 
+				, A.ATTR_NAME 
+				, A.ATTR_TYPE 
+				, A.ATTR_VALUE 
+				, T.PROCESSED_DATE
+			 FROM LOY_PROMOTION_ATTRIBUTE_VALUE_LOG A 
+			 LEFT JOIN LOY_PROMOTION P  ON  A.PROMOTION_ID = P.PROMOTION_ID
+			 LEFT JOIN LOY_TXN T ON A.TXN_ID = T.TXN_ID
+			 WHERE A.TXN_ID = #{txnId}
+			 ORDER BY A.ATTR_NAME ASC
+	</select>
+	
+	
+	<select id="findTransactionById" resultType="transactionModelBean">
+       		SELECT  
+				T.TXN_ID
+				,T.PROGRAM_ID
+				,T.MEMBER_ID
+				,T.MEMBER_TIER_ID
+				,T.CARD_NUMBER
+				,T.CARD_TIER AS CARD_TIER_ID
+				,T.PRODUCT_ID
+				,T.PRODUCT_CODE
+				,T.PRODUCT_TYPE
+				,T.PRODUCT_NAME AS PRODUCT
+				,T.LOY_PRODUCT_TYPE
+				,T.CHANNEL
+				,T.RECEIPT_ID
+				,T.RECEIPT_DATE 
+				,T.AMOUNT
+				,T.TXN_TYPE AS TXN_TYPE_ID
+                ,C5.CODE_NAME AS TXN_TYPE
+				,T.TXN_SUB_TYPE AS TXN_SUB_TYPE_ID 
+                ,C6.CODE_NAME AS TXN_SUB_TYPE
+				,T.STATUS AS TXN_STATUS_ID
+                ,C4.CODE_NAME AS TXN_STATUS
+				,T.SUB_STATUS
+				,T.QUANTITY
+				,T.REDEEM_METHOD
+				,T.POINT_BEFORE
+				,T.EARN_POINT
+				,T.BURN_POINT
+				,T.BALANCE_POINT
+				,T.REQUEST_POINT
+				,T.PROCESSED_DATE
+				,T.PROCESSED_DATE as PROCESSED_TIME
+				,T.REFERED_CARD_NO
+				,T.CANCELLED_TXN_ID
+				,T.STORE_SHOP_ID
+				, T.STORE_SHOP_NAME
+				,T.STORE_SHOP_TYPE
+				,T.STORE_SHOP_TYPE_NAME
+				,T.CREATED_DATE
+				,T.UPDATED_DATE
+				,T.CREATED_BY
+				,T.UPDATED_BY 
+				,P.PROGRAM_NAME AS PROGRAM
+				,CONCAT(M.FIRST_NAME,'', ' ' , M.LAST_NAME,'') AS MEMBER_NAME
+				,T.PROCESSED_DTL
+			FROM LOY_TXN T
+			INNER JOIN LOY_PROGRAM P on T.PROGRAM_ID = P.PROGRAM_ID
+			INNER JOIN vw_customer_search M ON T.MEMBER_ID = M.MEMBER_ID
+			INNER JOIN TB_CODEBOOK C4  ON T.STATUS = C4.CODE_ID AND C4.CODE_TYPE = 'TXN_STATUS'
+            INNER JOIN TB_CODEBOOK C5  ON T.TXN_TYPE = C5.CODE_ID AND C5.CODE_TYPE = 'TXN_TYPE'
+            INNER JOIN TB_CODEBOOK C6  ON T.TXN_SUB_TYPE = C6.CODE_ID AND C6.CODE_TYPE = 'TXN_SUB_TYPE'
+            WHERE T.TXN_ID = #{txnId}
+	</select>
+	
+	<update id="updateTransaction">
+			UPDATE LOY_CAMPAIGN  SET 
+					 CAMPAIGN_NAME = #{transaction}
+					, CAMPAIGN_CODE = #{transactionCode}
+					, CAMPAIGN_TYPE = #{transactionTypeId}
+					, DETAIL = #{detail}
+					, START_DATE = #{startDate}
+					, END_DATE = #{endDate}
+					, ACTIVE_FLAG = #{activeFlag}
+					, UPDATED_DATE = NOW()
+					, UPDATED_BY = #{updatedBy}
+			WHERE CAMPAIGN_ID = #{transactionId}
+	</update>
+	
+	<insert id="createTransaction" keyColumn="CAMPAIGN_ID" keyProperty="transactionId" useGeneratedKeys="true">
+			INSERT INTO LOY_CAMPAIGN(
+					CAMPAIGN_CODE
+					, CAMPAIGN_NAME
+					, CAMPAIGN_TYPE
+					, DETAIL
+					, START_DATE
+					, END_DATE
+					, ACTIVE_FLAG
+					, CREATED_DATE
+					, CREATED_BY
+					, UPDATED_DATE
+					, UPDATED_BY
+			) VALUES(
+				    #{transactionCode}
+				   ,#{transaction}
+				   ,#{transactionTypeId}
+				   ,#{detail}
+				   ,#{startDate}
+				   ,#{endDate}
+				   ,#{activeFlag}
+		           , NOW()
+		           ,#{createdBy}
+		           , NOW()
+		           ,#{createdBy}
+		    )
+	</insert>
+	
+	<select id="getCardList" resultType="cardModelBean"> 
+			SELECT 	C.MEMBER_ID , 
+					C.CARD_NO AS CARD_NUMBER, 
+					CONCAT(IFNULL(C1.CODE_NAME,''), ' ', IFNULL(CUS.FIRST_NAME,''), ' ' , IFNULL(CUS.LAST_NAME,'')) 
+					AS FULL_NAME_EN, 
+					M.MEMBER_TIER_ID, 
+					C.CARD_PREFIX, 
+					C.CARD_TIER_ID
+					
+					FROM LOY_CARD C 
+					INNER JOIN LOY_TIER T ON (C.CARD_TIER_ID = T.TIER_ID)
+					INNER JOIN LOY_PROGRAM P  ON (T.PROGRAM_ID = P.PROGRAM_ID)
+					INNER JOIN LOY_MEMBER M  ON (C.MEMBER_ID = M.MEMBER_ID)
+					INNER JOIN TB_CUSTOMER CUS  ON (M.ACCOUNT_NO = CUS.ACCOUNT_NO )
+					LEFT JOIN TB_CODEBOOK C1  ON (CUS.TITLE = C1.CODE_ID AND CODE_TYPE = 'NAME_PREFIX')
+		<where>	
+			<if test="true">
+		    	C.CARD_STATUS = 1
+		  	</if>
+			<if test="programId != null">
+		    	AND P.PROGRAM_ID = #{programId}
+		  	</if>
+			<if test="memberId != null">
+		    	<bind name="memberId" value="'%' + memberId + '%'" />
+		    	AND C.MEMBER_ID like #{memberId}
+		  	</if>
+			<if test="firstName != null">
+		    	<bind name="firstName" value="'%' + firstName + '%'" />
+		    	AND CUS.FIRST_NAME like #{firstName} 
+		  	</if>
+			<if test="lastName != null">
+		    	<bind name="lastName" value="'%' + lastName + '%'" />
+		    	AND CUS.LAST_NAME like #{lastName} 
+		  	</if>
+		  	<if test="cardNumber != null">
+		    	<bind name="cardNumber" value="'%' + cardNumber + '%'" />
+		    	AND C.CARD_NO like #{cardNumber}
+		  	</if>
+	  	</where>		
+		<choose>
+			<when test="sortColumn != null">
+		  		<if test="sortColumn == 'memberId'">
+		  			ORDER BY C.MEMBER_ID ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY C.MEMBER_ID DESC  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+
+	<select id="getProductList" resultType="productModelBean"> 
+			SELECT P.ITEM_CODE AS ITEM_ID
+				, P.ITEM_NAME AS ITEM
+				, P.CATEGORY_CODE AS CATEGORY_ID 
+            	, C.CATEGORY_NAME AS CATEGORY
+				, C.PARENT_CATEGORY_CODE AS PARENT_CATEGORY_ID
+				, PC.CATEGORY_NAME AS PARENT_CATEGORY
+				, P.CREATED_DATE
+				, P.CREATED_BY
+				, P.UPDATED_DATE
+				, P.UPDATED_BY 
+			FROM LOY_SALE_PRODUCT P
+			LEFT JOIN LOY_SALE_PRODUCT_CATEGORY C ON P.CATEGORY_CODE = C.CATEGORY_CODE
+         	LEFT JOIN LOY_SALE_PRODUCT_CATEGORY PC ON C.PARENT_CATEGORY_CODE = PC.CATEGORY_CODE
+		<where>	
+			<if test="item != null">
+		    	<bind name="item" value="'%' + item + '%'" />
+		    	AND P.ITEM_NAME like #{item}
+		  	</if>
+			<if test="parentCategoryId != null">
+		    	AND C.PARENT_CATEGORY_CODE = #{parentCategoryId}
+		  	</if>
+		  	<if test="categoryId != null">
+		    	AND C.CATEGORY_CODE = #{categoryId}
+		  	</if>
+	  	</where>		
+		<choose>
+			<when test="sortColumn != null">
+		  		<if test="sortColumn == 'item'">
+		  			ORDER BY P.ITEM_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY P.ITEM_NAME DESC  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	
+	
+</mapper>

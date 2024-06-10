@@ -1,0 +1,195 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="selector">
+	<select id="getCodebookByCodeType" resultType="selectorModelBean"> 
+       	SELECT
+       		CODE_ID, 
+       		CODE_TYPE,
+       		CODE_NAME,
+       		PARENT_TYPE,
+       		PARENT_ID,
+       		LANG,
+       		SEQ,
+       		ETC1,
+       		ETC2,
+       		ETC3,
+       		ETC4,
+       		ETC5 
+		FROM TB_CODEBOOK
+		WHERE
+			CODE_TYPE = #{codeType}
+			AND ACTIVE_FLAG = 'Y'
+		ORDER BY SEQ ASC, CODE_NAME ASC
+	</select>
+	<select id="getCodebookByCodeTypeAndParentId" resultType="selectorModelBean"> 
+       	SELECT
+       		CODE_ID, 
+       		CODE_TYPE,
+       		CODE_NAME,
+       		PARENT_TYPE,
+       		PARENT_ID,
+       		LANG,
+       		SEQ,
+       		ETC1,
+       		ETC2,
+       		ETC3,
+       		ETC4,
+       		ETC5 
+		FROM TB_CODEBOOK
+		WHERE
+			CODE_TYPE = #{codeType}
+			AND PARENT_ID = #{parentId}
+		ORDER BY SEQ ASC, CODE_NAME ASC		
+	</select>
+	<select id="getCodebookType" resultType="selectorModelBean"> 
+       	SELECT
+       		CODE_TYPE AS CODE_ID, 
+       		CODE_TYPE AS CODE_NAME
+		FROM TB_CODEBOOK
+		GROUP BY CODE_TYPE
+		ORDER BY CODE_TYPE ASC
+	</select>
+	<select id="getBusinessUnit" resultType="selectorModelBean"> 
+       	SELECT
+       		BU_ID AS CODE_ID, 
+       		BU_NAME AS CODE_NAME
+		FROM TB_BUSINESS_UNIT
+		WHERE ACTIVE_YN = 'Y'
+	</select>
+	<select id="getRole" resultType="selectorModelBean"> 
+       	SELECT
+       		ROLE_CODE AS CODE_ID, 
+       		ROLE_NAME AS CODE_NAME 
+		FROM TB_ROLE
+		WHERE USE_YN = 'Y'
+	</select>
+	<select id="getPosition" resultType="selectorModelBean">
+       	SELECT
+       		POS_ID AS CODE_ID,
+       		POS_NAME AS CODE_NAME,
+       		BU_ID
+		FROM TB_POSITION
+	</select>
+	<select id="getProgram" resultType="selectorModelBean"> 
+       	SELECT
+       		PROGRAM_ID AS CODE_ID, 
+       		PROGRAM_NAME AS CODE_NAME,
+			BU_ID
+		FROM LOY_PROGRAM  WHERE ACTIVE_FLAG = 'Y'
+		ORDER BY PROGRAM_NAME ASC
+	</select>
+	<select id="getShopType" resultType="selectorModelBean"> 
+       	SELECT ST.SHOP_TYPE_ID AS codeId
+				 ,ST.SHOP_TYPE_NAME AS codeName
+				 , ST.BU_ID
+		FROM LOY_SHOP_TYPE ST
+		WHERE ST.ACTIVE_FLAG = 'Y'
+		ORDER BY codeName ASC
+	</select>
+	<select id="getProductCategory" resultType="selectorModelBean"> 
+		SELECT CATEGORY_CODE AS codeId, CATEGORY_NAME  AS codeName, PARENT_CATEGORY_CODE AS PARENT_ID
+			, BU_ID
+	  	FROM LOY_SALE_PRODUCT_CATEGORY WHERE CATEGORY_STATUS = '01'
+	</select>
+	
+	<select id="getSaleProductCategory" resultType="selectorCustomModelBean"> 
+		SELECT CATEGORY_CODE AS codeId, CATEGORY_NAME  AS codeName, PARENT_CATEGORY_CODE AS parentId
+			, BU_ID
+	  	FROM LOY_SALE_PRODUCT_CATEGORY WHERE CATEGORY_STATUS = '01'
+	</select>
+	
+	<select id="getCampaign" resultType="selectorModelBean"> 
+		SELECT CAMPAIGN_ID AS CODE_ID
+			 	,CAMPAIGN_NAME AS CODE_NAME
+			 	, BU_ID
+			 	, ACTIVE_FLAG
+		FROM LOY_CAMPAIGN
+	</select>
+	
+	<select id="getAttrGroup" resultType="selectorModelBean">
+			SELECT ATTR_GROUP_ID AS CODE_ID
+					,ATTR_GROUP_NAME AS CODE_NAME
+			FROM LOY_ATTRIBUTE_GROUP 
+		  	ORDER BY ATTR_GROUP_NAME ASC  	
+	</select>	  	
+	
+	<select id="getAttr" resultType="selectorModelBean">
+		  	SELECT A.ATTR_ID AS CODE_ID
+					, A.ATTR_NAME AS CODE_NAME
+					, A.ATTR_GROUP_ID AS PARENT_ID
+					, A.ATTR_ACTIVE_YN AS ETC1
+					, A.DATA_TYPE AS ETC2
+					, CB1.CODE_NAME AS ETC3
+					, A.BU_ID
+			FROM LOY_ATTRIBUTE A
+			LEFT JOIN LOY_ATTRIBUTE_GROUP AG ON AG.ATTR_GROUP_ID = A.ATTR_GROUP_ID
+			LEFT JOIN TB_CODEBOOK CB1 ON CB1.CODE_ID = A.DATA_TYPE  AND CB1.CODE_TYPE = 'PROGRAM_DATA_TYPE_ATTRIBUTE'
+			LEFT JOIN TB_CODEBOOK CB2 ON CB2.CODE_ID = A.METHOD  AND CB2.CODE_TYPE = 'PROGRAM_ATTRIBUTE_METHOD'
+	</select>	
+	<select id="getPointType" resultType="selectorModelBean">
+		  	SELECT 
+		  		POINT_TYPE_ID AS CODE_ID, 
+		  		POINT_TYPE_NAME AS CODE_NAME,
+		  		PROGRAM_ID AS ETC1 
+		  	FROM LOY_PROGRAM_POINT_TYPE  
+			WHERE ACTIVE_FLAG = 'Y'
+	</select>
+	<select id="getPartnerType" resultType="selectorModelBean">
+		  	SELECT
+		  		ST.PARTNER_TYPE_ID AS CODE_ID,
+				ST.PARTNER_TYPE_NAME AS CODE_NAME,
+				ST.BU_ID
+		  	FROM LOY_PARTNER_TYPE ST
+		  	WHERE ST.ACTIVE_FLAG = 'Y'
+	</select>
+	<select id="getParentMenu" resultType="selectorModelBean">
+		  	SELECT 
+		  		ID AS CODE_ID, 
+				NAME AS CODE_NAME
+		  	FROM TB_MENU
+		  	WHERE TYPE = '01'
+	</select>
+	
+	<select id="getProvince" resultType="selectorModelBean">
+		  	SELECT SUBSTRING(a.`LOCATION_CODE`,1,2) as codeId, MAX(a.`PROVINCE`) as codeName
+			FROM tb_province a
+			WHERE a.`COUNTRY`= #{parent}
+			GROUP BY 1
+			ORDER BY 2 ASC
+	</select>
+	
+	<select id="getDistrict" resultType="selectorModelBean">
+		  	SELECT SUBSTRING(a.`LOCATION_CODE`,1,4) as codeId, MAX(a.`DISTRICT`) as codeName
+			FROM tb_province a
+			WHERE a.`LOCATION_CODE` like concat(#{parent},'____') AND a.`USE_YN`='Y'
+			GROUP BY 1
+	</select>
+	
+	<select id="getSubDistrict" resultType="selectorModelBean">
+		  	SELECT a.`LOCATION_CODE` as codeId, MAX(a.`SUB_DISTRICT`) as codeName
+			FROM tb_province a
+			WHERE a.`LOCATION_CODE` like concat(#{parent},'__') AND a.`USE_YN`='Y'
+			GROUP BY 1
+			ORDER BY 2 ASC
+	</select>
+	
+	<select id="getPostCode" resultType="selectorModelBean">
+		  	SELECT a.`POSTAL_CODE` as codeId,
+		  		concat(a.`SUB_DISTRICT`,', ',a.`DISTRICT`,', ',a.`PROVINCE`,' ',a.`POSTAL_CODE`) as codeName,
+				a.`LOCATION_CODE` as etc1
+			FROM tb_province a
+			WHERE a.`LOCATION_CODE` = #{parent} AND a.`USE_YN`='Y'
+			ORDER BY 1 ASC
+	</select>
+	
+	<select id="getPostCodeDetail" resultType="selectorModelBean">
+		  	SELECT a.`POSTAL_CODE` as codeId,
+		  		concat(a.`SUB_DISTRICT`,', ',a.`DISTRICT`,', ',a.`PROVINCE`,' ',a.`POSTAL_CODE`) as codeName,
+				a.`LOCATION_CODE` as etc1
+			FROM tb_province a
+			WHERE a.`POSTAL_CODE` = #{parent} AND a.`USE_YN`='Y'
+			ORDER BY 1 ASC
+	</select>
+</mapper>
