@@ -89,7 +89,7 @@ public class SwaggerConfig {
 	private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("JLOXG REST API")
                 .description("JLOXG BackEnd REST API")
-                .contact(new Contact("Jason Cho", "www.locus.co.th", "jason@locus.co.th"))
+                .contact(new Contact("Locus Telecommunication Inc., Ltd.", "www.locus.co.th", "locus.lti@nttdata.com"))
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .version("1.0-SNAPSHOT")
