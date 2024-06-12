@@ -1,0 +1,69 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="consulting">
+
+	<select id="generateConsultingNumber" resultType="String" statementType="CALLABLE">
+	  	call GEN_NEW_SEQUENCE(
+	  		'CONSULTING_SEQUENCE',
+	    	#{buId, jdbcType = INTEGER, mode = IN}
+	  	)
+	 </select>
+	
+	<insert id="createConsulting" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO  `tb_consulting`
+							( 
+							`CONSULTING_NUMBER`,
+							`CHANNEL_CD`,
+							`STATUS_CD`,
+							`START_DATE`,
+							`TITLE`,
+							`CALLING_NUMBER`,
+							`CALL_OBJECT_ID`,
+							`OWNER_ID`,
+							`NOTE`,
+							`CONSULTING_TYPE_CD`,
+							`CONTACT_ID`,
+							`CREATED_DATE`,
+							`CREATED_BY`
+							)
+							VALUES
+							(
+							#{consultingNumber},
+						    #{channelCd},
+						    #{statusCd},
+						    NOW(),
+						    #{title},
+						    #{callingNumber},
+						    #{callObjectId},
+						    #{ownerId},
+						    #{note},
+						    #{consultingTypeCd},
+						    #{contactId},
+							NOW() ,
+							#{createdBy}
+							);
+
+	</insert>
+	
+	 <update id="updateConsulting">
+		 	UPDATE `tb_consulting`
+			SET
+				`STATUS_CD` = #{statusCd},
+				`END_DATE` = NOW(),
+				`TITLE` = #{title},
+				`CALLING_NUMBER` = #{callingNumber},
+				`CALL_OBJECT_ID` = #{callObjectId},
+				`NOTE` = #{note},
+				`CONTACT_ID` = #{contactId},
+				`UPDATED_DATE` =NOW(),
+				`UPDATED_BY` = #{updatedBy}
+			WHERE (`id` = #{id})
+	</update>
+	
+	
+	<select id="findConsultingById" resultType="ConsultingModelBean">
+		select * from tb_consulting where id = #{id}
+	</select>
+	
+</mapper>
