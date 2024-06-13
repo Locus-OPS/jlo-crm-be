@@ -36,4 +36,18 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 		 
 	}
 
+	@Override
+	public ServiceResult<ConsultingModelBean> getConsultingData(ConsultingModelBean bean) {
+		return success(commonDao.selectOne("consulting.findConsultingData", bean));
+	}
+
+	@Override
+	public ServiceResult<ConsultingModelBean> updateConsulting(ConsultingModelBean bean) {
+		int result = commonDao.update("consulting.updateConsulting", bean);
+		if (result > 0) {
+			return success(commonDao.selectOne("consulting.findConsultingById", bean));
+		}
+		return fail();
+	}
+
 }

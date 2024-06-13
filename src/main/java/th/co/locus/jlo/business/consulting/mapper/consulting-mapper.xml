@@ -49,13 +49,19 @@
 	 <update id="updateConsulting">
 		 	UPDATE `tb_consulting`
 			SET
+				`CUST_ID` = #{customerId},
+				`OWNER_ID` = #{ownerId},
+				`CONTACT_ID` = #{contactId},
+				`CHANNEL_CD` = #{channelCd},
 				`STATUS_CD` = #{statusCd},
 				`END_DATE` = NOW(),
 				`TITLE` = #{title},
 				`CALLING_NUMBER` = #{callingNumber},
 				`CALL_OBJECT_ID` = #{callObjectId},
 				`NOTE` = #{note},
-				`CONTACT_ID` = #{contactId},
+								
+				
+				
 				`UPDATED_DATE` =NOW(),
 				`UPDATED_BY` = #{updatedBy}
 			WHERE (`id` = #{id})
@@ -64,6 +70,29 @@
 	
 	<select id="findConsultingById" resultType="ConsultingModelBean">
 		select * from tb_consulting where id = #{id}
+	</select>
+	
+	<select id="findConsultingData" resultType="ConsultingModelBean">
+		SELECT 
+			cons.id as id
+			,cons.CONSULTING_NUMBER  as consultingNumber
+			,CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) as customerName
+			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
+			,cons.CHANNEL_CD as channelCd
+			,cb1.CODE_NAME as channelName
+			,cons.STATUS_CD as statusCd
+			,cb2.CODE_NAME as statusName
+			,cons.START_DATE as startDate
+			,cons.END_DATE as endDate
+			,cons.TITLE	as title 
+			,cons.note	as note
+			
+		FROM jlo_crm.tb_consulting cons
+		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
+		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
+		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
+		LEFT OUTER JOIN tb_user U ON cons.OWNER_ID = U.ID
+		WHERE cons.id =  #{id}
 	</select>
 	
 </mapper>

@@ -7,7 +7,8 @@ public interface ConsultingService {
 	
 	public ServiceResult<ConsultingModelBean> insertConsultingInital(ConsultingModelBean inital);
 	public ServiceResult<ConsultingModelBean> stopConsulting(ConsultingModelBean consultBean) throws Exception;
-
+	public ServiceResult<ConsultingModelBean> getConsultingData(ConsultingModelBean bean);
+	public ServiceResult<ConsultingModelBean> updateConsulting(ConsultingModelBean bean);
 	
 
 }

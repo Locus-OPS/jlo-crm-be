@@ -13,6 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
+import th.co.locus.jlo.common.ApiPageRequest;
+import th.co.locus.jlo.common.ApiPageResponse;
 import th.co.locus.jlo.common.ApiRequest;
 import th.co.locus.jlo.common.ApiResponse;
 import th.co.locus.jlo.common.BaseController;
@@ -84,4 +86,39 @@ public class ConsultingController extends BaseController {
 		return ApiResponse.fail(serviceResult.getResponseDescription());
 		
 	}
+	
+	
+	@ApiOperation(value = "Get Consulting Data")
+	@PostMapping(value = "/getConsultingData", produces = "application/json")
+	public ApiResponse<ConsultingModelBean> getConsultingData(@RequestBody ApiRequest<ConsultingModelBean> request) {
+		log.info("masterdata listMatGroup");
+		ConsultingModelBean bean = request.getData();
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.getConsultingData(bean);
+		ConsultingModelBean finalResult = serviceResult.getResult();
+		if(serviceResult.isSuccess()) {
+			return ApiResponse.success(finalResult);
+		}else {
+			return ApiPageResponse.fail();			
+		}
+	}
+	
+	@WritePermission
+	@ApiOperation(value = "Update Consulting Infor")
+    @PostMapping(value = "/updateConsulting", produces = "application/json")
+    public ApiResponse<ConsultingModelBean> updateConsulting(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+		StringUtil.nullifyObject(request.getData());
+		ConsultingModelBean bean = request.getData();
+		bean.setContactId(bean.getCustomerId());
+		bean.setBuId(getBuId());
+		bean.setCreatedBy(getUserId());
+		bean.setUpdatedBy(getUserId());
+		
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateConsulting(bean);
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		}
+		return ApiResponse.fail();
+    }
+	
+	
 }
