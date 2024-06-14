@@ -11,6 +11,7 @@ import org.springframework.util.Base64Utils;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.customer.bean.AddressData;
+import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
@@ -173,6 +174,15 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 	@Override
 	public ServiceResult<List<CustomerData>> findCustomerByCitizenIdOrPassportNo(CustomerListCriteria criteria) {
 		return success(commonDao.selectList("customer.findCustomerByCitizenIdOrPassportNo", criteria));
+	}
+
+	@Override
+	public ServiceResult<Integer> createContact(ContactData customer) {
+		int result = commonDao.update("customer.createContact", customer);
+		if (result > 0) {
+			return success(result);
+		}
+		return fail();
 	}
 
 }

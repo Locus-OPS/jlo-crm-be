@@ -266,4 +266,41 @@
 	<delete id="deleteCustomerAddress">
 			DELETE FROM tb_customer_address WHERE `ADDRESS_ID` = #{addressId}
 	</delete>
+	
+	<insert id="createContact" keyColumn="CONT_ID" keyProperty="contId" useGeneratedKeys="true">
+		
+			INSERT INTO `tb_contact`
+				(`CUST_ID`,
+				`CREATED_DATE`,
+				`CREATED_BY`,
+				`UPDATED_DATE`,
+				`UPDATED_BY`)
+			VALUES( 
+				#{customerId},
+				NOW(), 
+				#{createdBy}, 
+				NOW(), 
+				#{updatedBy} 
+			);
+				
+			<!-- INSERT INTO `tb_customer_contact`
+				(
+				`CUST_ID`,
+				`CONT_ID`,
+				`RELATION_CD`,
+				`CREATED_DATE`,
+				`CREATED_BY`,
+				`UPDATED_DATE`,
+				`UPDATED_BY`)
+				VALUES
+				#{customerId},
+				#{contId},
+				#{RELATION_CD},
+				#{createdBy}, 
+				NOW(), 
+				#{updatedBy}, 
+				NOW()
+				);
+		  -->
+	</insert>
 </mapper>

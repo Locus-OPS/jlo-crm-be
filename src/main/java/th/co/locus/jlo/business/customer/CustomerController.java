@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.customer.bean.AddressData;
+import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
@@ -93,6 +94,13 @@ public class CustomerController extends BaseController {
 			serviceResult = customerService.createCustomer(cusData);
 		}
 		if (serviceResult.isSuccess()) {
+			// Create Contact
+			ContactData contact = new ContactData();
+			contact.setCreatedBy(getUserId());
+			contact.setUpdatedBy(getUserId());
+			contact.setCustomerId(serviceResult.getResult().getCustomerId());
+			customerService.createContact(contact);
+			
 			return ApiResponse.success(serviceResult.getResult());
 		}
 		return ApiResponse.fail();

@@ -38,6 +38,8 @@ public class ConsultingModelBean extends BaseModelBean implements Serializable {
 	
 	private String customerId;
 	private String customerName;
+	private String customerType;
+	private String businessName;
 	private String ownerName;
 	private String channelName;
 	private String statusName;

@@ -102,7 +102,9 @@
 			,cons.CHANNEL_CD as channelCd
 			,cb1.CODE_NAME as channelName
 			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
-			,CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) as customerName
+				, cust.business_Name as businessName
+			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
+            ,cust.`CUSTOMER_TYPE` as customerType
 			,cons.START_DATE as startDate
 			,cons.END_DATE as endDate
 	
