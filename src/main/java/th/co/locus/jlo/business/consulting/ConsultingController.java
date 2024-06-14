@@ -3,6 +3,8 @@
  */
 package th.co.locus.jlo.business.consulting;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,8 @@ import th.co.locus.jlo.common.ApiPageResponse;
 import th.co.locus.jlo.common.ApiRequest;
 import th.co.locus.jlo.common.ApiResponse;
 import th.co.locus.jlo.common.BaseController;
+import th.co.locus.jlo.common.Page;
+import th.co.locus.jlo.common.PageRequest;
 import th.co.locus.jlo.common.ServiceResult;
 import th.co.locus.jlo.common.util.StringUtil;
 import th.co.locus.jlo.config.security.annotation.WritePermission;
@@ -120,5 +124,22 @@ public class ConsultingController extends BaseController {
 		return ApiResponse.fail();
     }
 	
+	
+	@ApiOperation(value = "Get Consulting List")
+    @PostMapping(value = "/getConsultingDataList", produces = "application/json")
+    public ApiPageResponse<List<ConsultingModelBean>> getConsultingDataList(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+
+        StringUtil.nullifyObject(request.getData());
+
+        PageRequest pageRequest = getPageRequest(request);
+        ServiceResult<Page<ConsultingModelBean>> serviceResult = consultingService.getConsultingDataList(request.getData(), pageRequest);
+        
+        if (serviceResult.isSuccess()) {
+            return ApiPageResponse.success(serviceResult.getResult().getContent(),
+                    serviceResult.getResult().getTotalElements());
+        } else {
+            return ApiPageResponse.fail();
+        }
+    }
 	
 }

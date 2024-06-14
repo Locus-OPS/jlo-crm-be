@@ -95,4 +95,56 @@
 		WHERE cons.id =  #{id}
 	</select>
 	
+	<select id="findConsultingDataList" resultType="ConsultingModelBean">
+		SELECT 
+			cons.id as id
+			,cons.CONSULTING_NUMBER  as consultingNumber
+			,cons.CHANNEL_CD as channelCd
+			,cb1.CODE_NAME as channelName
+			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
+			,CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) as customerName
+			,cons.START_DATE as startDate
+			,cons.END_DATE as endDate
+	
+			,cons.STATUS_CD as statusCd
+			,cb2.CODE_NAME as statusName
+			
+			
+			
+			,cons.TITLE	as title 
+			,cons.note	as note
+			
+		FROM jlo_crm.tb_consulting cons
+		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
+		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
+		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
+		LEFT OUTER JOIN tb_user U ON cons.OWNER_ID = U.ID
+		<where>
+			<if test="consultingNumber != null and consultingNumber != ''">
+				AND cons.CONSULTING_NUMBER = #{consultingNumber}
+			</if>
+			<if test="channelCd != null and channelCd != ''">
+				AND cons.CHANNEL_CD = #{channelCd}
+			</if>
+			<if test="ownerId != null and ownerId != ''">
+				AND cons.OWNER_ID = #{ownerId}
+			</if>
+			<if test="customerId != null and customerId != ''">
+				AND cons.CUST_ID = #{customerId}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				AND cons.STATUS_CD = #{statusCd}
+			</if>
+			
+			<if test="startDate != null"> 
+				<![CDATA[ AND DATE(cons.START_DATE) >= #{startDate, jdbcType=DATE}]]>
+			</if>
+			<if test="endDate != null">			 
+				<![CDATA[ AND DATE(cons.START_DATE) <= #{endDate, jdbcType=DATE} ]]>
+			</if>
+			 
+			 
+		</where>
+		ORDER BY cons.CONSULTING_NUMBER DESC 
+	</select>
 </mapper>
