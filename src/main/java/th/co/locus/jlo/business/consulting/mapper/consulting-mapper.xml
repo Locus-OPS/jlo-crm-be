@@ -69,6 +69,15 @@
 	</update>
 	
 	
+	 <update id="updateConsultingBindingCustomer">
+		 	UPDATE `tb_consulting`
+			SET
+				`CUST_ID` = #{customerId},				 
+				`UPDATED_DATE` =NOW(),
+				`UPDATED_BY` = #{updatedBy}
+			WHERE (`CONSULTING_NUMBER` = #{consultingNumber})
+	</update>
+	
 	<select id="findConsultingById" resultType="ConsultingModelBean">
 		select * from tb_consulting where id = #{id}
 	</select>
@@ -77,22 +86,29 @@
 		SELECT 
 			cons.id as id
 			,cons.CONSULTING_NUMBER  as consultingNumber
-			,CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) as customerName
-			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
 			,cons.CHANNEL_CD as channelCd
 			,cb1.CODE_NAME as channelName
-			,cons.STATUS_CD as statusCd
-			,cb2.CODE_NAME as statusName
+			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
+			, cust.business_Name as businessName
+			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
+            ,cust.`CUSTOMER_TYPE` as customerType
 			,cons.START_DATE as startDate
 			,cons.END_DATE as endDate
+	
+			,cons.STATUS_CD as statusCd
+			,cb2.CODE_NAME as statusName
+			
 			,cons.TITLE	as title 
 			,cons.note	as note
+			
 			,cons.OWNER_ID as ownerId
 			,cons.CUST_ID as customerId
+			
 			,cons.CREATED_BY
 		    ,cons.CREATED_DATE
 		    ,cons.UPDATED_BY
 		    ,cons.UPDATED_DATE
+			
 		FROM jlo_crm.tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'

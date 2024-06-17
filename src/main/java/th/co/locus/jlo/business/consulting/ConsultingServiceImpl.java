@@ -28,15 +28,7 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 
 	}
 
-	@Override
-	public ServiceResult<ConsultingModelBean> stopConsulting(ConsultingModelBean consultBean) throws Exception {
-		int result = commonDao.update("consulting.updateConsulting", consultBean);
-		if (result > 0) {
-			return success(commonDao.selectOne("consulting.findConsultingById", consultBean));
-		}
-		return fail();
-		 
-	}
+	
 
 	@Override
 	public ServiceResult<ConsultingModelBean> getConsultingData(ConsultingModelBean bean) {
@@ -56,6 +48,17 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 	public ServiceResult<Page<ConsultingModelBean>> getConsultingDataList(ConsultingModelBean req,
 			PageRequest pageRequest) {
 		return success(commonDao.selectPage("consulting.findConsultingDataList", req, pageRequest));
+	}
+
+
+
+	@Override
+	public ServiceResult<ConsultingModelBean> updateConsultingBindingCustomer(ConsultingModelBean bean) {
+		int result = commonDao.update("consulting.updateConsultingBindingCustomer", bean);
+		if (result > 0) {
+			return success(commonDao.selectOne("consulting.findConsultingById", bean));
+		}
+		return fail();
 	}
 
 }

@@ -77,95 +77,6 @@ public class ConsultingController extends BaseController {
 
 	}
 	
-	
-	
-	@WritePermission
-	@ApiOperation(value = "Create or Update Consulting")
-	@PostMapping(value = "/processWalkinConsulting", produces = "application/json")
-	public ApiResponse<ConsultingModelBean> processWalkinConsulting(
-			@RequestBody ApiRequest<ConsultingModelBean> request) {
-		StringUtil.nullifyObject(request.getData());
-		ServiceResult<ConsultingModelBean> serviceResult = new ServiceResult<ConsultingModelBean>();
-		try {
-			Boolean isExistConsulting = true;
-
-			if (!isExistConsulting) {
-
-			}
-			log.info(request.getData().toString());
-			log.info("request.getData().getConsultingAction() " + request.getData().getId());
-
-			if (request.getData().getId() != null) {
-				ConsultingModelBean consultingData = request.getData();
-				consultingData.setUpdatedBy(getUserId());
-				consultingData.setStatusCd("02");// Finish
-				serviceResult = consultingService.stopConsulting(consultingData);
-
-			} else {
-				ConsultingModelBean consultingData = request.getData();
-
-				consultingData.setConsultingTypeCd("01");
-				consultingData.setAgentState("Walk-In");
-				consultingData.setReasonCode("Walk-In");
-				consultingData.setChannelCd("01");
-				consultingData.setOwnerId(getRoleCode());
-				consultingData.setStatusCd("01"); // In Progress
-
-				consultingData.setBuId(getBuId());
-				consultingData.setCreatedBy(getUserId());
-				consultingData.setUpdatedBy(getUserId());
-				serviceResult = consultingService.insertConsultingInital(consultingData);
-			}
-
-			if (serviceResult.isSuccess()) {
-				return ApiResponse.success(serviceResult.getResult());
-			}
-
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-			return ApiResponse.fail(e.getMessage());
-		}
-
-		return ApiResponse.fail(serviceResult.getResponseDescription());
-
-	}
-
-	 
-
-	@WritePermission
-	@ApiOperation(value = "Stop WalkinConsulting or Update Consulting")
-	@PostMapping(value = "/stopWalkinConsulting", produces = "application/json")
-	public ApiResponse<ConsultingModelBean> stopWalkinConsulting(@RequestBody ApiRequest<ConsultingModelBean> request) {
-		StringUtil.nullifyObject(request.getData());
-		ServiceResult<ConsultingModelBean> serviceResult = new ServiceResult<ConsultingModelBean>();
-		try {
-			Boolean isExistConsulting = true;
-
-			if (!isExistConsulting) {
-
-			}
-			log.info(request.getData().toString());
-			log.info("request.getData().getConsultingAction() " + request.getData().getId());
-
-			ConsultingModelBean consultingData = request.getData();
-			consultingData.setUpdatedBy(getUserId());
-			consultingData.setStatusCd("02");// Finish
-			serviceResult = consultingService.stopConsulting(consultingData);
-
-			if (serviceResult.isSuccess()) {
-				return ApiResponse.success(serviceResult.getResult());
-			}
-
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-			return ApiResponse.fail(e.getMessage());
-		}
-
-		return ApiResponse.fail(serviceResult.getResponseDescription());
-
-	}
 
 	@ApiOperation(value = "Get Consulting Data")
 	@PostMapping(value = "/getConsultingData", produces = "application/json")
@@ -194,6 +105,25 @@ public class ConsultingController extends BaseController {
 		bean.setUpdatedBy(getUserId());
 
 		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateConsulting(bean);
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		}
+		return ApiResponse.fail();
+	}
+	
+	@WritePermission
+	@ApiOperation(value = "Update Consulting Infor")
+	@PostMapping(value = "/updateConsultingBindingCustomer", produces = "application/json")
+	public ApiResponse<ConsultingModelBean> updateConsultingBindingCustomer(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+		StringUtil.nullifyObject(request.getData());
+		
+		ConsultingModelBean bean = request.getData();
+		bean.setContactId(bean.getCustomerId());
+		bean.setBuId(getBuId());
+		bean.setCreatedBy(getUserId());
+		bean.setUpdatedBy(getUserId());
+
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateConsultingBindingCustomer(bean);
 		if (serviceResult.isSuccess()) {
 			return ApiResponse.success(serviceResult.getResult());
 		}
