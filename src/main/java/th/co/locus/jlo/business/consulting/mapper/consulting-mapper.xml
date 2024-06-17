@@ -17,11 +17,9 @@
 							`CHANNEL_CD`,
 							`STATUS_CD`,
 							`START_DATE`,
-							`TITLE`,
 							`CALLING_NUMBER`,
 							`CALL_OBJECT_ID`,
 							`OWNER_ID`,
-							`NOTE`,
 							`CONSULTING_TYPE_CD`,
 							`CONTACT_ID`,
 							`CREATED_DATE`,
@@ -33,11 +31,9 @@
 						    #{channelCd},
 						    #{statusCd},
 						    NOW(),
-						    #{title},
 						    #{callingNumber},
 						    #{callObjectId},
 						    #{ownerId},
-						    #{note},
 						    #{consultingTypeCd},
 						    #{contactId},
 							NOW() ,
@@ -49,22 +45,27 @@
 	 <update id="updateConsulting">
 		 	UPDATE `tb_consulting`
 			SET
+
+				`CHANNEL_CD` = #{channelCd},
+				`STATUS_CD` = #{statusCd},
+				
+				<if test="statusCd != null and statusCd != '' and statusCd != '01'">
+				`END_DATE` = NOW(),
+				</if>
+				
+				
+				`TITLE` = #{title},
+				`NOTE` = #{note},
+				`CONSULTING_TYPE_CD`= #{consultingTypeCd},
 				`CUST_ID` = #{customerId},
 				`OWNER_ID` = #{ownerId},
 				`CONTACT_ID` = #{contactId},
-				`CHANNEL_CD` = #{channelCd},
-				`STATUS_CD` = #{statusCd},
-				`END_DATE` = NOW(),
-				`TITLE` = #{title},
+				
 				`CALLING_NUMBER` = #{callingNumber},
 				`CALL_OBJECT_ID` = #{callObjectId},
-				`NOTE` = #{note},
-								
-				
-				
 				`UPDATED_DATE` =NOW(),
 				`UPDATED_BY` = #{updatedBy}
-			WHERE (`id` = #{id})
+			WHERE (`CONSULTING_NUMBER` = #{consultingNumber})
 	</update>
 	
 	
@@ -86,7 +87,12 @@
 			,cons.END_DATE as endDate
 			,cons.TITLE	as title 
 			,cons.note	as note
-			
+			,cons.OWNER_ID as ownerId
+			,cons.CUST_ID as customerId
+			,cons.CREATED_BY
+		    ,cons.CREATED_DATE
+		    ,cons.UPDATED_BY
+		    ,cons.UPDATED_DATE
 		FROM jlo_crm.tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
@@ -102,7 +108,7 @@
 			,cons.CHANNEL_CD as channelCd
 			,cb1.CODE_NAME as channelName
 			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
-				, cust.business_Name as businessName
+			, cust.business_Name as businessName
 			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
             ,cust.`CUSTOMER_TYPE` as customerType
 			,cons.START_DATE as startDate
@@ -111,10 +117,16 @@
 			,cons.STATUS_CD as statusCd
 			,cb2.CODE_NAME as statusName
 			
-			
-			
 			,cons.TITLE	as title 
 			,cons.note	as note
+			
+			,cons.OWNER_ID as ownerId
+			,cons.CUST_ID as customerId
+			
+			,cons.CREATED_BY
+		    ,cons.CREATED_DATE
+		    ,cons.UPDATED_BY
+		    ,cons.UPDATED_DATE
 			
 		FROM jlo_crm.tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID

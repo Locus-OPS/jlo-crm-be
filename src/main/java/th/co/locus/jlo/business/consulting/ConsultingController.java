@@ -39,6 +39,47 @@ public class ConsultingController extends BaseController {
 	private ConsultingService consultingService;
 
 	@WritePermission
+	@ApiOperation(value = "Create Consulting")
+	@PostMapping(value = "/startWalkinConsulting", produces = "application/json")
+	public ApiResponse<ConsultingModelBean> startWalkinConsulting(
+			@RequestBody ApiRequest<ConsultingModelBean> request) {
+		StringUtil.nullifyObject(request.getData());
+		ServiceResult<ConsultingModelBean> serviceResult = new ServiceResult<ConsultingModelBean>();
+		try {
+		 
+			log.info(request.getData().toString());
+			log.info("request.getData().getConsultingAction() " + request.getData().getId());
+
+		 
+				ConsultingModelBean consultingData = request.getData();
+				
+				consultingData.setStatusCd("01"); // In Progress
+				consultingData.setConsultingTypeCd("01"); //Inbound				
+				consultingData.setChannelCd("01");		 // WalkIn
+				consultingData.setOwnerId(getUserId());
+		
+				consultingData.setBuId(getBuId());
+				consultingData.setCreatedBy(getUserId());
+				consultingData.setUpdatedBy(getUserId());
+				serviceResult = consultingService.insertConsultingInital(consultingData);
+			 
+			if (serviceResult.isSuccess()) {
+				return ApiResponse.success(serviceResult.getResult());
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			e.printStackTrace();
+			return ApiResponse.fail(e.getMessage());
+		}
+
+		return ApiResponse.fail(serviceResult.getResponseDescription());
+
+	}
+	
+	
+	
+	@WritePermission
 	@ApiOperation(value = "Create or Update Consulting")
 	@PostMapping(value = "/processWalkinConsulting", produces = "application/json")
 	public ApiResponse<ConsultingModelBean> processWalkinConsulting(
@@ -90,50 +131,7 @@ public class ConsultingController extends BaseController {
 
 	}
 
-	@WritePermission
-	@ApiOperation(value = "Start or Update Consulting")
-	@PostMapping(value = "/startWalkinConsulting", produces = "application/json")
-	public ApiResponse<ConsultingModelBean> startWalkinConsulting(
-			@RequestBody ApiRequest<ConsultingModelBean> request) {
-		StringUtil.nullifyObject(request.getData());
-		ServiceResult<ConsultingModelBean> serviceResult = new ServiceResult<ConsultingModelBean>();
-		try {
-			Boolean isExistConsulting = true;
-
-			if (!isExistConsulting) {
-
-			}
-			log.info(request.getData().toString());
-			log.info("request.getData().getConsultingAction() " + request.getData().getId());
-
-			ConsultingModelBean consultingData = request.getData();
-
-			consultingData.setConsultingTypeCd("01");
-			consultingData.setAgentState("Walk-In");
-			consultingData.setReasonCode("Walk-In");
-			consultingData.setChannelCd("01");
-			consultingData.setOwnerId(getRoleCode());
-			consultingData.setStatusCd("01"); // In Progress
-
-			consultingData.setBuId(getBuId());
-			consultingData.setCreatedBy(getUserId());
-			consultingData.setUpdatedBy(getUserId());
-
-			serviceResult = consultingService.insertConsultingInital(consultingData);
-
-			if (serviceResult.isSuccess()) {
-				return ApiResponse.success(serviceResult.getResult());
-			}
-
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
-			return ApiResponse.fail(e.getMessage());
-		}
-
-		return ApiResponse.fail(serviceResult.getResponseDescription());
-
-	}
+	 
 
 	@WritePermission
 	@ApiOperation(value = "Stop WalkinConsulting or Update Consulting")
@@ -188,6 +186,7 @@ public class ConsultingController extends BaseController {
 	@PostMapping(value = "/updateConsulting", produces = "application/json")
 	public ApiResponse<ConsultingModelBean> updateConsulting(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
 		StringUtil.nullifyObject(request.getData());
+		
 		ConsultingModelBean bean = request.getData();
 		bean.setContactId(bean.getCustomerId());
 		bean.setBuId(getBuId());

@@ -20,7 +20,7 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 			inital.setConsultingNumber(consultingNumber);
 			int resultInsert = commonDao.insert("consulting.createConsulting", inital);
 			if (resultInsert > 0) {
-				return success(commonDao.selectOne("consulting.findConsultingById", inital));
+				return success(commonDao.selectOne("consulting.findConsultingData", inital));
 			}
 		}
 
