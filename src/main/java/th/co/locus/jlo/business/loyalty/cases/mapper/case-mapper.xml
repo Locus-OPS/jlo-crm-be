@@ -74,7 +74,7 @@
 				<![CDATA[ AND DATE(LC.CLOSED_DATE) <= #{closedDateEnd, jdbcType=DATE} ]]>
 			</if>
 		</where>
-		ORDER BY LC.CASE_NUMBER DESC 
+		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC 
 	</select>
 	
     <select id="getCaseByCaseNumber" resultType="caseModelBean">
@@ -117,11 +117,13 @@
             LEFT JOIN LOY_MEMBER LMB ON LC.CUSTOMER_ID = LMB.CUSTOMER_ID
 		WHERE
 		  (CASE_NUMBER = #{caseNumber})
+		   limit 1
 	</select>
 	
     <insert id="createCase">
 		INSERT INTO LOY_CASE (
 			CASE_NUMBER,
+			CONSULTING_NUMBER,
 			TYPE,
 			SUBTYPE,
 			PRIORITY,
@@ -143,6 +145,7 @@
 	  	 VALUES
 		 (
 		 	#{caseNumber},
+		 	#{consultingNumber},
 			#{type},
 			#{subType},
 			#{priority},

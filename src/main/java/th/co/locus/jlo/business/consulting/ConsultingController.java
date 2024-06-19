@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
+import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.ApiPageRequest;
 import th.co.locus.jlo.common.ApiPageResponse;
 import th.co.locus.jlo.common.ApiRequest;
@@ -56,7 +57,7 @@ public class ConsultingController extends BaseController {
 				consultingData.setStatusCd("01"); // In Progress
 				consultingData.setConsultingTypeCd("01"); //Inbound				
 				consultingData.setChannelCd("01");		 // WalkIn
-				consultingData.setOwnerId(getUserId());
+				consultingData.setConsOwnerId(getUserId());
 		
 				consultingData.setBuId(getBuId());
 				consultingData.setCreatedBy(getUserId());
@@ -148,5 +149,25 @@ public class ConsultingController extends BaseController {
 			return ApiPageResponse.fail();
 		}
 	}
+	
+	@ApiOperation(value = "Get Case Consulting List")
+	@PostMapping(value = "/getCaseUnderConsultingList", produces = "application/json")
+	public ApiPageResponse<List<CaseModelBean>> getCaseUnderConsultingList(
+			@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+
+		StringUtil.nullifyObject(request.getData());
+
+		PageRequest pageRequest = getPageRequest(request);
+		ServiceResult<Page<CaseModelBean>> serviceResult = consultingService
+				.getCaseUnderConsultingList(request.getData(), pageRequest);
+
+		if (serviceResult.isSuccess()) {
+			return ApiPageResponse.success(serviceResult.getResult().getContent(),
+					serviceResult.getResult().getTotalElements());
+		} else {
+			return ApiPageResponse.fail();
+		}
+	}
+	
 
 }

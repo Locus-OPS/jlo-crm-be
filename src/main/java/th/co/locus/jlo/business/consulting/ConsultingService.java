@@ -1,6 +1,7 @@
 package th.co.locus.jlo.business.consulting;
 
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
+import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.Page;
 import th.co.locus.jlo.common.PageRequest;
 import th.co.locus.jlo.common.ServiceResult;
@@ -19,5 +20,9 @@ public interface ConsultingService {
 
 	public ServiceResult<Page<ConsultingModelBean>> getConsultingDataList(ConsultingModelBean req,
 			PageRequest pageRequest);
-
+	
+	public ServiceResult<Page<CaseModelBean>> getCaseUnderConsultingList(ConsultingModelBean req,
+			PageRequest pageRequest);
+	
+	
 }

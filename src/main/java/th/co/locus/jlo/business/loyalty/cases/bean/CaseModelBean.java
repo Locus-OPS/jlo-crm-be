@@ -18,6 +18,7 @@ import th.co.locus.jlo.common.BaseModelBean;
 public class CaseModelBean extends BaseModelBean {
 	
 	private String caseNumber;
+	private String consultingNumber;
 	private String type;
 	private String subType;
 	private String priority;

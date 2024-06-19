@@ -29,7 +29,7 @@ public class ConsultingModelBean extends BaseModelBean implements Serializable {
 	private String title;
 	private String callingNumber;
 	private String callObjectId;
-	private String ownerId;
+	private String consOwnerId;
 	private String note;
 	private String consultingTypeCd;
 	private String contactId; 
@@ -40,7 +40,7 @@ public class ConsultingModelBean extends BaseModelBean implements Serializable {
 	private String customerName;
 	private String customerType;
 	private String businessName;
-	private String ownerName;
+	private String consOwnerName;
 	private String channelName;
 	private String statusName;
 

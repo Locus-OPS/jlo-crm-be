@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
+import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.BaseService;
 import th.co.locus.jlo.common.Page;
 import th.co.locus.jlo.common.PageRequest;
@@ -59,6 +60,14 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 			return success(commonDao.selectOne("consulting.findConsultingById", bean));
 		}
 		return fail();
+	}
+
+
+
+	@Override
+	public ServiceResult<Page<CaseModelBean>> getCaseUnderConsultingList(ConsultingModelBean req,
+			PageRequest pageRequest) {
+		return success(commonDao.selectPage("consulting.getCaseUnderConsultingList", req, pageRequest));
 	}
 
 }
