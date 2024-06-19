@@ -104,16 +104,20 @@
 			,cons.OWNER_ID as consOwnerId
 			,cons.CUST_ID as customerId
 			
-			,cons.CREATED_BY
-		    ,cons.CREATED_DATE
-		    ,cons.UPDATED_BY
-		    ,cons.UPDATED_DATE
+			
+		    
+			,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdBy
+			,cons.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy
+			,cons.UPDATED_DATE AS updatedDate
 			
 		FROM jlo_crm.tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
 		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
 		LEFT OUTER JOIN tb_user U ON cons.OWNER_ID = U.ID
+		LEFT JOIN TB_USER u1 ON cons.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON cons.UPDATED_BY = u2.ID
 		WHERE cons.id =  #{id}
 	</select>
 	
@@ -139,16 +143,18 @@
 			,cons.OWNER_ID as consOwnerId
 			,cons.CUST_ID as customerId
 			
-			,cons.CREATED_BY
-		    ,cons.CREATED_DATE
-		    ,cons.UPDATED_BY
-		    ,cons.UPDATED_DATE
+			,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdBy
+			,cons.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy
+			,cons.UPDATED_DATE AS updatedDate
 			
 		FROM jlo_crm.tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
 		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
 		LEFT OUTER JOIN tb_user U ON cons.OWNER_ID = U.ID
+		LEFT JOIN TB_USER u1 ON cons.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON cons.UPDATED_BY = u2.ID
 		<where>
 			<if test="consultingNumber != null and consultingNumber != ''">
 				AND cons.CONSULTING_NUMBER = #{consultingNumber}
@@ -200,10 +206,12 @@
 		    LC.CLOSED_DATE,
 		    LC.BU_ID,
 		    LC.CUSTOMER_ID,
-			LC.CREATED_DATE,
-			LC.CREATED_BY,
-			LC.UPDATED_DATE,
-			LC.UPDATED_BY,
+		    
+			CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdBy,
+			LC.CREATED_DATE AS createdDate ,
+            CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy,
+			LC.UPDATED_DATE AS updatedDate,
+            
             CONCAT(USR.FIRST_NAME,' ',USR.LAST_NAME) AS displayName,
             CB1.CODE_NAME AS typeName,
             CB2.CODE_NAME AS subTypeName,
@@ -216,6 +224,8 @@
 	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
             INNER JOIN TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
             LEFT JOIN LOY_MEMBER LMB ON LC.CUSTOMER_ID = LMB.CUSTOMER_ID
+			LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
+			LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
 		<where>
 		<if test="consultingNumber != null and consultingNumber != ''">
 			AND LC.CONSULTING_NUMBER = #{consultingNumber}

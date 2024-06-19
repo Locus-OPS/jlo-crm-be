@@ -57,7 +57,10 @@ public class SecurityUserDetailsService extends AbstractUserDetailsAuthenticatio
 		ServiceResult<UserLoginDTO> result = userService.getUserLoginByLoginId(userId);
 		SecurityUserDTO secUser;
 		if (result.isSuccess()) {			
-			secUser = new SecurityUserDTO(userId, result.getResult().getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_TEST")));
+			//secUser = new SecurityUserDTO(userId, result.getResult().getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_TEST")));
+			secUser = new SecurityUserDTO(result.getResult().getId().toString(), result.getResult().getPassword(), Arrays.asList(new SimpleGrantedAuthority("ROLE_TEST")));
+			
+			secUser.setId(result.getResult().getId());
 			secUser.setFirstName(result.getResult().getFirstName());
 			secUser.setLastName(result.getResult().getLastName());
 			secUser.setPictureUrl(result.getResult().getPictureUrl());

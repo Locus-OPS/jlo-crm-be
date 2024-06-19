@@ -21,7 +21,8 @@ import th.co.locus.jlo.system.menu.bean.TokenMenuRespModelBean;
 public class SecurityUserDTO extends User {
 
 	private static final long serialVersionUID = -7155518853403064085L;
-
+	
+	private Long id;
 	private String userId;
 	
 	@JsonIgnore
@@ -32,6 +33,9 @@ public class SecurityUserDTO extends User {
 	private String lastName;
 	private String pictureUrl;
 	private String buId;
+	private String email;
+	
+	private String loginType;
 
 	private List<GrantedAuthority> authorityInfo;
 	
