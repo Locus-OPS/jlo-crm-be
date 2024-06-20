@@ -3,13 +3,50 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="member">
 	<select id="findMemberById" resultType="memberData">
-		select * from loy_member
+		 SELECT 
+	m.`MEMBER_ID`,
+    m.`CUSTOMER_ID`,
+    m.`MEMBER_TYPE`,
+    m.`MEMBER_STATUS`,
+    m.`CITIZEN_ID`,
+    m.`PASSPORT_NO`,
+    m.`TITLE`,
+    m.`FIRST_NAME`,
+    m.`LAST_NAME`,
+    m.`BUSINESS_NAME`,
+    m.`BUSINESS_TYPE`,
+    m.`GENDER`,
+    m.`NATIONALITY`,
+    m.`BIRTHDATE`,
+    m.`OCCUPATION`,
+    m.`MARITAL_STATUS`,
+    m.`IMAGE_URL`,
+    m.`APPROVED_DATE`,
+     CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY,
+    m.`REGISTRATION_STORE`,
+    m.`REGISTRATION_CHANNEL`,
+    m.`REMARK`,
+    m.`BU_ID`,
+    m.`CREATED_DATE`,
+    CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdBy,		           
+    m.`UPDATED_DATE`,
+	CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy,
+    m.`PHONE_AREA`,
+    m.`PHONE_NO`,
+    m.`EMAIL`,
+    m.`PROGRAM_ID`,
+    m.`MEMBER_TIER_ID`,
+    m.`TAX_ID`
+FROM loy_member m 
+LEFT JOIN TB_USER u1 ON m.CREATED_BY = u1.ID
+LEFT JOIN TB_USER u2 ON m.UPDATED_BY = u2.ID
+LEFT OUTER JOIN TB_USER a1 ON m.APPROVED_BY = a1.ID
 		<where>
 			<if test="memberId != null and memberId != ''">
-				AND `MEMBER_ID` = #{memberId}
+				AND m.`MEMBER_ID` = #{memberId}
 			</if>
 			<if test="customerId != null and customerId != ''">
-				AND `CUSTOMER_ID` = #{customerId}
+				AND m.`CUSTOMER_ID` = #{customerId}
 			</if>
 		</where>
 	</select>

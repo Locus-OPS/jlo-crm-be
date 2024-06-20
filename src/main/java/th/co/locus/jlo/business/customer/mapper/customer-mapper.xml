@@ -9,8 +9,11 @@
 		 t.`TITLE`, t.`FIRST_NAME`, t.`LAST_NAME`, t.`CITIZEN_ID`, t.PASSPORT_NO,
 		 t.`NATIONALITY`,
 		 t.`BUSINESS_NAME`, t.`TAX_ID`, t.`CUSTOMER_STATUS`,
-		 t.`APPROVED_BY`, t.`APPROVED_DATE`, t.`MEMBER_ID`
+		 
+        	CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY
+         , t.`APPROVED_DATE`, t.`MEMBER_ID`
 		from vw_customer_search t
+        LEFT OUTER JOIN TB_USER u1 ON t.APPROVED_BY = u1.ID
 		<where>	
 			<if test="passportNo != null and passportNo != ''">
 				<bind name="passportNo" value="'%' + passportNo + '%'" />

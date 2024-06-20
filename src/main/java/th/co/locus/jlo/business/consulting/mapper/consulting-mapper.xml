@@ -127,7 +127,7 @@
 			,cons.CONSULTING_NUMBER  as consultingNumber
 			,cons.CHANNEL_CD as channelCd
 			,cb1.CODE_NAME as channelName
-			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as ownerName
+			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as consOwnerName
 			, cust.business_Name as businessName
 			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
             ,cust.`CUSTOMER_TYPE` as customerType
