@@ -185,4 +185,11 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		return fail();
 	}
 
+	@Override
+	public ServiceResult<List<CustomerData>> getCustomerByPhoneNo(CustomerListCriteria criteria) {
+		return success(commonDao.selectList("customer.findCustomerByPhoneNo", criteria));
+	}
+
+ 
+
 }

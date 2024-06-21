@@ -31,5 +31,6 @@ public interface CustomerService {
 	// Create Contact
 	ServiceResult<Integer> createContact(ContactData customer);
 	
-
+	
+	public ServiceResult<List<CustomerData>> getCustomerByPhoneNo(CustomerListCriteria criteria);
 }

@@ -58,6 +58,8 @@ public class CustomerData {
 	
 	private String memberCardNo;
 	
+	private Boolean isMemberFlag;
+	
 	
 	
 }

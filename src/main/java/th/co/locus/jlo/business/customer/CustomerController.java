@@ -288,4 +288,21 @@ public class CustomerController extends BaseController {
 			return ApiResponse.fail();
 		}
 	}
+	
+	
+	@ReadPermission
+	@ApiOperation(value = "Find Customer by phone no")
+	@PostMapping(value = "/getCustomerByPhoneNo", produces = "application/json")
+	public ApiResponse<List<CustomerData>> getCustomerByPhoneNo(@RequestBody ApiRequest<CustomerListCriteria> request) {
+		CustomerListCriteria criteria = request.getData();
+		criteria.setBuId(getBuId());
+		
+		
+		ServiceResult<List<CustomerData>> serviceResult = customerService.getCustomerByPhoneNo(criteria);
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		} else {
+			return ApiResponse.fail();
+		}
+	}
 }

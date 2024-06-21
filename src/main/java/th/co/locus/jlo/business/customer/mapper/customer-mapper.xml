@@ -40,6 +40,10 @@
 		    		AND t.MEMBER_CARD_NO = #{memberCardNo}
 		    		AND t.CARD_STATUS = '01'
 		  	</if>
+		  	<if test="phoneNo != null and phoneNo != ''">
+		    	AND t.PHONE_NO = #{phoneNo}
+		  	</if>
+		  	
 		</where>
 	  	<choose>
 		  	<when test="sortColumn != null and sortColumn != ''">
@@ -306,4 +310,21 @@
 				);
 		  -->
 	</insert>
+	<select id="findCustomerByPhoneNo" resultType="customerData"> 
+       	select
+		 t.CUSTOMER_ID,
+		 CASE t.CUSTOMER_TYPE
+		 	WHEN true THEN CONCAT(t.FIRST_NAME,' ', t.LAST_NAME)
+		 	ELSE t.BUSINESS_NAME
+		 	END AS FULL_NAME,
+		 	t.MEMBER_ID,
+		 	t.PHONE_NO
+		from vw_customer_search t
+		<where>
+			<if test="phoneNo != null and phoneNo != ''">
+		    	AND t.PHONE_NO = #{phoneNo}
+		  	</if>
+		  	 
+		</where>
+	</select>
 </mapper>
