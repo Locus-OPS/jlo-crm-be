@@ -78,6 +78,65 @@ public class ConsultingController extends BaseController {
 
 	}
 	
+	@WritePermission
+	@ApiOperation(value = "Create Consulting")
+	@PostMapping(value = "/startPhoneConsulting", produces = "application/json")
+	public ApiResponse<ConsultingModelBean> startPhoneConsulting(
+			@RequestBody ApiRequest<ConsultingModelBean> request) {
+		StringUtil.nullifyObject(request.getData());
+		ServiceResult<ConsultingModelBean> serviceResult = new ServiceResult<ConsultingModelBean>();
+		try {
+		 
+			log.info(request.getData().toString());
+			log.info("request.getData().getConsultingAction() " + request.getData().getId());
+
+		 
+				ConsultingModelBean consultingData = request.getData();
+				
+				consultingData.setStatusCd("01"); // In Progress
+				consultingData.setConsultingTypeCd("01"); //Inbound				
+				consultingData.setChannelCd(consultingData.getChannelCd());		 // WalkIn 01
+				consultingData.setConsOwnerId(getUserId());
+		
+				consultingData.setBuId(getBuId());
+				consultingData.setCreatedBy(getUserId());
+				consultingData.setUpdatedBy(getUserId());
+				serviceResult = consultingService.insertConsultingInital(consultingData);
+			 
+			if (serviceResult.isSuccess()) {
+				return ApiResponse.success(serviceResult.getResult());
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			e.printStackTrace();
+			return ApiResponse.fail(e.getMessage());
+		}
+
+		return ApiResponse.fail(serviceResult.getResponseDescription());
+
+	}
+	
+	@WritePermission
+	@ApiOperation(value = "Update Consulting Infor")
+	@PostMapping(value = "/stopPhoneConsulting", produces = "application/json")
+	public ApiResponse<ConsultingModelBean> stopPhoneConsulting(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+		StringUtil.nullifyObject(request.getData());
+		
+		ConsultingModelBean bean = request.getData();
+		bean.setContactId(bean.getCustomerId());
+		bean.setBuId(getBuId());
+		bean.setCreatedBy(getUserId());
+		bean.setUpdatedBy(getUserId());
+		bean.setStatusCd("02"); // Finished
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateConsulting(bean);
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		}
+		return ApiResponse.fail();
+	}
+	
+	
 
 	@ApiOperation(value = "Get Consulting Data")
 	@PostMapping(value = "/getConsultingData", produces = "application/json")
