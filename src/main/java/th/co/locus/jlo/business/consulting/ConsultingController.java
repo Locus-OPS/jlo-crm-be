@@ -56,7 +56,7 @@ public class ConsultingController extends BaseController {
 				
 				consultingData.setStatusCd("01"); // In Progress
 				consultingData.setConsultingTypeCd("01"); //Inbound				
-				consultingData.setChannelCd(consultingData.getChannelCd());		 // WalkIn 04
+				consultingData.setChannelCd("04");		 // WalkIn 04
 				consultingData.setConsOwnerId(getUserId());
 		
 				consultingData.setBuId(getBuId());
@@ -88,16 +88,17 @@ public class ConsultingController extends BaseController {
 		try {
 		 
 			log.info(request.getData().toString());
-			log.info("request.getData().getConsultingAction() " + request.getData().getId());
+			log.info("request.getData() " + request.getData());
 
 		 
 				ConsultingModelBean consultingData = request.getData();
 				
 				consultingData.setStatusCd("01"); // In Progress
 				consultingData.setConsultingTypeCd("01"); //Inbound				
-				consultingData.setChannelCd(consultingData.getChannelCd());		 // WalkIn 01
+				consultingData.setChannelCd("02");		 // Phone 02
 				consultingData.setConsOwnerId(getUserId());
-		
+				consultingData.setCustomerId(consultingData.getCustomerId());
+				
 				consultingData.setBuId(getBuId());
 				consultingData.setCreatedBy(getUserId());
 				consultingData.setUpdatedBy(getUserId());
@@ -129,7 +130,7 @@ public class ConsultingController extends BaseController {
 		bean.setCreatedBy(getUserId());
 		bean.setUpdatedBy(getUserId());
 		bean.setStatusCd("02"); // Finished
-		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateConsulting(bean);
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updatePhoneStopConsulting(bean);
 		if (serviceResult.isSuccess()) {
 			return ApiResponse.success(serviceResult.getResult());
 		}

@@ -22,6 +22,7 @@
 							`OWNER_ID`,
 							`CONSULTING_TYPE_CD`,
 							`CONTACT_ID`,
+							`CUST_ID`,
 							`CREATED_DATE`,
 							`CREATED_BY`
 							)
@@ -36,6 +37,7 @@
 						    #{consOwnerId},
 						    #{consultingTypeCd},
 						    #{contactId},
+						    #{customerId},
 							NOW() ,
 							#{createdBy}
 							);
@@ -234,5 +236,16 @@
 		</where>
 		ORDER BY LC.CASE_NUMBER DESC 
 	</select>
+	
+	 <update id="updatePhoneStopConsulting">
+		 	UPDATE `tb_consulting`
+			SET
+				`CHANNEL_CD` = #{channelCd},
+				`STATUS_CD` = #{statusCd},				
+				`END_DATE` = NOW(),
+				`UPDATED_DATE` =NOW(),
+				`UPDATED_BY` = #{updatedBy}
+			WHERE (`CONSULTING_NUMBER` = #{consultingNumber})
+	</update>
 	
 </mapper>
