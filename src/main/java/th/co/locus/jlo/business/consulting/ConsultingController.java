@@ -95,7 +95,7 @@ public class ConsultingController extends BaseController {
 				
 				consultingData.setStatusCd("01"); // In Progress
 				consultingData.setConsultingTypeCd("01"); //Inbound				
-				consultingData.setChannelCd("02");		 // Phone 02
+				consultingData.setChannelCd("01");		 // Phone 01
 				consultingData.setConsOwnerId(getUserId());
 				consultingData.setCustomerId(consultingData.getCustomerId());
 				
