@@ -49,7 +49,6 @@ public class CustomerController extends BaseController {
 	 * @param request the criteria to search
 	 * @return the customer list
 	 */
-	@ReadPermission
 	@ApiOperation(value = "Get Customer List")
 	@PostMapping(value = "/getCustomerList", produces = "application/json")
 	public ApiPageResponse<List<CustomerData>> getCustomerList(

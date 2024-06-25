@@ -53,7 +53,7 @@ public class UserController extends BaseController {
 	@Autowired
 	private FileService fileService;
 
-	@ReadPermission
+	 
 	@ApiOperation(value = "Get User List")
 	@PostMapping(value = "/getUserList", produces = "application/json")
 	public ApiPageResponse<List<UserDataModelBean>> getUserList(@RequestBody ApiPageRequest<UserListCriteriaModelBean> request) {
