@@ -237,7 +237,7 @@
 		ORDER BY LC.CASE_NUMBER DESC 
 	</select>
 	
-	 <update id="updatePhoneStopConsulting">
+	 <update id="updateStopConsulting">
 		 	UPDATE `tb_consulting`
 			SET
 				`CHANNEL_CD` = #{channelCd},

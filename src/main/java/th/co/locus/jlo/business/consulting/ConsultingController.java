@@ -120,7 +120,7 @@ public class ConsultingController extends BaseController {
 	
 	@WritePermission
 	@ApiOperation(value = "Update Consulting Infor")
-	@PostMapping(value = "/stopPhoneConsulting", produces = "application/json")
+	@PostMapping(value = "/updateStopConsulting", produces = "application/json")
 	public ApiResponse<ConsultingModelBean> stopPhoneConsulting(@RequestBody ApiPageRequest<ConsultingModelBean> request) {
 		StringUtil.nullifyObject(request.getData());
 		
@@ -130,7 +130,7 @@ public class ConsultingController extends BaseController {
 		bean.setCreatedBy(getUserId());
 		bean.setUpdatedBy(getUserId());
 		bean.setStatusCd("02"); // Finished
-		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updatePhoneStopConsulting(bean);
+		ServiceResult<ConsultingModelBean> serviceResult = consultingService.updateStopConsulting(bean);
 		if (serviceResult.isSuccess()) {
 			return ApiResponse.success(serviceResult.getResult());
 		}

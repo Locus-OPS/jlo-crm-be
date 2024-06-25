@@ -17,7 +17,7 @@ public interface ConsultingService {
 	public ServiceResult<ConsultingModelBean> updateConsultingBindingCustomer(ConsultingModelBean bean);
 	
 	
-	public ServiceResult<ConsultingModelBean> updatePhoneStopConsulting(ConsultingModelBean bean);
+	public ServiceResult<ConsultingModelBean> updateStopConsulting(ConsultingModelBean bean);
 
 	public ServiceResult<Page<ConsultingModelBean>> getConsultingDataList(ConsultingModelBean req,
 			PageRequest pageRequest);

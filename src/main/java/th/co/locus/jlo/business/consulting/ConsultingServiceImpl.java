@@ -73,8 +73,8 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 
 
 	@Override
-	public ServiceResult<ConsultingModelBean> updatePhoneStopConsulting(ConsultingModelBean bean) {
-		int result = commonDao.update("consulting.updatePhoneStopConsulting", bean);
+	public ServiceResult<ConsultingModelBean> updateStopConsulting(ConsultingModelBean bean) {
+		int result = commonDao.update("consulting.updateStopConsulting", bean);
 		if (result > 0) {
 			return success(commonDao.selectOne("consulting.findConsultingById", bean));
 		}
