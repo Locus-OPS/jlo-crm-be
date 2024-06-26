@@ -40,7 +40,7 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 	public ServiceResult<ConsultingModelBean> updateConsulting(ConsultingModelBean bean) {
 		int result = commonDao.update("consulting.updateConsulting", bean);
 		if (result > 0) {
-			return success(commonDao.selectOne("consulting.findConsultingById", bean));
+			return success(commonDao.selectOne("consulting.findConsultingData", bean));
 		}
 		return fail();
 	}
