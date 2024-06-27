@@ -210,6 +210,25 @@ public class ConsultingController extends BaseController {
 		}
 	}
 	
+	@ApiOperation(value = "Get Consulting List")
+	@PostMapping(value = "/getConsultingDataListByCustomerId", produces = "application/json")
+	public ApiPageResponse<List<ConsultingModelBean>> getConsultingDataListByCustomerId(
+			@RequestBody ApiPageRequest<ConsultingModelBean> request) {
+
+		StringUtil.nullifyObject(request.getData());
+
+		PageRequest pageRequest = getPageRequest(request);
+		ServiceResult<Page<ConsultingModelBean>> serviceResult = consultingService
+				.getConsultingDataListByCustomerId(request.getData(), pageRequest);
+
+		if (serviceResult.isSuccess()) {
+			return ApiPageResponse.success(serviceResult.getResult().getContent(),
+					serviceResult.getResult().getTotalElements());
+		} else {
+			return ApiPageResponse.fail();
+		}
+	}
+	
 	@ApiOperation(value = "Get Case Consulting List")
 	@PostMapping(value = "/getCaseUnderConsultingList", produces = "application/json")
 	public ApiPageResponse<List<CaseModelBean>> getCaseUnderConsultingList(

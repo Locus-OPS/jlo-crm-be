@@ -113,7 +113,7 @@
             ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy
 			,cons.UPDATED_DATE AS updatedDate
 			
-		FROM jlo_crm.tb_consulting cons
+		FROM tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
 		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
@@ -150,7 +150,7 @@
             ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy
 			,cons.UPDATED_DATE AS updatedDate
 			
-		FROM jlo_crm.tb_consulting cons
+		FROM tb_consulting cons
 		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
 		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
 		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
@@ -182,6 +182,48 @@
 			</if>
 			 
 			 
+		</where>
+		ORDER BY cons.CONSULTING_NUMBER DESC 
+	</select>
+	
+	<select id="findConsultingDataListByCustomerId" resultType="ConsultingModelBean">
+		SELECT 
+			cons.id as id
+			,cons.CONSULTING_NUMBER  as consultingNumber
+			,cons.CHANNEL_CD as channelCd
+			,cb1.CODE_NAME as channelName
+			,CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) as consOwnerName
+			, cust.business_Name as businessName
+			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
+            ,cust.`CUSTOMER_TYPE` as customerType
+			,cons.START_DATE as startDate
+			,cons.END_DATE as endDate
+	
+			,cons.STATUS_CD as statusCd
+			,cb2.CODE_NAME as statusName
+			
+			,cons.TITLE	as title 
+			,cons.note	as note
+			
+			,cons.OWNER_ID as consOwnerId
+			,cons.CUST_ID as customerId
+			
+			,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdBy
+			,cons.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedBy
+			,cons.UPDATED_DATE AS updatedDate
+			
+		FROM tb_consulting cons
+		LEFT OUTER JOIN  tb_customer cust on cons.CUST_ID = cust.CUSTOMER_ID
+		LEFT OUTER JOIN tb_codebook cb1 ON cons.CHANNEL_CD = cb1.CODE_ID AND cb1.CODE_TYPE = 'CONSULTING_CHANNEL'
+		LEFT OUTER JOIN tb_codebook cb2 ON cons.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE = 'CONSULTING_STATUS'
+		LEFT OUTER JOIN tb_user U ON cons.OWNER_ID = U.ID
+		LEFT JOIN TB_USER u1 ON cons.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON cons.UPDATED_BY = u2.ID
+		<where>
+			<if test="customerId != null and customerId != ''">
+				AND cons.CUST_ID = #{customerId}
+			</if>
 		</where>
 		ORDER BY cons.CONSULTING_NUMBER DESC 
 	</select>

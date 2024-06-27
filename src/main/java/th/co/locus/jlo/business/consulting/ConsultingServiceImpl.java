@@ -81,4 +81,12 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 		return fail();
 	}
 
+
+
+	@Override
+	public ServiceResult<Page<ConsultingModelBean>> getConsultingDataListByCustomerId(ConsultingModelBean req,
+			PageRequest pageRequest) {
+		return success(commonDao.selectPage("consulting.findConsultingDataListByCustomerId", req, pageRequest));
+	}
+	
 }

@@ -25,5 +25,8 @@ public interface ConsultingService {
 	public ServiceResult<Page<CaseModelBean>> getCaseUnderConsultingList(ConsultingModelBean req,
 			PageRequest pageRequest);
 	
+	public ServiceResult<Page<ConsultingModelBean>> getConsultingDataListByCustomerId(ConsultingModelBean req,
+			PageRequest pageRequest);
+	
 	
 }
