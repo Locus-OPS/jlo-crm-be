@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
+import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
 import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.ApiPageRequest;
 import th.co.locus.jlo.common.ApiPageResponse;
@@ -43,15 +43,14 @@ public class DashboardController extends BaseController {
 
 			StringUtil.nullifyObject(request.getData());
 			DashboardBean dashboardBean = request.getData();
-			
-			if("01".equals(dashboardBean.getViewBy())) {
+
+			if ("01".equals(dashboardBean.getViewBy())) {
 				dashboardBean.setOwnerId(getUserId());
-				
-			}else if("02".equals(dashboardBean.getViewBy())) {
+
+			} else if ("02".equals(dashboardBean.getViewBy())) {
 				dashboardBean.setOrgId(getUserId());
 			}
-			
-			
+
 			ServiceResult<DashboardBean> serviceResult = dashboardService.getCountCaseEachStatus(dashboardBean);
 
 			if (serviceResult.isSuccess()) {
@@ -74,14 +73,15 @@ public class DashboardController extends BaseController {
 		PageRequest pageRequest = getPageRequest(request);
 		DashboardBean bean = new DashboardBean();
 		bean = request.getData();
-		
-		if("01".equals(bean.getViewBy())) {
+
+		// My
+		if ("01".equals(bean.getViewBy())) {
 			bean.setOwnerId(getUserId());
-			
-		}else if("02".equals(bean.getViewBy())) {
+
+		} else if ("02".equals(bean.getViewBy())) {
 			bean.setOrgId(getUserId());
 		}
-		
+
 		ServiceResult<Page<CaseModelBean>> serviceResult = dashboardService.getCaseDashboardList(bean, pageRequest);
 		if (serviceResult.isSuccess()) {
 			return ApiPageResponse.success(serviceResult.getResult().getContent(),
@@ -90,4 +90,57 @@ public class DashboardController extends BaseController {
 			return ApiPageResponse.fail();
 		}
 	}
+
+	@ApiOperation(value = "get ChartBar Data List")
+	@PostMapping(value = "/getChartBarDataList", produces = "application/json")
+	public ApiResponse<List<DashboardChartsBarBean>> getChartBarDataList(
+			@RequestBody ApiRequest<DashboardBean> request) {
+
+		StringUtil.nullifyObject(request.getData());
+		DashboardBean bean = new DashboardBean();
+		bean = request.getData();
+
+		// My
+		if ("01".equals(bean.getViewBy())) {
+			bean.setOwnerId(getUserId());
+
+		} else if ("02".equals(bean.getViewBy())) {
+			bean.setOrgId(getUserId());
+		}
+
+		ServiceResult<List<DashboardChartsBarBean>> serviceResult = dashboardService.getChartBarDataList(bean);
+
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		} else {
+			return ApiResponse.fail();
+		}
+	}
+
+	@ApiOperation(value = "get Chart Pie Data List")
+	@PostMapping(value = "/getChartPieDataList", produces = "application/json")
+	public ApiResponse<List<DashboardChartsBarBean>> getChartPieDataList(
+			@RequestBody ApiRequest<DashboardBean> request) {
+
+		StringUtil.nullifyObject(request.getData());
+		DashboardBean bean = new DashboardBean();
+		bean = request.getData();
+
+		// My
+		if ("01".equals(bean.getViewBy())) {
+			bean.setOwnerId(getUserId());
+
+		} else if ("02".equals(bean.getViewBy())) {
+			bean.setOrgId(getUserId());
+		}
+
+		ServiceResult<List<DashboardChartsBarBean>> serviceResult = dashboardService.getChartPieDataList(bean);
+
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		} else {
+			return ApiResponse.fail();
+		}
+	}
+
 }

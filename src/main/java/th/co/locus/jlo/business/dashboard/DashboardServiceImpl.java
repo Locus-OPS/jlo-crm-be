@@ -1,9 +1,12 @@
 package th.co.locus.jlo.business.dashboard;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
+import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
 import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.BaseService;
 import th.co.locus.jlo.common.Page;
@@ -21,6 +24,16 @@ public class DashboardServiceImpl extends BaseService implements DashboardServic
 @Override
 public ServiceResult<Page<CaseModelBean>> getCaseDashboardList(DashboardBean req, PageRequest pageRequest) {
 	return success(commonDao.selectPage("dashboard.getCaseDashboardList", req, pageRequest));
+}
+
+@Override
+public ServiceResult<List<DashboardChartsBarBean>> getChartBarDataList(DashboardBean criteria) {
+	return success(commonDao.selectList("dashboard.getChartBarDataList", criteria));
+}
+
+@Override
+public ServiceResult<List<DashboardChartsBarBean>> getChartPieDataList(DashboardBean criteria) {
+	return success(commonDao.selectList("dashboard.getChartPieDataList", criteria));
 }
 				
 }
