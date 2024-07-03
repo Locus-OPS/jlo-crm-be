@@ -35,6 +35,7 @@ public class CustomerData {
 	private String email;
 	
 	private String customerStatus;
+	private String customerStatusName;
 	private String registrationChannel;
 	private String registrationStore;
 	

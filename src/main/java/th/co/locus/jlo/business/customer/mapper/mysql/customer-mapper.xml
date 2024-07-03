@@ -3,17 +3,21 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="customer">
 	<select id="getCustomerList" resultType="customerData"> 
-       	select
-		 t.`CUSTOMER_ID`, t.`CUSTOMER_TYPE`, t.`MEMBER_CARD_NO`,
+       select
+		 t.`CUSTOMER_ID`, t.`CUSTOMER_TYPE`, 
 		 CASE t.`CUSTOMER_TYPE` WHEN true THEN CONCAT(t.`FIRST_NAME`,' ', t.`LAST_NAME`) ELSE t.`BUSINESS_NAME` END AS FULL_NAME,
+         
 		 t.`TITLE`, t.`FIRST_NAME`, t.`LAST_NAME`, t.`CITIZEN_ID`, t.PASSPORT_NO,
 		 t.`NATIONALITY`,
-		 t.`BUSINESS_NAME`, t.`TAX_ID`, t.`CUSTOMER_STATUS`,
+		 t.`BUSINESS_NAME`, t.`TAX_ID`,
+         t.`CUSTOMER_STATUS`,
+         cb.code_name as customerStatusName,
 		 
         	CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME
-         , t.`APPROVED_DATE`, t.`MEMBER_ID`
-		from vw_customer_search t
+         , t.`APPROVED_DATE`
+		from vw_customer_search_list t
         LEFT OUTER JOIN TB_USER u1 ON t.APPROVED_BY = u1.ID
+        INNER JOIN TB_CODEBOOK cb ON t.CUSTOMER_STATUS = cb.code_id and cb.code_type='CUSTOMER_CRM_STATUS'
 		<where>	
 			<if test="passportNo != null and passportNo != ''">
 				<bind name="passportNo" value="'%' + passportNo + '%'" />
@@ -35,11 +39,11 @@
 				<bind name="buId" value="buId" />
 		  			AND t.`BU_ID` = #{buId}
 		  	</if>
-		  	<if test="memberCardNo != null and memberCardNo != ''">
+		  <!-- 	<if test="memberCardNo != null and memberCardNo != ''">
 				<bind name="memberCardNo" value="memberCardNo" />
 		    		AND t.MEMBER_CARD_NO = #{memberCardNo}
 		    		AND t.CARD_STATUS = '01'
-		  	</if>
+		  	</if> -->
 		  	<if test="phoneNo != null and phoneNo != ''">
 		    	AND t.PHONE_NO = #{phoneNo}
 		  	</if>
