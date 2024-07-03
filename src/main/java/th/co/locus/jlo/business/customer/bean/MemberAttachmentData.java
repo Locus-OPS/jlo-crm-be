@@ -14,9 +14,9 @@ public class MemberAttachmentData {
 	private String title;
 	private String descp;
 	private String mainFlag;
-	private String createdBy;
+	private Long createdBy;
 	private Date createdDate;
-	private String updatedBy;
+	private Long updatedBy;
 	private Date updatedDate;
 	
 	private String fileName;

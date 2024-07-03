@@ -11,24 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.common.util.StringUtil;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
+import th.co.locus.jlo.common.util.CommonUtil;
 
 @Slf4j
-@Api(value = "API for Consulting ", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/dashboard")
 public class DashboardController extends BaseController {
@@ -36,12 +27,11 @@ public class DashboardController extends BaseController {
 	@Autowired
 	private DashboardService dashboardService;
 
-	@ApiOperation(value = "Get Count Case Each Status")
 	@PostMapping(value = "/getCountCaseEachStatus", produces = "application/json")
 	public ApiResponse<DashboardBean> getCountCaseEachStatus(@RequestBody ApiRequest<DashboardBean> request) {
 		try {
 
-			StringUtil.nullifyObject(request.getData());
+			CommonUtil.nullifyObject(request.getData());
 			DashboardBean dashboardBean = request.getData();
 
 			if ("01".equals(dashboardBean.getViewBy())) {
@@ -64,12 +54,11 @@ public class DashboardController extends BaseController {
 		return ApiResponse.fail();
 	}
 
-	@ApiOperation(value = "Get Case Consulting List")
 	@PostMapping(value = "/getCaseDashboardList", produces = "application/json")
 	public ApiPageResponse<List<CaseModelBean>> getCaseDashboardList(
 			@RequestBody ApiPageRequest<DashboardBean> request) {
 
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		PageRequest pageRequest = getPageRequest(request);
 		DashboardBean bean = new DashboardBean();
 		bean = request.getData();
@@ -91,12 +80,11 @@ public class DashboardController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "get ChartBar Data List")
 	@PostMapping(value = "/getChartBarDataList", produces = "application/json")
 	public ApiResponse<List<DashboardChartsBarBean>> getChartBarDataList(
 			@RequestBody ApiRequest<DashboardBean> request) {
 
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		DashboardBean bean = new DashboardBean();
 		bean = request.getData();
 
@@ -117,12 +105,11 @@ public class DashboardController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "get Chart Pie Data List")
 	@PostMapping(value = "/getChartPieDataList", produces = "application/json")
 	public ApiResponse<List<DashboardChartsBarBean>> getChartPieDataList(
 			@RequestBody ApiRequest<DashboardBean> request) {
 
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		DashboardBean bean = new DashboardBean();
 		bean = request.getData();
 

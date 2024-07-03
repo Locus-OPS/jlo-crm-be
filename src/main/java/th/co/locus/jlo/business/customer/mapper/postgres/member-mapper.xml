@@ -1,0 +1,445 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<select id="findMemberById" resultType="memberData">
+		 SELECT 
+	m.`MEMBER_ID`,
+    m.`CUSTOMER_ID`,
+    m.`MEMBER_TYPE`,
+    m.`MEMBER_STATUS`,
+    m.`CITIZEN_ID`,
+    m.`PASSPORT_NO`,
+    m.`TITLE`,
+    m.`FIRST_NAME`,
+    m.`LAST_NAME`,
+    m.`BUSINESS_NAME`,
+    m.`BUSINESS_TYPE`,
+    m.`GENDER`,
+    m.`NATIONALITY`,
+    m.`BIRTHDATE`,
+    m.`OCCUPATION`,
+    m.`MARITAL_STATUS`,
+    m.`IMAGE_URL`,
+    m.`APPROVED_DATE`,
+     CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
+    m.`REGISTRATION_STORE`,
+    m.`REGISTRATION_CHANNEL`,
+    m.`REMARK`,
+    m.`BU_ID`,
+    m.`CREATED_DATE`,
+    CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,
+    m.`UPDATED_DATE`,
+	CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName,
+    m.`PHONE_AREA`,
+    m.`PHONE_NO`,
+    m.`EMAIL`,
+    m.`PROGRAM_ID`,
+    m.`MEMBER_TIER_ID`,
+    m.`TAX_ID`
+FROM loy_member m 
+LEFT JOIN TB_USER u1 ON m.CREATED_BY = u1.ID
+LEFT JOIN TB_USER u2 ON m.UPDATED_BY = u2.ID
+LEFT OUTER JOIN TB_USER a1 ON m.APPROVED_BY = a1.ID
+		<where>
+			<if test="memberId != null and memberId != ''">
+				AND m.`MEMBER_ID` = #{memberId}
+			</if>
+			<if test="customerId != null and customerId != ''">
+				AND m.`CUSTOMER_ID` = #{customerId}
+			</if>
+		</where>
+	</select>
+	<update id="updateMember">
+		update loy_member 
+		SET 
+		 `BUSINESS_NAME`=#{businessName}
+		 ,`BUSINESS_TYPE`=#{businessType}
+		 ,`BIRTHDATE`=#{birthDate}
+		 ,`CITIZEN_ID`=#{citizenId}
+		 ,`TAX_ID`=#{taxId}
+		 ,`EMAIL`=#{email}
+		 ,`FIRST_NAME`=#{firstName}
+		 ,`GENDER`=#{gender}
+		 ,`LAST_NAME`=#{lastName}
+		 ,`MARITAL_STATUS`=#{maritalStatus}
+		 ,`NATIONALITY`=#{nationality}
+		 ,`OCCUPATION`=#{occupation}
+		 ,`PASSPORT_NO`=#{passportNo}
+		 ,`PHONE_AREA`=#{phoneArea}
+		 ,`PHONE_NO`=#{phoneNo}
+		 ,`REMARK`=#{remark}
+		 ,`TITLE`=#{title}
+		 , UPDATED_BY = #{updatedBy}
+		 , UPDATED_DATE = now()
+		where `MEMBER_ID` = #{memberId}
+	</update>
+	
+	<select id="callGenMemberCard" statementType="CALLABLE" resultType="java.util.HashMap">
+		{call GET_NEW_MEMBER_CARD(#{P_MEMBER_ID, mode=IN}, #{P_TIER_ID, mode=IN}, #{P_CREATED_BY, mode=IN}, #{P_RE_ISSUE_REASON, mode=IN}, #{P_RE_ISSUE_CARD_NO, mode=IN}, #{O_MEMBER_CARD,javaType=String, jdbcType=VARCHAR, mode=OUT}, #{O_TIER_ID,javaType=Integer, jdbcType=VARCHAR, mode=OUT})}
+	</select>
+	
+	<insert id="createMember" keyColumn="MEMBER_ID" keyProperty="memberId" useGeneratedKeys="true">
+		INSERT INTO loy_member (
+			CUSTOMER_ID,
+			MEMBER_TYPE,
+			MEMBER_STATUS,
+			CITIZEN_ID,
+			BUSINESS_TYPE,
+			PASSPORT_NO,
+			TITLE,
+			FIRST_NAME,
+			LAST_NAME,
+			BUSINESS_NAME,
+			GENDER,
+			NATIONALITY,
+			BIRTHDATE,
+			OCCUPATION,
+			MARITAL_STATUS,
+			IMAGE_URL,
+			APPROVED_DATE,
+			APPROVED_BY,
+			REGISTRATION_STORE,
+			REGISTRATION_CHANNEL,
+			PROGRAM_ID,
+			PHONE_AREA,
+			PHONE_NO,
+			EMAIL,
+			TAX_ID,
+			REMARK,
+			BU_ID,
+			CREATED_DATE,
+			CREATED_BY,
+			UPDATED_DATE,
+			UPDATED_BY)
+		SELECT
+			c.CUSTOMER_ID,
+			c.CUSTOMER_TYPE,
+			'01',
+			c.CITIZEN_ID,
+			c.BUSINESS_TYPE,
+			c.PASSPORT_NO,
+			c.TITLE,
+			c.FIRST_NAME,
+			c.LAST_NAME,
+			c.BUSINESS_NAME,
+			c.GENDER,
+			c.NATIONALITY,
+			c.BIRTHDATE,
+			c.OCCUPATION,
+			c.MARITAL_STATUS,
+			NULL,
+			NOW(),
+			#{approvedBy},
+			c.REGISTRATION_STORE,
+			c.REGISTRATION_CHANNEL,
+			c.PROGRAM_ID,
+			c.PHONE_AREA,
+			c.PHONE_NO,
+			c.EMAIL,
+			c.TAX_ID,
+			c.REMARK,
+			#{buId},
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+		FROM tb_customer c 
+		WHERE c.CUSTOMER_ID= #{customerId}
+	</insert>
+	
+	<insert id="cloneAddressFromCustomer" keyColumn="ADDRESS_ID" keyProperty="addressId" useGeneratedKeys="false">
+		INSERT INTO loy_member_address (`MEMBER_ID`, `ADDRESS`, `ADDRESS_TYPE`, `PRIMARY_YN`, `SUB_DISTRICT`, `DISTRICT`, `PROVINCE`, `COUNTRY`, `POSTCODE`, `BU_ID`, `CREATED_DATE`, `CREATED_BY`, `UPDATED_DATE`, `UPDATED_BY`)
+		SELECT  #{memberId}, `ADDRESS`, `ADDRESS_TYPE`, `PRIMARY_YN`, `SUB_DISTRICT`, `DISTRICT`, `PROVINCE`, `COUNTRY`, `POSTCODE`, `BU_ID`, NOW(), #{updatedBy}, NOW(), #{updatedBy}
+		FROM tb_customer_address WHERE `CUSTOMER_ID` = #{customerId}
+	</insert>
+	
+	<insert id="insertMemberPointBalance">
+		insert into loy_mem_point_balance (
+			PROGRAM_ID
+			, MEMBER_ID
+			, CURRENT_POINT
+			, TOTAL_SPENDING
+			, POINT_EXPIRE_THIS_YEAR
+			, POINT_EXPIRE_IN_1_MONTH
+			, POINT_EXPIRE_IN_2_MONTH
+			, POINT_EXPIRE_IN_3_MONTH
+			, POINT_TYPE_ID
+			, CREATED_DATE
+			, CREATED_BY
+			, UPDATED_DATE
+			, UPDATED_BY
+		)
+		SELECT m.PROGRAM_ID
+			, m.MEMBER_ID
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, 0
+			, p.POINT_TYPE_ID
+			, NOW()
+			, #{createdBy}
+			, NOW()
+			, #{updatedBy}
+		FROM loy_member m
+		INNER JOIN loy_program_point_type p on m.PROGRAM_ID = p.PROGRAM_ID AND p.PRIMARY_YN = 'Y'
+		WHERE m.MEMBER_ID = #{memberId}
+	</insert>
+	
+	<select id="getMemberAddressList" resultType="AddressData">
+		select a.*, concat( a.`ADDRESS`,' ',ifnull(t.`SUB_DISTRICT`,''),' ',ifnull(t.`DISTRICT`,''),' ',ifnull(t.`PROVINCE`,'')) as fullAddress
+		from loy_member_address a
+		left join tb_province t on a.`SUB_DISTRICT`=t.`LOCATION_CODE`
+		<where>
+			<if test="memberId != null">
+				AND a.`MEMBER_ID` = #{memberId}
+			</if>
+			<if test="buId != null">
+				AND a.BU_ID = #{buId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findMemberAddressById" resultType="AddressData">
+		select a.*, concat( a.`ADDRESS`,' ',ifnull(t.`SUB_DISTRICT`,''),' ',ifnull(t.`DISTRICT`,''),' ',ifnull(t.`PROVINCE`,'')) as fullAddress
+		from loy_member_address a
+		left join tb_province t on a.`SUB_DISTRICT`=t.`LOCATION_CODE`
+		<where>	
+			<if test="addressId != null and addressId != ''">
+				<bind name="addressId" value="addressId" />
+		    		AND a.ADDRESS_ID =  #{addressId}
+		  	</if>
+		  	<if test="primaryYn != null and primaryYn != ''">
+				<bind name="primaryYn" value="primaryYn" />
+		    		AND a.PRIMARY_YN = #{primaryYn}
+		  	</if>
+		  	<if test="memberId != null and memberId != ''">
+				<bind name="customerId" value="customerId" />
+		    		AND a.MEMBER_ID = #{memberId}
+		  	</if>
+			<if test="buId != null">
+				AND a.BU_ID = #{buId}
+			</if>
+		</where>
+	</select>
+	<update id="updateMemberAddress">
+		UPDATE loy_member_address SET
+			`ADDRESS_TYPE`=#{addressType}, 
+			`PRIMARY_YN`=#{primaryYn}, 
+			`ADDRESS`=#{address}, 
+			`SUB_DISTRICT`=#{subDistrict}, 
+			`DISTRICT`=#{district},
+			`PROVINCE`=#{province},
+			`COUNTRY`=#{country}, 
+			`POSTCODE`=#{postCode}, 
+			`UPDATED_BY`=#{updatedBy}, 
+			`UPDATED_DATE`=NOW() 
+		WHERE `ADDRESS_ID` = #{addressId}
+	</update>
+	<insert id="createMemberAddress" keyColumn="ADDRESS_ID" keyProperty="addressId" useGeneratedKeys="true">
+		INSERT INTO loy_member_address (
+			`MEMBER_ID`,
+			`ADDRESS_TYPE`,
+			`PRIMARY_YN`,
+			`ADDRESS`,
+			`SUB_DISTRICT`,
+			`DISTRICT`,
+			`PROVINCE`,
+			`COUNTRY`,
+			`POSTCODE`,
+			`BU_ID`,
+			`CREATED_BY`,
+			`CREATED_DATE`,
+			`UPDATED_BY`,
+			`UPDATED_DATE`
+		) VALUES (
+			#{memberId},
+			#{addressType}, 
+			#{primaryYn},
+			#{address},
+			#{subDistrict},
+			#{district},
+			#{province},
+			#{country},
+			#{postCode},
+			#{buId},
+			#{createdBy},
+			NOW(),
+			#{updatedBy},
+			NOW()
+		);
+			
+	</insert>
+	<update id="clearMemberAddressPrimary">
+		UPDATE loy_member_address SET 
+			`PRIMARY_YN`='N',
+			`UPDATED_BY`=#{updatedBy}, 
+			`UPDATED_DATE`=NOW() 
+		WHERE `MEMBER_ID` = #{memberId}  AND `PRIMARY_YN` = 'Y'
+	</update>
+	
+	<delete id="deleteMemberAddress">
+			DELETE FROM loy_member_address WHERE `ADDRESS_ID` = #{addressId}
+	</delete>
+	
+	<select id="getMemberCardList" resultType="MemberCardData">
+		select a.*, b.`TIER_NAME`
+		from loy_member_card a
+		left join loy_tier b on a.`CARD_TIER_ID` = b.`TIER_ID`
+		<where>
+			<if test="memberId != null and memberId != ''">
+				AND a.`MEMBER_ID` = #{memberId}
+			</if>
+			<if test="primaryYn != null and primaryYn != ''">
+				AND a.`PRIMARY_YN` = #{primaryYn}
+			</if>
+		</where>
+		ORDER BY a.PRIMARY_YN desc,a.CREATED_DATE desc
+	</select>
+	<select id="getMemberPoint" resultType="MemberPointData">
+		select l.`MEMBER_ID`,p.`PROGRAM_ID`,p.`PROGRAM_NAME`, l.`CURRENT_POINT`, l.`POINT_EXPIRE_THIS_YEAR`, l.`UPDATED_DATE` AS lastCalculatedDate
+		from loy_mem_point_balance l 
+		inner join loy_program_point_type n on l.`POINT_TYPE_ID`=n.`POINT_TYPE_ID` AND n.`PROGRAM_ID`=l.`PROGRAM_ID` AND n.`PRIMARY_YN`='Y'
+		inner join loy_program p on l.`PROGRAM_ID`=p.`PROGRAM_ID`
+		where l.`MEMBER_ID`= #{memberId} AND l.`PROGRAM_ID` = #{programId}
+	</select>
+	
+	<insert id="createMemberAttachment" keyColumn="MEMBER_ATT_ID" keyProperty="memberAttId" useGeneratedKeys="true">
+		INSERT INTO loy_member_att (ATT_ID, MEMBER_ID, TITLE, DESCP, MAIN_FLAG, CREATED_BY, CREATED_DATE, UPDATED_BY,UPDATED_DATE)
+		VALUES (#{attId}, #{memberId}, #{title}, #{descp}, #{mainFlag}, #{createdBy}, now(),#{createdBy}, now())
+	</insert>
+	<update id="updateMemberAttachment">
+		UPDATE loy_member_att 
+		SET
+			TITLE = #{title}
+			, DESCP = #{descp}
+			, ATT_ID = #{attId}
+			, MAIN_FLAG = #{mainFlag}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = now()
+		WHERE
+			MEMBER_ATT_ID  = #{memberAttId}
+	</update>
+	
+	<select id="getMemberAttachmentList" resultType="MemberAttachmentData">
+		SELECT 
+			  A.MEMBER_ATT_ID
+			, A.ATT_ID
+			, A.MEMBER_ID
+			, A.TITLE
+			, A.DESCP
+			, A.MAIN_FLAG 
+			, A.CREATED_BY
+			, A.CREATED_DATE
+			, A.UPDATED_BY
+			, A.UPDATED_DATE
+			, B.FILE_PATH
+			, B.FILE_NAME
+			, B.FILE_EXTENSION
+			, B.FILE_SIZE
+		FROM
+			loy_member_att A
+		INNER JOIN tb_att B ON A.ATT_ID = B.ATT_ID
+		WHERE
+			MEMBER_ID = #{memberId}
+	</select>
+	
+	<select id="findMemberAttachmentById" resultType="MemberAttachmentData">
+		SELECT 
+			  A.MEMBER_ATT_ID
+			, A.ATT_ID
+			, A.MEMBER_ID
+			, A.TITLE
+			, A.DESCP
+			, A.MAIN_FLAG 
+			, A.CREATED_BY
+			, A.CREATED_DATE
+			, A.UPDATED_BY
+			, A.UPDATED_DATE
+			, B.FILE_PATH
+			, B.FILE_NAME
+			, B.FILE_EXTENSION
+			, B.FILE_SIZE
+		FROM
+			loy_member_att A
+		INNER JOIN tb_att B ON A.ATT_ID = B.ATT_ID
+		WHERE
+			MEMBER_ATT_ID = #{memberAttId}
+	</select>
+	<delete id="deleteMemberAttachment">
+		DELETE FROM loy_member_att WHERE MEMBER_ATT_ID = #{memberAttId}
+	</delete>
+	
+	<select id="getMemberCaseList" resultType="CaseModelBean">
+		SELECT 		
+		    LC.CASE_NUMBER,
+			LC.DETAIL,
+		    LC.TYPE,
+			LC.SUBTYPE,
+		    LC.PRIORITY,
+		    LC.STATUS,
+		    LC.CHANNEL,
+		    LC.OWNER,
+		    LC.SUBJECT,
+		    LC.OPENED_DATE as openedDateDate,
+		    LC.CLOSED_DATE as closedDateDate,
+		    LC.BU_ID,
+		    LC.CUSTOMER_ID,
+            CB1.CODE_NAME AS typeName,
+            CB2.CODE_NAME AS subTypeName,
+            CB3.CODE_NAME AS priorityName,
+            CB4.CODE_NAME AS channelName,
+            CB5.CODE_NAME AS statusName,
+            CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) displayName
+		FROM
+		    LOY_CASE LC
+			INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+	        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+	        INNER JOIN TB_CODEBOOK CB4 ON LC.CHANNEL = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_CHANNEL'
+	        INNER JOIN TB_CODEBOOK CB5 ON LC.STATUS = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_STATUS'
+	        LEFT JOIN tb_user U ON LC.OWNER = U.ID
+		<where>
+			<if test="customerId != null and customerId != ''">
+				AND LC.CUSTOMER_ID = #{customerId}
+			</if>
+			<if test="buId != null">
+				AND LC.BU_ID = #{buId}
+			</if>
+		</where>
+		ORDER BY LC.CASE_NUMBER DESC 
+	</select>
+
+	<update id="updateBlockCard">
+		update jlo.loy_member_card
+		set CARD_STATUS = '04'
+		, CARD_LAST_BLOCK_DATE = now()
+		, CARD_BLOCK_REASON = #{cardBlockReason}
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = now()
+		where MEMBER_CARD_NO = #{memberCardNo}
+	</update>
+	
+	<select id="getMemberTierList" resultType="SelectorModelBean">
+		  select t.TIER_ID as code_id
+		  ,TIER_NAME as code_name
+		  from jlo.loy_tier t 
+		  where t.PROGRAM_ID = (
+		 	select m.PROGRAM_ID from jlo.loy_member m
+		 	where m.MEMBER_ID = #{memberId}
+		 ) and t.TIER_ACTIVE_FLAG = 'Y'
+		 order by t.TIER_NAME;
+	</select>
+	
+	<update id="inactiveMemberCard">
+		update jlo.loy_member_card
+		set CARD_STATUS = '02'
+		, PRIMARY_YN = 'N'
+		, CARD_INACTIVE_DATE = now()
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = now()
+		where MEMBER_ID = #{memberId}
+	</update>
+</mapper>

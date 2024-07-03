@@ -6,10 +6,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.system.role.bean.RespModelBean;
 import th.co.locus.jlo.system.role.bean.RoleModelBean;

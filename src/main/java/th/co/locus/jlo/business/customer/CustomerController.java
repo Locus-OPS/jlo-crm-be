@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
@@ -17,22 +15,15 @@ import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.common.util.StringUtil;
-import th.co.locus.jlo.config.security.annotation.ExtraPermission;
-import th.co.locus.jlo.config.security.annotation.ReadPermission;
-import th.co.locus.jlo.config.security.annotation.WritePermission;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.annotation.ExtraPermission;
+import th.co.locus.jlo.common.annotation.ReadPermission;
+import th.co.locus.jlo.common.annotation.WritePermission;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
+import th.co.locus.jlo.common.util.CommonUtil;
 
 @Slf4j
-@Api(value = "API for Customer Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/customer")
 public class CustomerController extends BaseController {
@@ -49,7 +40,6 @@ public class CustomerController extends BaseController {
 	 * @param request the criteria to search
 	 * @return the customer list
 	 */
-	@ApiOperation(value = "Get Customer List")
 	@PostMapping(value = "/getCustomerList", produces = "application/json")
 	public ApiPageResponse<List<CustomerData>> getCustomerList(
 			@RequestBody ApiPageRequest<CustomerListCriteria> request) {
@@ -57,7 +47,7 @@ public class CustomerController extends BaseController {
 
 		PageRequest pageRequest = getPageRequest(request);
 		CustomerListCriteria criteria = request.getData();
-		StringUtil.nullifyObject(criteria);
+		CommonUtil.nullifyObject(criteria);
 		criteria.setBuId(getBuId());
 		log.info("criteria : " + criteria);
 		ServiceResult<Page<CustomerData>> serviceResult = customerService.getCustomerList(criteria, pageRequest);
@@ -76,10 +66,9 @@ public class CustomerController extends BaseController {
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Create or Update Customer")
 	@PostMapping(value = "/saveCustomer", produces = "application/json")
 	public ApiResponse<CustomerData> saveCustomer(@RequestBody ApiRequest<CustomerData> request) {
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		ServiceResult<CustomerData> serviceResult;
 		if (request.getData().getCustomerId() != null) {
 			CustomerData cusData = request.getData();
@@ -106,12 +95,11 @@ public class CustomerController extends BaseController {
 	}
 
 	@ReadPermission
-	@ApiOperation(value = "Get Customer Address List")
 	@PostMapping(value = "/getCustomerAddressList", produces = "application/json")
 	public ApiPageResponse<List<AddressData>> getCustomerAddressList(@RequestBody ApiPageRequest<AddressData> request) {
 		log.info("CustomerId : "+request.getData());
 		
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		request.getData().setBuId(getBuId());
 		PageRequest pageRequest = getPageRequest(request);
 		ServiceResult<Page<AddressData>> serviceResult = customerService.getCustomerAddressList(request.getData(), pageRequest);
@@ -123,7 +111,6 @@ public class CustomerController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Create or Update Customer Address")
 	@PostMapping(value = "/saveCustomerAddress", produces = "application/json")
 	public ApiResponse<AddressData> saveCustomerAddress(@RequestBody ApiRequest<AddressData> request){
 		ServiceResult<AddressData> serviceResult;
@@ -145,19 +132,17 @@ public class CustomerController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Delete Customer Address")
 	@PostMapping(value = "/deleteCustomerAddress", produces = "application/json")
 	public ApiResponse<Integer> deleteCustomerAddress(@RequestBody ApiRequest<AddressData> request) {
 		return ApiResponse.success(customerService.deleteCustomerAddress(request.getData()).getResult());
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Customer Address By Primary")
 	@PostMapping(value = "/getCustomerAddressPrimary", produces = "application/json")
 	public ApiResponse<AddressData> getCustomerAddressPrimary(@RequestBody ApiPageRequest<AddressData> request) {
 		log.info("CustomerListCriteria : "+request.getData());
 		AddressData addressCri = request.getData();
-		StringUtil.nullifyObject(addressCri);
+		CommonUtil.nullifyObject(addressCri);
 		addressCri.setPrimaryYn("Y");
 		addressCri.setBuId(getBuId());
 		ServiceResult<AddressData> serviceResult = customerService.getCustomerAddressByPrimary(addressCri);
@@ -172,7 +157,6 @@ public class CustomerController extends BaseController {
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Customer By Id")
 	@PostMapping(value = "/getCustomerById", produces = "application/json")
 	public ApiResponse<CustomerData> getCustomerById(@RequestBody ApiPageRequest<CustomerData> request) {
 		log.info("CustomerListCriteria : "+request.getData());
@@ -190,7 +174,6 @@ public class CustomerController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Create or Update Customer Status")
 	@PostMapping(value = "/updateCustomerStatus", produces = "application/json")
 	public ApiResponse<CustomerData> updateCustomerStatus(@RequestBody ApiRequest<CustomerData> request){
 		ServiceResult<CustomerData> serviceResult;
@@ -207,7 +190,6 @@ public class CustomerController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Get Customer Verify Requests")
 	@PostMapping(value = "/verifyRequest", produces = "application/json")
 	public ApiResponse<CustomerVerifyData> verifyRequest(@RequestBody ApiRequest<CustomerData> request) {
 		ServiceResult<CustomerVerifyData> serviceResult = customerService.verifyRequest(request.getData());
@@ -222,7 +204,6 @@ public class CustomerController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Get Customer Verify Validate")
 	@PostMapping(value = "/verifyValidate", produces = "application/json")
 	public ApiResponse<String> verifyValidate(@RequestBody ApiRequest<CustomerVerifyData> request) {
 		ServiceResult<String> serviceResult = customerService.verifyValidate(request.getData());
@@ -237,11 +218,10 @@ public class CustomerController extends BaseController {
 	}
 
 	@ExtraPermission
-	@ApiOperation(value = "Create Member")
 	@PostMapping(value = "/createMember", produces = "application/json")
 	public ApiResponse<MemberData> createMember(@RequestBody ApiRequest<MemberData> request) {
 		MemberData mData = request.getData();
-		StringUtil.nullifyObject(mData);
+		CommonUtil.nullifyObject(mData);
 		mData.setCreatedBy(getUserId());
 		mData.setUpdatedBy(getUserId());
 		mData.setApprovedBy(getUserId());
@@ -259,7 +239,6 @@ public class CustomerController extends BaseController {
 	//===================================================== Case ==============================================
 	//=========================================================================================================
 	@ReadPermission
-	@ApiOperation(value = "Get Customer Case List")
 	@PostMapping(value = "/getCustomerCaseList", produces = "application/json")
 	public ApiPageResponse<List<CaseModelBean>> getCustomerCaseList(@RequestBody ApiPageRequest<CaseModelBean> request) {
 		log.info("CaseModelBean : " + request.getData());
@@ -274,7 +253,6 @@ public class CustomerController extends BaseController {
 	}
 
 	@ReadPermission
-	@ApiOperation(value = "Find Customer by citizen id or passport no.")
 	@PostMapping(value = "/getCustomerByCitizenIdOrPassportNo", produces = "application/json")
 	public ApiResponse<List<CustomerData>> getCustomerByCitizenIdOrPassportNo(
 			@RequestBody ApiPageRequest<CustomerListCriteria> request) {
@@ -290,7 +268,6 @@ public class CustomerController extends BaseController {
 	
 	
 	@ReadPermission
-	@ApiOperation(value = "Find Customer by phone no")
 	@PostMapping(value = "/getCustomerByPhoneNo", produces = "application/json")
 	public ApiResponse<List<CustomerData>> getCustomerByPhoneNo(@RequestBody ApiRequest<CustomerListCriteria> request) {
 		CustomerListCriteria criteria = request.getData();

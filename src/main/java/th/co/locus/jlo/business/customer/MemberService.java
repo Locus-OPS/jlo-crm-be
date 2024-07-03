@@ -9,13 +9,11 @@ import th.co.locus.jlo.business.customer.bean.MemberAttachmentData;
 import th.co.locus.jlo.business.customer.bean.MemberCardData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.business.customer.bean.MemberPointData;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.SearchTransactionCriteriaModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.TransactionModelBean;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
 
 public interface MemberService {
@@ -57,8 +55,5 @@ public interface MemberService {
 	ServiceResult<MemberCardData> saveReIssuesCard(MemberCardData cardData);
 
 	ServiceResult<MemberCardData> saveBlockCard(MemberCardData cardData);
-
-	ServiceResult<Page<TransactionModelBean>> getMemberTransactionList(SearchTransactionCriteriaModelBean data,
-			PageRequest pageRequest);	
 
 }

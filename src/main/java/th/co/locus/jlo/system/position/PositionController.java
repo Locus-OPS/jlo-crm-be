@@ -8,23 +8,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.common.util.StringUtil;
-import th.co.locus.jlo.config.security.annotation.ReadPermission;
-import th.co.locus.jlo.config.security.annotation.WritePermission;
+import th.co.locus.jlo.common.annotation.ReadPermission;
+import th.co.locus.jlo.common.annotation.WritePermission;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
+import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.system.position.bean.PositionCriteriaModelBean;
 import th.co.locus.jlo.system.position.bean.PositionModelBean;
 
-@Api(value = "API for Position Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/position")
 public class PositionController extends BaseController {
@@ -33,10 +24,9 @@ public class PositionController extends BaseController {
 	private PositionService positionService;
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Position List")
 	@PostMapping(value = "/getPositionList", produces = "application/json")
 	public ApiPageResponse<List<PositionModelBean>> getPositionList(@RequestBody ApiPageRequest<PositionCriteriaModelBean> request) {
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		request.getData().setBuId(getBuId());
 		PageRequest pageRequest = getPageRequest(request);
 		ServiceResult<Page<PositionModelBean>> serviceResult = positionService.getPositionList(request.getData(), pageRequest);
@@ -48,11 +38,10 @@ public class PositionController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Create or Update Position")
 	@PostMapping(value = "/savePosition", produces = "application/json")
 	public ApiResponse<PositionModelBean> savePosition(@RequestBody ApiRequest<PositionModelBean> request) {
 		ServiceResult<PositionModelBean> serviceResult;
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		request.getData().setCreatedBy(getUserId());
 		request.getData().setUpdatedBy(getUserId());
 		request.getData().setBuId(getBuId());
@@ -68,7 +57,6 @@ public class PositionController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Delete Position")
 	@PostMapping(value = "/deletePosition", produces = "application/json")
 	public ApiResponse<Integer> deletePosition(@RequestBody ApiRequest<PositionModelBean> request) {
 		return ApiResponse.success(positionService.deletePosition(request.getData()).getResult());

@@ -3,7 +3,7 @@ package th.co.locus.jlo.system.business_unit.bean;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import th.co.locus.jlo.common.SortingModelBean;
+import th.co.locus.jlo.common.bean.SortingModelBean;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

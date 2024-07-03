@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
@@ -20,8 +20,8 @@ import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFolderSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKeywordModelBean;
-import th.co.locus.jlo.util.file.FileService;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.system.file.FileService;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
 @Service
 public class KbServiceImpl extends BaseService implements KbService {

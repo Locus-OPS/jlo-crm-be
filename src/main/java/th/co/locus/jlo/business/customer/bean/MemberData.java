@@ -41,11 +41,12 @@ public class MemberData {
 	
 	private Integer buId;
 	private Date approvedDate;
-	private String approvedBy;
+	private Long approvedBy;
+	private String approvedByName;
 	private Date   createdDate;
-	private String createdBy;
+	private Long createdBy;
 	private Date   updatedDate;
-	private String updatedBy;
+	private Long updatedBy;
 	
 	
 	private MemberCardData memberCardNoData;

@@ -7,9 +7,9 @@ import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 
 public interface CustomerService {
 

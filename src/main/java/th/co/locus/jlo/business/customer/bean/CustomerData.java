@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.ToString;
-import th.co.locus.jlo.common.ChangeLogBean;
 
 @Data
 @ToString
@@ -44,17 +43,18 @@ public class CustomerData {
 	private Integer programId;
 	
 	private Date   approvedDate;
-	private String approvedBy;
+	private Long approvedBy;
+	private String approvedByName;
 	private Date   createdDate;
-	private String createdBy;
+	private Long createdBy;
 	private Date   updatedDate;
-	private String updatedBy;
+	private Long updatedBy;
 	private Integer buId;
 	
 	private Integer memberId;
 	
 	private List<AddressData> address;
-	private List<ChangeLogBean> changeLog;
+//	private List<ChangeLogBean> changeLog;
 	
 	private String memberCardNo;
 	

@@ -29,9 +29,9 @@ public class MemberCardData {
 	private Date cardLastBlockDate;
 	private String reIssueReason;
 	private String reIssueCardNo;
-	private String createdBy;
+	private Long createdBy;
 	private Date createdDate;
-	private String updatedBy;
+	private Long updatedBy;
 	private Date updatedDate;
 	
 	private String tierName;

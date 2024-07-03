@@ -19,27 +19,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.annotation.ReadPermission;
+import th.co.locus.jlo.common.annotation.WritePermission;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
-import th.co.locus.jlo.common.util.StringUtil;
-import th.co.locus.jlo.config.security.annotation.ReadPermission;
-import th.co.locus.jlo.config.security.annotation.WritePermission;
 import th.co.locus.jlo.system.user.bean.LoginLogCriteriaModelBean;
 import th.co.locus.jlo.system.user.bean.LoginLogModelBean;
 import th.co.locus.jlo.system.user.bean.UserDataModelBean;
 import th.co.locus.jlo.system.user.bean.UserListCriteriaModelBean;
-import th.co.locus.jlo.util.file.FileService;
+import th.co.locus.jlo.system.file.FileService;
 
-@Api(value = "API for User Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/user")
 public class UserController extends BaseController {
@@ -54,7 +44,6 @@ public class UserController extends BaseController {
 	private FileService fileService;
 
 	 
-	@ApiOperation(value = "Get User List")
 	@PostMapping(value = "/getUserList", produces = "application/json")
 	public ApiPageResponse<List<UserDataModelBean>> getUserList(@RequestBody ApiPageRequest<UserListCriteriaModelBean> request) {
 		PageRequest pageRequest = getPageRequest(request);
@@ -68,11 +57,10 @@ public class UserController extends BaseController {
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Create or Update User")
 	@PostMapping(value = "/saveUser", produces = "application/json")
 	public ApiResponse<UserDataModelBean> saveUser(@RequestBody ApiRequest<UserDataModelBean> request) {
 		UserDataModelBean userDataModelBean = request.getData();
-		StringUtil.nullifyObject(userDataModelBean);
+		CommonUtil.nullifyObject(userDataModelBean);
 		userDataModelBean.setCreatedBy(getUserId());
 		userDataModelBean.setUpdatedBy(getUserId());
 		ServiceResult<UserDataModelBean> serviceResult;
@@ -88,14 +76,12 @@ public class UserController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Delete User")
 	@PostMapping(value = "/deleteUser", produces = "application/json")
 	public ApiResponse<Integer> deleteprogram(@RequestBody ApiRequest<Long> request) {
 		return ApiResponse.success(userService.deleteUser(request.getData()).getResult());
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Upload Profile Image")
 	@PostMapping(value = "/upload")
 	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id,
 			@RequestParam("userId") String userId) {
@@ -111,7 +97,6 @@ public class UserController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Get Profile Image")
 	@GetMapping(value = "/profile_image/{fileName:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> getProfileImage(@PathVariable String fileName) {
@@ -120,7 +105,6 @@ public class UserController extends BaseController {
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get User Login Log List")
 	@PostMapping(value = "/getUserLoginLogList", produces = "application/json")
 	public ApiPageResponse<List<LoginLogModelBean>> getUserLoginLogList(@RequestBody ApiPageRequest<LoginLogCriteriaModelBean> request) {
 		PageRequest pageRequest = getPageRequest(request);

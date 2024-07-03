@@ -16,17 +16,13 @@ import th.co.locus.jlo.business.customer.bean.MemberAttachmentData;
 import th.co.locus.jlo.business.customer.bean.MemberCardData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.business.customer.bean.MemberPointData;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.business.loyalty.engine.EngineTxnService;
-import th.co.locus.jlo.business.loyalty.engine.bean.TransactionEnrollModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.SearchTransactionCriteriaModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.TransactionModelBean;
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.util.file.FileService;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.system.file.FileService;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
 @Slf4j
 @Service
@@ -34,9 +30,6 @@ public class MemberServiceImpl extends BaseService implements MemberService {
 	
 	@Autowired
 	private FileService fileService;
-	
-	@Autowired
-	private EngineTxnService engineTxnService;
 	
 	@Override
 	@Transactional
@@ -68,12 +61,7 @@ public class MemberServiceImpl extends BaseService implements MemberService {
 			commonDao.update("customer.updateCustomerStatus",cData);
 			
 			MemberData memberData = commonDao.selectOne("member.findMemberById", mData);
-			
-			// insert engine inital data
-			TransactionEnrollModelBean enroll = new TransactionEnrollModelBean();
-			enroll.setMemberId(mData.getMemberId().longValue());
-			engineTxnService.enrollMember(enroll);
-			
+
 			return success(memberData);
 		}
 		return fail();
@@ -245,14 +233,5 @@ public class MemberServiceImpl extends BaseService implements MemberService {
 	public ServiceResult<Page<CaseModelBean>> getMemberCaseList(CaseModelBean data, PageRequest pageRequest) {
 		return success(commonDao.selectPage("member.getMemberCaseList", data, pageRequest));
 	}
-	
 
-	//=========================================================================================================
-	//===================================================== Transaction =======================================
-	//=========================================================================================================
-	@Override
-	public ServiceResult<Page<TransactionModelBean>> getMemberTransactionList(SearchTransactionCriteriaModelBean data,
-			PageRequest pageRequest) {
-		return success(commonDao.selectPage("member.getMemberTransactionList", data, pageRequest));
-	}
 }

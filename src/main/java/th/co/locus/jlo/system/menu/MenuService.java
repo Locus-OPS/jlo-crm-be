@@ -2,13 +2,13 @@ package th.co.locus.jlo.system.menu;
 
 import java.util.List;
 
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.bean.TokenMenuRespModelBean;
 import th.co.locus.jlo.system.menu.bean.MenuModelBean;
 import th.co.locus.jlo.system.menu.bean.MenuRespModelBean;
 import th.co.locus.jlo.system.menu.bean.SearchMenuModelBean;
-import th.co.locus.jlo.system.menu.bean.TokenMenuRespModelBean;
 
 public interface MenuService {
 

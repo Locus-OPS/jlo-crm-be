@@ -7,10 +7,10 @@ import java.util.List;
 
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 
 /**
  * 

@@ -1,0 +1,10 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="file">
+	<insert id="createAttachment" keyColumn="ATT_ID" keyProperty="attId" useGeneratedKeys="true">
+		INSERT INTO TB_ATT (FILE_PATH, FILE_NAME, FILE_EXTENSION, FILE_SIZE, CREATED_BY, CREATED_DATE)
+		VALUES (#{filePath}, #{fileName}, #{fileExtension}, #{fileSize}, #{createdBy}, now())
+	</insert>
+</mapper>

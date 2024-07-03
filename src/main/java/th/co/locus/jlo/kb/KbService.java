@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.kb.modelbean.KbKeywordModelBean;
@@ -14,7 +14,7 @@ import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFolderSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKeywordModelBean;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
 public interface KbService {
 
