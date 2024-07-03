@@ -16,7 +16,7 @@
 			att.CREATED_BY as createdBy,
 			att.UPDATED_DATE as updatedDate,
 			att.UPDATED_BY as updatedBy
-		FROM loy_case_attachment att
+		FROM TB_CASE_ATTACHMENT att
 		left outer join tb_att attach on att.ATTACHMENT_ID = attach.ATT_ID
 		WHERE att.CASE_NUMBER = #{caseNumber}
 		AND att.BU_ID = #{buId}
@@ -26,7 +26,7 @@
 	
 	 <insert id="createCaseAttachment">
 	 
-		INSERT INTO loy_case_attachment
+		INSERT INTO TB_CASE_attachment
 		 (	 
 			ATTACHMENT_ID,
 			CASE_NUMBER,
@@ -62,7 +62,7 @@
 			att.CREATED_BY as createdBy ,
 			att.UPDATED_DATE as updatedDate,
 			att.UPDATED_BY as updatedBy
-		FROM loy_case_attachment att
+		FROM TB_CASE_ATTACHMENT att
 		left outer join tb_att attach on att.ATTACHMENT_ID =  attach.ATT_ID
 		WHERE att.CASE_ATT_ID = #{caseAttId} 
 		
@@ -71,7 +71,7 @@
    
 	
     <update id="updateCaseAttachment">
-		UPDATE loy_case_attachment
+		UPDATE TB_CASE_ATTACHMENT
 		SET
 			ATTACHMENT_ID = #{attachmentId}, 
 			UPDATED_DATE = NOW(),
@@ -82,7 +82,7 @@
 	
     <delete id="deleteCaseAttachment">
 		DELETE FROM
-		  loy_case_attachment
+		  TB_CASE_ATTACHMENT
 		WHERE
 		(CASE_ATT_ID =  #{caseAttId}) 
 	</delete>

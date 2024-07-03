@@ -19,7 +19,7 @@
 		    act.CREATED_BY as createdBy ,
 		    act.UPDATED_DATE as updatedDate,
     		act.UPDATED_BY as updatedBy
-		FROM loy_case_activity act    
+		FROM TB_CASE_ACTIVITY act    
 		 LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
 		LEFT OUTER JOIN tb_codebook cb1  on act.TYPE = cb1.CODE_ID  and cb1.CODE_TYPE ='ACT_TYPE'
 		LEFT OUTER JOIN tb_codebook cb2  on act.STATUS = cb2.CODE_ID  and cb2.CODE_TYPE ='ACT_STATUS'
@@ -30,7 +30,7 @@
 	</select>
 	
 	 <insert id="createCaseActivity">
-		INSERT INTO loy_case_activity
+		INSERT INTO TB_CASE_ACTIVITY
 		(
 			ACTIVITY_NUMBER,
 			CASE_NUMBER,
@@ -79,7 +79,7 @@
 		    act.CREATED_BY as createdBy ,
 		    act.UPDATED_DATE as updatedDate,
     		act.UPDATED_BY as updatedBy
-		FROM loy_case_activity act    
+		FROM TB_CASE_ACTIVITY act    
 		 LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
 		LEFT OUTER JOIN tb_codebook cb1  on act.TYPE = cb1.CODE_ID  and cb1.CODE_TYPE ='ACT_TYPE'
 		LEFT OUTER JOIN tb_codebook cb2  on act.STATUS = cb2.CODE_ID  and cb2.CODE_TYPE ='ACT_STATUS'
@@ -91,7 +91,7 @@
    
 	
     <update id="updateCaseActivity">
-		UPDATE  loy_case_activity
+		UPDATE  TB_CASE_ACTIVITY
 		SET 
 			TYPE = #{type},
 			STATUS = #{status},
@@ -107,7 +107,7 @@
 	
     <delete id="deleteCaseActivity">
 		DELETE FROM
-		  loy_case_activity
+		  TB_CASE_ACTIVITY
 		WHERE
 		 (ACTIVITY_NUMBER = #{activityNumber})
 	</delete>
