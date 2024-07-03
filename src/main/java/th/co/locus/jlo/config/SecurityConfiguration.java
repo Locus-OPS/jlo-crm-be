@@ -11,15 +11,20 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfiguration {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/common/auth/login", "/common/auth/refreshToken"
+    };
+    private static final String[] SWAGGER_WHITELIST = {
+            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/common/auth/login", "/common/auth/refreshToken").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/api/internationalization/getTranslation/").permitAll()
-                        .requestMatchers("/api/menu/getMenuRespList").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
