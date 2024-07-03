@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
 
 @Slf4j
 @Service

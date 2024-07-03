@@ -2,9 +2,9 @@ package th.co.locus.jlo.system.role;
 
 import java.util.List;
 
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.system.role.bean.RespModelBean;
 import th.co.locus.jlo.system.role.bean.RoleModelBean;
 import th.co.locus.jlo.system.role.bean.UpdateRespModelBean;

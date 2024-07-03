@@ -1,0 +1,329 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kb">
+	<select id="getKbTreeList" resultType="kbTreeModelBean">
+       	SELECT TMP.*
+        FROM (
+	        SELECT
+					0 AS ID,
+			    NULL PARENT_ID,
+			    #{type} AS TITLE,
+			    1 AS IS_FOLDER,
+			    NULL as SEQ,
+				'' as ICON
+			UNION
+	        SELECT
+				CONCAT('C', cat.CAT_ID) AS ID,
+			    case
+ 					when cat.PARENT_CAT_ID != 0 then CONCAT('C', cat.PARENT_CAT_ID)
+ 					else cat.PARENT_CAT_ID
+ 				end as PARENT_ID,
+			    cat.CAT_NAME AS TITLE,
+			    1 AS IS_FOLDER,
+			    cat.SEQ,
+				'' as ICON
+			FROM TB_CONTENT_CAT cat
+			WHERE cat.CONTENT_TYPE = #{type}
+				AND cat.BU_ID = #{buId}
+				AND (cat.PARENT_CAT_ID = 0 
+					OR EXISTS(
+						SELECT parent.CAT_ID
+						FROM tb_content_cat parent
+						WHERE cat.PARENT_CAT_ID = parent.CAT_ID
+					))
+			UNION
+			SELECT
+				content.CONTENT_ID AS ID,
+			    CONCAT('C', content.CAT_ID) AS PARENT_ID,
+			    content.TITLE,
+			    0 AS IS_FOLDER,
+			    content.SEQ,
+				ifnull(icon.ETC1, '') as ICON
+			FROM TB_CONTENT content
+			LEFT JOIN TB_CODEBOOK icon
+				ON icon.CODE_TYPE = 'CONTENT_ICON'
+					AND content.DISPLAY = icon.CODE_ID
+					AND icon.ACTIVE_FLAG = 'Y'
+			WHERE content.TYPE = #{type}
+				AND content.BU_ID = #{buId}
+				AND EXISTS (
+					SELECT cat.CAT_ID FROM tb_content_cat cat WHERE content.CAT_ID = cat.CAT_ID
+				)
+		) TMP
+        <where>
+        	<if test="isFolder != null">
+		    	AND TMP.IS_FOLDER = #{isFolder}
+		  	</if>
+        </where>
+		ORDER BY IS_FOLDER DESC, SEQ ASC
+	</select>
+	
+	<select id="findKbDetailById" resultType="kbModelBean">
+		SELECT
+			content.CONTENT_ID,
+			content.CAT_ID,
+            cat.CAT_NAME,
+		    content.TYPE, 
+		    content.SUB_TYPE, 
+		    content.TITLE,
+		    content.CONTENT_STATUS,
+		    content.DISPLAY,
+		    content.SEQ,
+		    content.SEND_DOC_FLAG, 
+		    content.START_DATE, 
+		    content.START_DATE as START_TIME, 
+		    content.END_DATE,
+		    content.END_DATE as END_TIME,
+		    content.CREATED_BY, 
+		    content.CREATED_DATE,
+		    content.UPDATED_BY,
+		    content.UPDATED_DATE
+		FROM TB_CONTENT content
+        left join TB_CONTENT_CAT cat
+			on content.CAT_ID = cat.CAT_ID
+		WHERE content.CONTENT_ID = #{contentId}
+	</select>
+	
+	<select id="findKbDetailInfoById" resultType="kbDetailInfoModelBean">
+		SELECT
+			CONTENT_ID,
+			URL,
+			DESCRIPTION
+		FROM
+			TB_CONTENT
+		WHERE CONTENT_ID = #{contentId}
+	</select>
+	
+	<insert id="createKbDetail" keyColumn="CONTENT_ID" keyProperty="contentId" useGeneratedKeys="true">
+		INSERT INTO TB_CONTENT (
+			CAT_ID,
+		    TYPE,
+		    SUB_TYPE,
+		    TITLE,
+		    CONTENT_STATUS,
+		    DISPLAY,
+		    SEQ,
+		    SEND_DOC_FLAG,
+		    START_DATE,
+		    END_DATE,
+		    CREATED_BY,
+		    CREATED_DATE,
+		    BU_ID
+		) VALUES (
+			#{catId},
+			#{type},
+			#{subType},
+			#{title},
+			#{contentStatus},
+			#{display},
+			#{seq},
+			#{sendDocFlag},
+			#{startDateTime},
+			#{endDateTime},
+			#{createdBy},
+			now(),
+			#{buId}
+		)
+	</insert>
+	<update id="updateKbDetail">
+		UPDATE TB_CONTENT
+		SET
+			CAT_ID = #{catId},
+		    SUB_TYPE = #{subType},
+		    TITLE = #{title},
+		    CONTENT_STATUS = #{contentStatus},
+		    DISPLAY = #{display},
+		    SEQ = #{seq},
+		    SEND_DOC_FLAG = #{sendDocFlag},
+		    START_DATE = #{startDateTime},
+		    END_DATE = #{endDateTime},
+		    UPDATED_BY = #{updatedBy},
+		    UPDATED_DATE = now()
+		WHERE
+			CONTENT_ID = #{contentId}
+	</update>
+	
+	<update id="updateKbDetailInfo">
+		UPDATE TB_CONTENT
+		SET
+			URL = #{url},
+		    DESCRIPTION = #{description},
+		    UPDATED_BY = #{updatedBy},
+		    UPDATED_DATE = now()
+		WHERE CONTENT_ID = #{contentId}
+	</update>
+	
+	<select id="findKeywordByContentId" resultType="kbKeywordModelBean">
+		SELECT 
+			KEY_ID, CONTENT_ID, KEYWORD
+		FROM
+			TB_CONTENT_KEYWORD
+		WHERE	
+			CONTENT_ID = #{contentId}
+	</select>
+	<delete id="deleteKeywordByContentId">
+		DELETE FROM TB_CONTENT_KEYWORD WHERE CONTENT_ID = #{contentId}
+	</delete>
+	<insert id="createKeyword">
+		INSERT INTO TB_CONTENT_KEYWORD (CONTENT_ID, KEYWORD, CREATED_BY, CREATED_DATE, UPDATED_BY, UPDATED_DATE)
+		VALUES 
+		<foreach collection="keywordList" item="item" separator=",">
+		( #{item.contentId}, #{item.keyword}, #{createdBy}, now(), #{createdBy}, now() )
+		</foreach>
+		;
+	</insert>
+	<select id="findDocumentByContentId" resultType="kbDocumentModelBean">
+		SELECT 
+			A.CONTENT_ATT_ID
+			, A.ATT_ID
+			, A.CONTENT_ID
+			, A.TITLE
+			, A.DESCP
+			, A.MAIN_FLAG 
+			, A.CREATED_BY
+			, A.CREATED_DATE
+			, A.UPDATED_BY
+			, A.UPDATED_DATE
+			, B.FILE_PATH
+			, B.FILE_NAME
+			, B.FILE_EXTENSION
+			, B.FILE_SIZE
+		FROM TB_CONTENT_ATT A
+		INNER JOIN TB_ATT B ON A.ATT_ID = B.ATT_ID
+		<where>
+		  	<if test="contentId != null">
+		    	AND A.CONTENT_ID = #{contentId}
+		  	</if>
+		  	<if test="mainFlag != null">
+		    	AND A.MAIN_FLAG  = #{mainFlag}
+		  	</if>
+		</where>
+		ORDER BY UPDATED_DATE DESC
+	</select>
+	
+	<select id="findKbDocumentById" resultType="kbDocumentModelBean">
+		SELECT 
+			A.CONTENT_ATT_ID
+			, A.ATT_ID
+			, A.CONTENT_ID
+			, A.TITLE
+			, A.DESCP
+			, A.MAIN_FLAG 
+			, A.CREATED_BY
+			, A.CREATED_DATE
+			, A.UPDATED_BY
+			, A.UPDATED_DATE
+			, B.FILE_PATH
+			, B.FILE_NAME
+			, B.FILE_EXTENSION
+			, B.FILE_SIZE
+		FROM
+			TB_CONTENT_ATT A
+		INNER JOIN TB_ATT B ON A.ATT_ID = B.ATT_ID
+		WHERE
+			CONTENT_ATT_ID = #{contentAttId}
+	</select>
+	<insert id="createKbDocument" keyColumn="CONTENT_ATT_ID" keyProperty="contentAttId" useGeneratedKeys="true">
+		INSERT INTO TB_CONTENT_ATT (ATT_ID, CONTENT_ID, TITLE, DESCP, MAIN_FLAG, CREATED_BY, CREATED_DATE)
+		VALUES (#{attId}, #{contentId}, #{title}, #{descp}, #{mainFlag}, #{createdBy}, now())
+	</insert>
+	<update id="updateKbDocument">
+		UPDATE TB_CONTENT_ATT 
+		SET
+			TITLE = #{title}
+			, DESCP = #{descp}
+			, ATT_ID = #{attId}
+			, MAIN_FLAG = #{mainFlag}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = now()
+		WHERE
+			CONTENT_ATT_ID  = #{contentAttId}
+	</update>
+	<update id="updateKbDocumentMainFlagNoByContentId">
+		UPDATE TB_CONTENT_ATT SET MAIN_FLAG = 'N' WHERE CONTENT_ID  = #{contentId} 
+	</update>
+	<delete id="deleteKbDocumentById">
+		DELETE FROM TB_CONTENT_ATT WHERE CONTENT_ATT_ID = #{contentAttId}
+	</delete>
+	
+	<insert id="createKbFolder" keyColumn="CAT_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TB_CONTENT_CAT (
+			CONTENT_TYPE,
+			CAT_NAME,
+			PARENT_CAT_ID,
+			SEQ,
+			BU_ID,
+			CREATED_BY,
+			CREATED_DATE
+		) VALUES (
+			#{contentType},
+			#{title},
+			#{parentId},
+			#{seq},
+			#{buId},
+			#{createdBy},
+			now()
+		)
+	</insert>
+	
+	<update id="updateKbFolder">
+		UPDATE TB_CONTENT_CAT
+		SET CAT_NAME = #{title}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = now()
+		WHERE CAT_ID = #{id}
+	</update>
+	
+	<select id="findKbFolderById" resultType="kbTreeModelBean">
+		SELECT 
+			CAT_ID as ID
+			, PARENT_CAT_ID as PARENT_ID
+			, CAT_NAME as TITLE
+			, CONTENT_TYPE
+			, CREATED_BY
+			, CREATED_DATE
+			, UPDATED_BY
+			, UPDATED_DATE
+			, BU_ID
+		FROM TB_CONTENT_CAT
+		WHERE CAT_ID = #{id}
+	</select>
+	
+	<delete id="deleteKbFolderById">
+		DELETE FROM TB_CONTENT_CAT WHERE CAT_ID = #{catId}
+	</delete>
+	
+	<update id="updateKbFolderSeq" statementType="CALLABLE">
+	  	call UPDATE_CONTENT_CAT_SEQ(
+	    	#{catId},
+	    	#{moveFlag}, -- 0 = Move up, 1 = Move down
+	    	#{updatedBy}
+	  	)
+	 </update>
+	
+	<delete id="deleteKbFileById">
+		DELETE FROM TB_CONTENT WHERE CONTENT_ID = #{contentId}
+	</delete>
+	
+	<update id="updateKbFileSeq" statementType="CALLABLE">
+	  	call UPDATE_CONTENT_SEQ(
+	    	#{contentId},
+	    	#{moveFlag}, -- 0 = Move up, 1 = Move down
+	    	#{updatedBy}
+	  	)
+	 </update>
+	
+	<select id="findMaxSequenceContent" resultType="int">
+		select ifnull(MAX(SEQ), 0)
+		from TB_CONTENT
+		where CAT_ID = #{catId}
+	</select>
+	
+	<select id="findMaxSequenceContentFolder" resultType="int">
+		select ifnull(MAX(SEQ), 0)
+		from TB_CONTENT_CAT
+		where PARENT_CAT_ID = #{parentId}
+	</select>
+</mapper>

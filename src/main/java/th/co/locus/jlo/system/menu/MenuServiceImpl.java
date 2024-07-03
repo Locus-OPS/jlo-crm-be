@@ -6,21 +6,21 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.bean.TokenMenuRespModelBean;
+import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.common.util.selector.CommonSelectorService;
 import th.co.locus.jlo.system.menu.bean.MenuModelBean;
 import th.co.locus.jlo.system.menu.bean.MenuRespModelBean;
 import th.co.locus.jlo.system.menu.bean.SearchMenuModelBean;
-import th.co.locus.jlo.system.menu.bean.TokenMenuRespModelBean;
-import th.co.locus.jlo.util.selector.SelectorService;
 
 @Service
 public class MenuServiceImpl extends BaseService implements MenuService {
 
 	@Autowired
-	private SelectorService selectorService;
+	private CommonSelectorService commonSelectorService;
 	
     @Override
     public ServiceResult<Page<MenuModelBean>> getMenuList(SearchMenuModelBean bean, PageRequest pageRequest) {
@@ -31,7 +31,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     public ServiceResult<MenuModelBean> createMenu(MenuModelBean bean) {
         int result = commonDao.update("menu.createMenu", bean);
         if (result > 0) {
-        	selectorService.clearParentMenuCache();
+            commonSelectorService.clearParentMenuCache();
             return success(commonDao.selectOne("menu.findMenuById", bean));
         }
         return fail();
@@ -41,7 +41,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     public ServiceResult<MenuModelBean> updateMenu(MenuModelBean bean) {
         int result = commonDao.update("menu.updateMenu", bean);
         if (result > 0) {
-        	selectorService.clearParentMenuCache();
+            commonSelectorService.clearParentMenuCache();
             return success(commonDao.selectOne("menu.findMenuById", bean));
         }
         return fail();

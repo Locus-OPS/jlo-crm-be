@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import th.co.locus.jlo.common.BaseModelBean;
+import th.co.locus.jlo.common.bean.BaseModelBean;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

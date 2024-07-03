@@ -6,7 +6,7 @@ package th.co.locus.jlo.business.consulting.bean;
 import java.io.Serializable;
 
 import lombok.Data;
-import th.co.locus.jlo.common.BaseModelBean;
+import th.co.locus.jlo.common.bean.BaseModelBean;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class ConsultingModelBean extends BaseModelBean implements Serializable {
 	private String title;
 	private String callingNumber;
 	private String callObjectId;
-	private String consOwnerId;
+	private Long consOwnerId;
 	private String note;
 	private String consultingTypeCd;
 	private String contactId; 

@@ -8,25 +8,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
-import th.co.locus.jlo.common.util.StringUtil;
-import th.co.locus.jlo.config.security.annotation.ReadPermission;
-import th.co.locus.jlo.config.security.annotation.WritePermission;
+import th.co.locus.jlo.common.annotation.ReadPermission;
+import th.co.locus.jlo.common.annotation.WritePermission;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
+import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.system.business_unit.bean.BusinessUnitModelBean;
 import th.co.locus.jlo.system.business_unit.bean.SearchBusinessUnitModelBean;
 
 @Slf4j
-@Api(value = "API for Internationalization Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/business-unit")
 public class BusinessUnitController extends BaseController {
@@ -35,12 +26,11 @@ public class BusinessUnitController extends BaseController {
 	private BusinessUnitService businessUnitService;
 
 	@ReadPermission
-	@ApiOperation(value = "Get Business Unit List")
 	@PostMapping(value = "/getBusinessUnitList", produces = "application/json")
 	public ApiPageResponse<List<BusinessUnitModelBean>> getBusinessUnitList(
 			@RequestBody ApiPageRequest<SearchBusinessUnitModelBean> request) {
 		
-		StringUtil.nullifyObject(request.getData());
+		CommonUtil.nullifyObject(request.getData());
 		
 		PageRequest pageRequest = getPageRequest(request);
 		ServiceResult<Page<BusinessUnitModelBean>> serviceResult = businessUnitService
@@ -59,7 +49,6 @@ public class BusinessUnitController extends BaseController {
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Create Business Unit")
 	@PostMapping(value = "/createBusinessUnit", produces = "application/json")
 	public ApiResponse<BusinessUnitModelBean> createBusinessUnit(
 			@RequestBody ApiRequest<BusinessUnitModelBean> request) {
@@ -73,7 +62,6 @@ public class BusinessUnitController extends BaseController {
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Update Business Unit")
 	@PostMapping(value = "/updateBusinessUnit", produces = "application/json")
 	public ApiResponse<BusinessUnitModelBean> updateBusinessUnit(
 			@RequestBody ApiRequest<BusinessUnitModelBean> request) {
@@ -87,7 +75,6 @@ public class BusinessUnitController extends BaseController {
 	}
 
 	@WritePermission
-	@ApiOperation(value = "Delete Business Unit")
 	@PostMapping(value = "/deleteBusinessUnit", produces = "application/json")
 	public ApiResponse<Integer> deleteBusinessUnit(@RequestBody ApiRequest<BusinessUnitModelBean> request) {
 		return ApiResponse.success(businessUnitService.deleteBusinessUnit(request.getData()).getResult());

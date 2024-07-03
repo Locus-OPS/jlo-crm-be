@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.system.internationalization.bean.InternationalizationModelBean;
 import th.co.locus.jlo.system.internationalization.bean.SaveInternationalizationModelBean;
 import th.co.locus.jlo.system.internationalization.bean.SearchInternationalizationModelBean;

@@ -18,35 +18,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.MemberAttachmentData;
 import th.co.locus.jlo.business.customer.bean.MemberCardData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.business.customer.bean.MemberPointData;
-import th.co.locus.jlo.business.loyalty.cases.bean.CaseModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.SearchTransactionCriteriaModelBean;
-import th.co.locus.jlo.business.loyalty.transaction.bean.TransactionModelBean;
-import th.co.locus.jlo.common.ApiPageRequest;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.Page;
-import th.co.locus.jlo.common.PageRequest;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.common.annotation.ReadPermission;
+import th.co.locus.jlo.common.annotation.WritePermission;
+import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
-import th.co.locus.jlo.common.util.StringUtil;
-import th.co.locus.jlo.config.security.annotation.ReadPermission;
-import th.co.locus.jlo.config.security.annotation.WritePermission;
-import th.co.locus.jlo.util.file.FileService;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.system.file.FileService;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
 
 @Slf4j
-@Api(value = "API for Member Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/member")
 public class MemberController extends BaseController {
@@ -63,12 +51,11 @@ public class MemberController extends BaseController {
 	//===================================================== Member ============================================
 	//=========================================================================================================
 	@WritePermission
-	@ApiOperation(value = "Update Member")
 	@PostMapping(value = "/saveMember", produces = "application/json")
 	public ApiResponse<MemberData> saveMember(@RequestBody ApiRequest<MemberData> request){
 		
 		MemberData mData = request.getData();
-		StringUtil.nullifyObject(mData);
+		CommonUtil.nullifyObject(mData);
 		mData.setUpdatedBy(getUserId());
 		ServiceResult<MemberData> serviceResult = memberService.updateMember(mData);
 		if (serviceResult.isSuccess()) {
@@ -78,7 +65,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Member By Id")
 	@PostMapping(value = "/getMemberById", produces = "application/json")
 	public ApiResponse<MemberData> getMemberById(@RequestBody ApiPageRequest<MemberData> request) {
 		log.info("MemberCriteria : " + request.getData());
@@ -112,7 +98,6 @@ public class MemberController extends BaseController {
 	//=========================================================================================================
 	//===================================================== Address ===========================================
 	//=========================================================================================================
-	@ApiOperation(value = "Get Member Address List")
 	@PostMapping(value = "/getMemberAddressList", produces = "application/json")
 	public ApiPageResponse<List<AddressData>> getMemberAddressList(@RequestBody ApiPageRequest<AddressData> request) {
 		request.getData().setBuId(getBuId());
@@ -128,7 +113,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Create or Update Member Address")
 	@PostMapping(value = "/saveMemberAddress", produces = "application/json")
 	public ApiResponse<AddressData> saveMemberAddress(@RequestBody ApiRequest<AddressData> request){
 		ServiceResult<AddressData> serviceResult;
@@ -150,7 +134,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Delete Member Address")
 	@PostMapping(value = "/deleteMemberAddress", produces = "application/json")
 	public ApiResponse<Integer> deleteMemberAddress(@RequestBody ApiRequest<AddressData> request) {
 		return ApiResponse.success(memberService.deleteMemberAddress(request.getData()).getResult());
@@ -158,12 +141,11 @@ public class MemberController extends BaseController {
 	
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Member Address By Primary")
 	@PostMapping(value = "/getMemberAddressPrimary", produces = "application/json")
 	public ApiResponse<AddressData> getCustomerAddressPrimary(@RequestBody ApiPageRequest<AddressData> request) {
 		log.info("CustomerListCriteria : "+request.getData());
 		AddressData addressCri = request.getData();
-		StringUtil.nullifyObject(addressCri);
+		CommonUtil.nullifyObject(addressCri);
 		addressCri.setPrimaryYn("Y");
 		ServiceResult<AddressData> serviceResult = memberService.getMemberAddressByPrimary(addressCri);
 		if (serviceResult.isSuccess()) {
@@ -180,7 +162,6 @@ public class MemberController extends BaseController {
 	//===================================================== Card ==============================================
 	//=========================================================================================================
 	@ReadPermission
-	@ApiOperation(value = "Get Member Card List")
 	@PostMapping(value = "/getMemberCardList", produces = "application/json")
 	public ApiPageResponse<List<MemberCardData>> getMemberCardList(@RequestBody ApiPageRequest<MemberCardData> request) {
 		log.info("MemberId : "+request.getData());
@@ -198,7 +179,6 @@ public class MemberController extends BaseController {
 	//===================================================== Attachment ========================================
 	//=========================================================================================================
 	@ReadPermission
-	@ApiOperation(value = "Get Member Attachment List")
 	@PostMapping(value = "/getMemberAttachmentList", produces = "application/json")
 	public ApiPageResponse<List<MemberAttachmentData>> getMemberAttachmentList(@RequestBody ApiPageRequest<MemberAttachmentData> request) {
 		log.info("MemberId : "+request.getData());
@@ -213,7 +193,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Create Member Attachment")
 	@PostMapping(value = "/createAttachment")
 	public ApiResponse<MemberAttachmentData> createAttachment(@RequestParam(value = "file", required = false) MultipartFile file,
 			@RequestParam(value = "memberId", required = false) Integer memberId,
@@ -263,7 +242,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Delete Member Attachment")
 	@PostMapping(value = "/deleteMemberAttachment", produces = "application/json")
 	public ApiResponse<Boolean> deleteMemberAttachment(@RequestBody ApiPageRequest<MemberAttachmentData> request) {	
 		MemberAttachmentData mData = request.getData();
@@ -278,7 +256,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Member Document")
 	@GetMapping(value = "/doc")
 	@ResponseBody
 	public ResponseEntity<Resource> getProfileImage(@RequestParam("filePath") String filePath) {
@@ -290,7 +267,6 @@ public class MemberController extends BaseController {
 	//===================================================== Case ==============================================
 	//=========================================================================================================
 	@ReadPermission
-	@ApiOperation(value = "Get Member Case List")
 	@PostMapping(value = "/getMemberCaseList", produces = "application/json")
 	public ApiPageResponse<List<CaseModelBean>> getMemberCaseList(@RequestBody ApiPageRequest<CaseModelBean> request) {
 		log.info("CaseModelBean : "+request.getData());
@@ -304,26 +280,7 @@ public class MemberController extends BaseController {
 		}
 	}
 	
-	//=========================================================================================================
-	//===================================================== Transaction ==============================================
-	//=========================================================================================================
-	@ReadPermission
-	@ApiOperation(value = "Get Member Transaction List")
-	@PostMapping(value = "/getMemberTransactionList", produces = "application/json")
-	public ApiPageResponse<List<TransactionModelBean>> getMemberTransactionList(@RequestBody ApiPageRequest<SearchTransactionCriteriaModelBean> request) {
-		log.info("SearchTransactionCriteriaModelBean : "+request.getData());
-		
-		PageRequest pageRequest = getPageRequest(request);
-		ServiceResult<Page<TransactionModelBean>> serviceResult = memberService.getMemberTransactionList(request.getData(), pageRequest);
-		if (serviceResult.isSuccess()) {
-			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
-		} else {
-			return ApiPageResponse.fail();
-		}
-	}
-	
 	@WritePermission
-	@ApiOperation(value = "Block Card")
 	@PostMapping(value = "/saveBlockCard", produces = "application/json")
 	public ApiResponse<MemberCardData> saveBlockCard(@RequestBody ApiRequest<MemberCardData> request){
 		
@@ -337,7 +294,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@ReadPermission
-	@ApiOperation(value = "Get Member Tier List")
 	@PostMapping(value = "/getMemberTierList", produces = "application/json")
 	public ApiResponse<List<SelectorModelBean>> getMemberTierList(@RequestBody ApiRequest<MemberCardData> request) {
 		MemberCardData mData = request.getData();
@@ -353,7 +309,6 @@ public class MemberController extends BaseController {
 	}
 	
 	@WritePermission
-	@ApiOperation(value = "Re-Issues Card")
 	@PostMapping(value = "/saveReIssuesCard", produces = "application/json")
 	public ApiResponse<MemberCardData> saveReIssuesCard(@RequestBody ApiRequest<MemberCardData> request){
 		
@@ -367,7 +322,6 @@ public class MemberController extends BaseController {
 	}
 
 	@ReadPermission
-	@ApiOperation(value = "Get Member point")
 	@PostMapping(value = "/getMemberPoint", produces = "application/json")
 	public ApiResponse<MemberPointData> getMemberPoint(@RequestBody ApiPageRequest<MemberPointData> request) {
 		MemberPointData mPoint = request.getData();

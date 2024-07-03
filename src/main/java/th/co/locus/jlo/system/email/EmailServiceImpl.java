@@ -3,14 +3,12 @@ package th.co.locus.jlo.system.email;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import th.co.locus.jlo.common.BaseService;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
 
 @Service
 public class EmailServiceImpl extends BaseService implements EmailService {

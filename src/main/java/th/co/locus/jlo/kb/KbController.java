@@ -20,15 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.micrometer.core.instrument.util.StringUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import th.co.locus.jlo.common.ApiPageResponse;
-import th.co.locus.jlo.common.ApiRequest;
-import th.co.locus.jlo.common.ApiResponse;
-import th.co.locus.jlo.common.BaseController;
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.ApiPageResponse;
+import th.co.locus.jlo.common.bean.ApiRequest;
+import th.co.locus.jlo.common.bean.ApiResponse;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
-import th.co.locus.jlo.common.util.StringUtil;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.kb.modelbean.KbKeywordModelBean;
@@ -37,10 +34,9 @@ import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFolderSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKeywordModelBean;
-import th.co.locus.jlo.util.file.FileService;
-import th.co.locus.jlo.util.file.modelbean.FileModelBean;
+import th.co.locus.jlo.system.file.FileService;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
-@Api(value = "API for Knowledge Base Management", consumes = "application/json", produces = "application/json")
 @RestController
 @RequestMapping("api/kb")
 public class KbController extends BaseController {
@@ -54,7 +50,6 @@ public class KbController extends BaseController {
 	@Autowired
 	private FileService fileService;
 	
-	@ApiOperation(value = "Get KB Tree List")
 	@PostMapping(value = "/getKbTreeList", produces = "application/json")
 	public ApiResponse<List<KbTreeModelBean>> getKbTreeList(@RequestBody ApiRequest<String> request) {
 		ServiceResult<List<KbTreeModelBean>> serviceResult = kbService.getKbTreeList(request.getData(), getBuId());
@@ -65,7 +60,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Get KB Tree Folder List")
 	@PostMapping(value = "/getKbTreeFolderList", produces = "application/json")
 	public ApiResponse<List<KbTreeModelBean>> getKbTreeFolderList(@RequestBody ApiRequest<String> request) {
 		ServiceResult<List<KbTreeModelBean>> serviceResult = kbService.getKbTreeList(request.getData(), getBuId(), 1);
@@ -76,7 +70,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Create or Update KB")
 	@PostMapping(value = "/saveKbDetail", produces = "application/json")
 	public ApiResponse<KbModelBean> saveKbDetail(@RequestBody ApiRequest<KbModelBean> request) {
 		KbModelBean kbModelBean = request.getData();
@@ -100,14 +93,13 @@ public class KbController extends BaseController {
 		return ApiResponse.fail();
 	}
 	
-	@ApiOperation(value = "Create or Update KB Detail Info")
 	@PostMapping(value = "/saveKbDetailInfo", produces = "application/json")
 	public ApiResponse<KbDetailInfoModelBean> saveKbDetailInfo(@RequestBody ApiRequest<KbDetailInfoModelBean> request) {
 		KbDetailInfoModelBean kbDetailInfoModelBean = request.getData();
 		kbDetailInfoModelBean.setCreatedBy(getUserId());
 		kbDetailInfoModelBean.setUpdatedBy(getUserId());
 		kbDetailInfoModelBean.setBuId(getBuId());
-		StringUtil.nullifyObject(kbDetailInfoModelBean);
+		CommonUtil.nullifyObject(kbDetailInfoModelBean);
 		ServiceResult<KbDetailInfoModelBean> serviceResult = kbService.updateKbDetailInfo(kbDetailInfoModelBean);
 		if (serviceResult.isSuccess()) {
 			return ApiResponse.success(serviceResult.getResult());
@@ -115,7 +107,6 @@ public class KbController extends BaseController {
 		return ApiResponse.fail();
 	}
 	
-	@ApiOperation(value = "Find KB Detail By Content ID")
 	@PostMapping(value = "/findKbDetailById", produces = "application/json")
 	public ApiResponse<KbModelBean> findKbDetailById(@RequestBody ApiRequest<Long> request) {
 		Long contentId = request.getData();
@@ -130,7 +121,6 @@ public class KbController extends BaseController {
 		return ApiResponse.fail();
 	}
 
-	@ApiOperation(value = "Find KB Detail Information By Content ID")
 	@PostMapping(value = "/findKbDetailInfoById", produces = "application/json")
 	public ApiResponse<KbDetailInfoModelBean> findKbDetailInfoById(@RequestBody ApiRequest<Long> request) {
 		ServiceResult<KbDetailInfoModelBean> serviceResult = kbService.findKbDetailInfoById(request.getData());
@@ -140,7 +130,6 @@ public class KbController extends BaseController {
 		return ApiResponse.fail();
 	}
 
-	@ApiOperation(value = "Get KB Keyword List")
 	@PostMapping(value = "/getKbKeywordList", produces = "application/json")
 	public ApiResponse<List<KbKeywordModelBean>> getKbKeywordList(@RequestBody ApiRequest<Long> request) {
 		Long contentId = request.getData();
@@ -155,7 +144,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Update KB Keyword by Content ID")
 	@PostMapping(value = "/updateKeywordByContentId", produces = "application/json")
 	public ApiResponse<Boolean> updateKeywordByContentId(@RequestBody ApiRequest<UpdateKeywordModelBean> request) {
 		ServiceResult<Boolean> serviceResult = kbService.updateKeywordByContentId(request.getData());
@@ -166,7 +154,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Get KB Document List")
 	@PostMapping(value = "/getKbDocumentList", produces = "application/json")
 	public ApiResponse<List<KbDocumentModelBean>> getKbDocumentList(@RequestBody ApiRequest<Long> request) {
 		Long contentId = request.getData();
@@ -181,7 +168,6 @@ public class KbController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Get Main Knowlege base document")
 	@PostMapping(value = "/getKbMainDocument", produces = "application/json")
 	public ApiResponse<KbDocumentModelBean> getKbMainDocument(@RequestBody ApiRequest<Long> request) {
 
@@ -195,7 +181,6 @@ public class KbController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Save KB Document")
 	@PostMapping(value = "/saveKbDocument")
 	public ApiResponse<KbDocumentModelBean> saveKbDocument(
 			@RequestParam(value = "file", required = false) MultipartFile file,
@@ -214,7 +199,7 @@ public class KbController extends BaseController {
 		kbDoc.setCreatedBy(getUserId());
 		kbDoc.setUpdatedBy(getUserId());
 
-		StringUtil.nullifyObject(kbDoc);
+		CommonUtil.nullifyObject(kbDoc);
 
 		FileModelBean fileBean = null;
 		if (file != null) {
@@ -234,7 +219,6 @@ public class KbController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Delete KB Document by ID")
 	@PostMapping(value = "/deleteKbDocumentById", produces = "application/json")
 	public ApiResponse<Boolean> deleteKbDocumentById(@RequestBody ApiRequest<Long> request) {
 		ServiceResult<Boolean> serviceResult = kbService.deleteKbDocumentById(request.getData());
@@ -245,7 +229,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Get KB Document")
 	@GetMapping(value = "/doc")
 	@ResponseBody
 	public ResponseEntity<Resource> getProfileImage(@RequestParam("filePath") String filePath) {
@@ -253,7 +236,6 @@ public class KbController extends BaseController {
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}
 
-	@ApiOperation(value = "Save KB Folder")
 	@PostMapping(value = "/saveKBFolder", produces = "application/json")
 	public ApiResponse<KbTreeModelBean> saveKBFolder(@RequestBody ApiRequest<KbTreeModelBean> request) {
 		KbTreeModelBean kbTreeModelBean = request.getData();
@@ -278,7 +260,6 @@ public class KbController extends BaseController {
 		return ApiResponse.fail();
 	}
 	
-	@ApiOperation(value = "Delete KB Folder by ID")
 	@PostMapping(value = "/deleteKbFolderById", produces = "application/json")
 	public ApiResponse<Boolean> deleteKbFolderById(@RequestBody ApiRequest<Long> request) {
 		ServiceResult<Boolean> serviceResult = kbService.deleteKbFolderById(request.getData());
@@ -289,7 +270,6 @@ public class KbController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Update KB Folder sequence by ID")
 	@PostMapping(value = "/updateKbFolderSequenceById", produces = "application/json")
 	public ApiResponse<Boolean> updateKbFolderSequenceById(@RequestBody ApiRequest<UpdateKbFolderSequenceModelBean> request) {
 		ServiceResult<Boolean> serviceResult = kbService.updateKbFolderSequence(request.getData());
@@ -300,7 +280,6 @@ public class KbController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "Delete KB File by ID")
 	@PostMapping(value = "/deleteKbFileById", produces = "application/json")
 	public ApiResponse<Boolean> deleteKbFileById(@RequestBody ApiRequest<Long> request) {
 		ServiceResult<Boolean> serviceResult = kbService.deleteKbFileById(request.getData());
@@ -311,7 +290,6 @@ public class KbController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Update KB File sequence by ID")
 	@PostMapping(value = "/updateKbFileSequenceById", produces = "application/json")
 	public ApiResponse<Boolean> updateKbFileSequenceById(@RequestBody ApiRequest<UpdateKbFileSequenceModelBean> request) {
 		ServiceResult<Boolean> serviceResult = kbService.updateKbFileSequence(request.getData());

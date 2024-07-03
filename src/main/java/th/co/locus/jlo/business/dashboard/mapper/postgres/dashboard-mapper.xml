@@ -1,0 +1,116 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dashboard">
+	<select id="getCountCaseEachStatus" resultType="DashboardBean">
+
+		SELECT
+		  count(IF(c.STATUS ='01',1,NULL)) as countNew ,
+		  count(IF(c.STATUS ='02',1,NULL)) as countWorking,
+		  count(IF(c.STATUS ='03',1,NULL)) as countEscalated,
+		  count(IF(c.STATUS ='04',1,NULL)) as countClosed 
+		FROM loy_case c 
+		<where>
+			
+			<if test="ownerId != null and ownerId != ''"> 
+				and c.OWNER = #{ownerId}
+			</if>
+			<if test="orgId != null and orgId != ''"> 
+				and c.OWNER = #{orgId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getCaseDashboardList" resultType="CaseModelBean">
+		SELECT 		
+			LC.CASE_NUMBER,
+			CB1.CODE_NAME AS typeName,  
+			TCM.FIRST_NAME AS FIRST_NAME,
+			TCM.LAST_NAME AS LAST_NAME,
+			TCM.BUSINESS_NAME AS BUSINESS_NAME,            
+			CB2.CODE_NAME AS subTypeName,     
+			CB3.CODE_NAME AS priorityName,
+			LC.CUSTOMER_ID,
+			TCM.CUSTOMER_ID	 
+		FROM
+	    LOY_CASE LC
+        LEFT OUTER JOIN  TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
+        INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+		INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'  
+
+		<where>
+		 	 AND LC.STATUS not in('04')
+			<if test="ownerId != null and ownerId != ''">
+				AND LC.OWNER = #{ownerId}
+			</if>
+			<if test="orgId != null and orgId != ''"> 
+				and c.OWNER = #{orgId}
+			</if>	
+		</where>
+	 	ORDER BY LC.CREATED_DATE DESC  
+	</select>
+	
+	<select id="getChartBarDataList" resultType="DashboardChartsBarBean">
+
+		SELECT  
+			cb1.code_name as 'name',
+			CASE
+				WHEN c.CHANNEL = '01' THEN count(c.CHANNEL)
+				WHEN c.CHANNEL = '02' THEN count(c.CHANNEL)
+				WHEN c.CHANNEL = '03' THEN count(c.CHANNEL)
+				WHEN c.CHANNEL = '04' THEN count(c.CHANNEL)
+		        WHEN c.CHANNEL = '05' THEN count(c.CHANNEL)
+				WHEN c.CHANNEL = '06' THEN count(c.CHANNEL)        
+				ELSE "OTHER"
+			END
+		    	AS 'value'    
+		 	FROM loy_case c 
+			LEFT OUTER JOIN tb_codebook cb1  on c.CHANNEL = cb1.CODE_ID  and cb1.CODE_TYPE ='CASE_CHANNEL' 		    
+		
+		<where>
+			<if test="ownerId != null and ownerId != ''"> 
+				and c.OWNER = #{ownerId}
+			</if>
+			<if test="orgId != null and orgId != ''"> 
+				and c.OWNER = #{orgId}
+			</if>
+		</where>
+		    group by cb1.code_name,c.CHANNEL
+		    order by c.CHANNEL asc;
+		    
+	</select>
+	
+	
+	<select id="getChartPieDataList" resultType="DashboardChartsBarBean">
+
+		SELECT  
+			cb1.code_name as 'name',
+			CASE
+				WHEN c.type = '01' THEN count(c.type)
+				WHEN c.type = '02' THEN count(c.type)
+                WHEN c.type = '03' THEN count(c.type)
+                WHEN c.type = '04' THEN count(c.type)
+                WHEN c.type = '05' THEN count(c.type)
+				ELSE "OTHER"
+			END
+		    	AS 'value'    
+		 	FROM loy_case c 
+			LEFT OUTER JOIN tb_codebook cb1  on c.type = cb1.CODE_ID  and cb1.CODE_TYPE ='CASE_TYPE' 	 		    
+		
+		<where>
+			<if test="ownerId != null and ownerId != ''"> 
+				and c.OWNER = #{ownerId}
+			</if>
+			<if test="orgId != null and orgId != ''"> 
+				and c.OWNER = #{orgId}
+			</if>
+		</where>
+		     group by cb1.code_name,c.type
+		     order by c.type asc
+		    
+	</select>
+	
+	
+</mapper>

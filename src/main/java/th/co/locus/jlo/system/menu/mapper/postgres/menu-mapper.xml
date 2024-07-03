@@ -1,0 +1,129 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="menu">
+    <select id="getMenuList" resultType="menuModelBean">
+		SELECT
+		  ID,
+		  NAME,
+		  TYPE,
+		  ICON,
+		  LINK,
+		  LANG,
+		  ACTIVE_FLAG,
+		  CREATED_BY,
+		  CREATED_DATE,
+		  UPDATED_BY,
+		  UPDATED_DATE,
+		  SEQ,
+		  PARENT_MENU_ID,
+		  API_PATH
+		FROM
+		  tb_menu
+		<where>
+			<if test="name != null and name != ''">
+				<bind name="_name" value="name + '%'" />
+				AND NAME like #{_name}
+			</if>
+			<if test="parentMenuId != null and parentMenuId != ''">
+				<bind name="_parentMenuId" value="parentMenuId + '%'" />
+				AND PARENT_MENU_ID like #{_parentMenuId}
+			</if>
+		</where>
+		<choose>
+			<when test="sortColumn != null">
+				<if test="sortColumn == 'name'">
+					ORDER BY NAME ${sortDirection}
+				</if>
+				<if test="sortColumn == 'seq'">
+					ORDER BY SEQ ${sortDirection}
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY ID ASC
+			</otherwise>
+		</choose>
+	</select>
+    <select id="findMenuById" resultType="menuModelBean">
+SELECT
+  ID,
+  NAME,
+  TYPE,
+  ICON,
+  LINK,
+  LANG,
+  ACTIVE_FLAG,
+  CREATED_BY,
+  CREATED_DATE,
+  UPDATED_BY,
+  UPDATED_DATE,
+  SEQ,
+  PARENT_MENU_ID,
+  API_PATH
+FROM
+  tb_menu
+WHERE
+  (
+    ID = #{id})
+	</select>
+    <insert id="createMenu" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+INSERT INTO
+  tb_menu (
+    ID,
+    NAME,
+    TYPE,
+    ICON,
+    LINK,
+    LANG,
+    ACTIVE_FLAG,
+    CREATED_BY,
+    CREATED_DATE,
+    SEQ,
+    PARENT_MENU_ID,
+    API_PATH
+  )
+VALUES
+  (
+    #{id}, #{name}, #{type}, #{icon}, #{link}, #{lang}, #{activeFlag}, #{createdBy}, NOW(), #{seq}, #{parentMenuId}, #{apiPath} )
+	</insert>
+    <update id="updateMenu">
+UPDATE
+  tb_menu
+SET
+  NAME = #{name}, TYPE = #{type}, ICON = #{icon}, LINK = #{link}, LANG = #{lang}, ACTIVE_FLAG = #{activeFlag}, UPDATED_BY = #{updatedBy}, UPDATED_DATE = NOW(), SEQ = #{seq}, PARENT_MENU_ID = #{parentMenuId}, API_PATH = #{apiPath}
+WHERE
+  (
+    ID = #{id})
+	</update>
+    <delete id="deleteMenu">
+DELETE FROM
+  tb_menu
+WHERE
+  (
+    ID = #{id})
+	</delete>
+	<select id="getMenuRespList" resultType="menuRespModelBean">
+		SELECT
+		  id,
+		  name,
+		  CASE WHEN type = '01' THEN 'sub' ELSE 'link' END AS type,
+		  icon,
+		  link,
+		  parent_menu_id,
+		  resp_flag,
+		  api_path,
+		  m.active_flag as 'use'
+		FROM tb_menu m 
+		  left join tb_responsibilities r on r.menu_id = m.id and r.role_code = #{roleCode}
+		ORDER BY seq
+	</select>
+	<select id="getTokenMenuRespList" resultType="tokenMenuRespModelBean">
+		SELECT
+		  id,
+		  resp_flag,
+		  api_path,
+		  m.active_flag as 'use'
+		FROM tb_menu m 
+		  left join tb_responsibilities r on r.menu_id = m.id and r.role_code = #{roleCode}
+		ORDER BY seq
+	</select>
+</mapper>

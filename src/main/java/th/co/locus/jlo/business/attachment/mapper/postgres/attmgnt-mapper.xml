@@ -1,0 +1,25 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="attmgnt">
+    <select id="getAttachmentByAttId" resultType="fileModelBean">
+		
+			SELECT 
+				ATT_ID as attId,
+			    FILE_PATH as filePath,
+			    FILE_NAME as fileName,
+			    FILE_EXTENSION as fileExtension,
+			    FILE_SIZE as fileSize,			    
+			    BU_ID as buId,
+			    CREATED_BY as createdBy,
+			    CREATED_DATE as createdDate,
+			    UPDATED_BY as updatedBy,
+			    UPDATED_DATE as updatedDate
+			FROM tb_att 
+			WHERE ATT_ID = #{attId}
+		
+		 
+	</select>
+	
+	  
+	
+</mapper>

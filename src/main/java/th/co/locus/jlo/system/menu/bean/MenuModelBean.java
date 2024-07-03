@@ -2,7 +2,7 @@ package th.co.locus.jlo.system.menu.bean;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import th.co.locus.jlo.common.BaseModelBean;
+import th.co.locus.jlo.common.bean.BaseModelBean;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

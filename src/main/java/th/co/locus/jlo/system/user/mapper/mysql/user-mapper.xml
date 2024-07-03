@@ -1,0 +1,261 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+	<select id="getUserLoginByLoginId" resultType="userLoginDTO"> 
+      SELECT
+		    U.ID
+		    ,U.USER_ID
+		    ,U.FIRST_NAME
+		    ,U.LAST_NAME 
+		    ,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS DISPLAY_NAME
+		    ,U.NICKNAME
+		    ,U.ROLE_CODE
+		    ,R.ROLE_NAME
+		    ,U.USE_YN
+		    ,U.POS_ID
+		    ,P.POS_NAME
+		    ,U.BU_ID
+		    ,B.BU_NAME
+		    ,U.DIV_ID
+		    ,'' AS DIV_NAME
+		    ,U.EMAIL
+            ,U.LOGIN_TYPE
+            ,U.PASSWORD
+            ,U.PICTURE_URL            
+			,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+			,U.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+			,U.UPDATED_DATE AS updatedDate
+            
+		FROM TB_USER U      
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		WHERE U.USER_ID = #{username}
+	</select>
+	<insert id="insertLoginAttempt">
+		INSERT INTO TB_USER_LOGIN_ATTEMPT
+		(	
+			USER_ID
+			, ATTEMPT_DATE
+			, STATUS_CODE
+			, STATUS_MESSAGE
+			, TYPE
+			, IP_ADDRESS
+		) 
+		VALUES 
+		(
+			#{userId}
+			, NOW()
+			, #{statusCode}
+			, #{statusMessage}
+			, #{type}
+			, #{ipAddress}
+		)
+	</insert>
+	<update id="updateUserSignOn">
+		UPDATE TB_USER set LAST_SIGNON_DATE = NOW(), LAST_SIGNON_IP = #{ipAddress} where USER_ID = #{userId}
+	</update>
+	<select id="getUserList" resultType="userDataModelBean"> 
+       	SELECT
+		    U.USER_ID
+		    ,U.ID
+		    ,U.FIRST_NAME
+		    ,U.LAST_NAME
+		    ,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS DISPLAY_NAME
+		    ,U.NICKNAME
+		    ,U.ROLE_CODE
+		    ,R.ROLE_NAME
+		    ,U.USE_YN
+		    ,U.POS_ID
+		    ,P.POS_NAME
+		    ,U.BU_ID
+		    ,B.BU_NAME
+		    ,U.DIV_ID
+		    ,'' AS DIV_NAME	
+		    ,U.EMAIL
+            ,U.LOGIN_TYPE
+            ,U.PASSWORD
+            ,U.PICTURE_URL
+            ,U.UPDATED_BY as updatedBy
+            ,U.UPDATED_DATE
+            ,U.CREATED_BY AS  createdBy
+            ,U.CREATED_DATE 
+		FROM TB_USER U
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		WHERE 1=1 
+		<if test="userId != null and userId!= ''">
+			<bind name="pUserId" value="userId + '%'" />
+	    	AND U.USER_ID like #{pUserId}
+	  	</if>
+		<if test="firstName != null and firstName != ''">
+			<bind name="pFirstName" value="firstName + '%'" />
+	    	AND U.FIRST_NAME like #{pFirstName}
+	  	</if>
+		<if test="lastName != null and lastName != ''">
+			<bind name="pLastName" value="lastName + '%'" />
+	    	AND U.LAST_NAME like #{pLastName}
+	  	</if>
+		<if test="status != null and status != ''">
+	    	AND U.USE_YN = #{status}
+	  	</if>
+		<if test="buId != null">
+	    	AND U.BU_ID = #{buId}
+	  	</if>
+		<if test="roleCode != null and roleCode != ''">
+	    	AND U.ROLE_CODE = #{roleCode}
+	  	</if>
+	  	<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'firstName'">
+		  			order by U.FIRST_NAME ${sortDirection}	  	
+		  		</if>
+		  		<if test="sortColumn == 'lastName'">
+		  			order by U.LAST_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by U.FIRST_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	<select id="findUserById" resultType="userDataModelBean">
+		SELECT
+		    U.USER_ID
+		    ,U.ID
+		    ,U.FIRST_NAME
+		    ,U.LAST_NAME
+		    ,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS DISPLAY_NAME
+		    ,U.NICKNAME
+		    ,U.ROLE_CODE
+		    ,R.ROLE_NAME
+		    ,U.USE_YN
+		    ,U.POS_ID
+		    ,P.POS_NAME
+		    ,U.BU_ID
+		    ,B.BU_NAME
+		    ,U.DIV_ID
+		    ,'' AS DIV_NAME	
+		    ,U.EMAIL
+            ,U.LOGIN_TYPE
+            ,U.PASSWORD
+            ,U.PICTURE_URL
+            
+            ,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+			,U.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+			,U.UPDATED_DATE AS updatedDate
+            
+		FROM TB_USER U
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		WHERE U.ID = #{id}
+	</select>
+	<update id="updateUser">
+		UPDATE TB_USER set
+			USER_ID = #{userId}
+			, USE_YN = #{useYn}
+			, PASSWORD = #{password}
+			, LOGIN_TYPE = #{loginType}
+			, FIRST_NAME = #{firstName}
+			, LAST_NAME = #{lastName}
+			, NICKNAME = #{nickname}
+			, EMAIL = #{email} 
+			, ROLE_CODE = #{roleCode}
+			, BU_ID = #{buId}
+			, POS_ID = #{posId}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = NOW()
+		where ID = #{id}
+	</update>
+	<update id="updateUserProfileImage">
+		UPDATE TB_USER set
+			PICTURE_URL = #{pictureUrl}
+			, UPDATED_DATE = NOW()
+		where ID = #{id}
+	</update>
+	
+	<insert id="createUser" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TB_USER
+		(	
+			USER_ID
+			, USE_YN
+			, PASSWORD
+			, LOGIN_TYPE
+			, FIRST_NAME
+			, LAST_NAME
+			, NICKNAME
+			, EMAIL
+			, ROLE_CODE
+			, BU_ID
+			, POS_ID
+			, CREATED_BY
+			, CREATED_DATE
+		) 
+		VALUES 
+		(
+			#{userId}
+			, #{useYn}
+			, #{password}
+			, #{loginType}
+			, #{firstName}
+			, #{lastName}
+			, #{nickname}
+			, #{email}
+			, #{roleCode}
+			, #{buId}
+			, #{posId}
+			, #{createdBy}
+			, NOW()
+		)
+	</insert>
+	
+	<delete id="deleteUser">
+			DELETE FROM TB_USER WHERE ID = #{id}
+	</delete>
+	<select id="getUserLoginLogByUserId" resultType="loginLogModelBean">
+		SELECT  
+			USER_ID
+		    , ATTEMPT_DATE
+		    , TYPE
+		    , IP_ADDRESS
+		    , STATUS_CODE
+		    , STATUS_MESSAGE
+		FROM TB_USER_LOGIN_ATTEMPT	
+		<where>
+			USER_ID = #{userId}
+			<if test="attemptDateFrom != null">
+				<![CDATA[ AND DATE(ATTEMPT_DATE) >= #{attemptDateFrom,jdbcType=DATE} ]]>
+			</if>
+			<if test="attemptDateTo != null">
+				<![CDATA[ AND DATE(ATTEMPT_DATE) <= #{attemptDateTo,jdbcType=DATE} ]]>
+			</if>
+			<if test="statusCode != null and statusCode != ''">
+				AND STATUS_CODE = #{statusCode}
+			</if>
+			<if test="statusMessage != null and statusMessage != ''">
+				<bind name="pStatusMessage" value="'%' + statusMessage + '%'" />
+				AND STATUS_MESSAGE like #{pStatusMessage}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'attemptDate'">
+		  			order by ATTEMPT_DATE ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by ATTEMPT_DATE ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+</mapper>

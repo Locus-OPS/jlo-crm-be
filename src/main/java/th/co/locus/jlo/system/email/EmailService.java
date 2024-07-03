@@ -1,6 +1,6 @@
 package th.co.locus.jlo.system.email;
 
-import th.co.locus.jlo.common.ServiceResult;
+import th.co.locus.jlo.common.bean.ServiceResult;
 
 public interface EmailService {
 
