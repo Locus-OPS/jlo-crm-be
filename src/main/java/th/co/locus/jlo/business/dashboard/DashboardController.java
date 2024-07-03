@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.bean.*;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.dashboard.bean.DashboardBean;
 import th.co.locus.jlo.business.dashboard.bean.DashboardChartsBarBean;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;

@@ -15,7 +15,7 @@ import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.annotation.ExtraPermission;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
