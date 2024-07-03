@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.*;
 import th.co.locus.jlo.common.controller.BaseController;

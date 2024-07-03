@@ -1,7 +1,7 @@
 /**
  * 
  */
-package th.co.locus.jlo.business.cases.cases;
+package th.co.locus.jlo.business.cases;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
-import th.co.locus.jlo.business.cases.cases.bean.SearchCaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
 import th.co.locus.jlo.business.customer.CustomerService;
 import th.co.locus.jlo.business.customer.MemberService;
 import th.co.locus.jlo.business.customer.bean.CustomerData;

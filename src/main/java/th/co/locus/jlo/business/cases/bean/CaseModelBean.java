@@ -1,7 +1,7 @@
 /**
  * 
  */
-package th.co.locus.jlo.business.cases.cases.bean;
+package th.co.locus.jlo.business.cases.bean;
 
 import java.util.Date;
 

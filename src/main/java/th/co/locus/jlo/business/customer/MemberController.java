@@ -24,7 +24,7 @@ import th.co.locus.jlo.business.customer.bean.MemberAttachmentData;
 import th.co.locus.jlo.business.customer.bean.MemberCardData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.business.customer.bean.MemberPointData;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.*;

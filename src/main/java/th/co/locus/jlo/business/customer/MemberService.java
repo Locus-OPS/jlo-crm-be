@@ -9,7 +9,7 @@ import th.co.locus.jlo.business.customer.bean.MemberAttachmentData;
 import th.co.locus.jlo.business.customer.bean.MemberCardData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.business.customer.bean.MemberPointData;
-import th.co.locus.jlo.business.cases.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
