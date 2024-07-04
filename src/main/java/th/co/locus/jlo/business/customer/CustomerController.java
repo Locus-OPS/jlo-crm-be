@@ -1,27 +1,47 @@
 package th.co.locus.jlo.business.customer;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
 import th.co.locus.jlo.business.customer.bean.MemberData;
-import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.common.annotation.ExtraPermission;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
-import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.bean.ApiPageRequest;
+import th.co.locus.jlo.common.bean.ApiPageResponse;
+import th.co.locus.jlo.common.bean.ApiRequest;
+import th.co.locus.jlo.common.bean.ApiResponse;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
+import th.co.locus.jlo.system.file.FileService;
 
 @Slf4j
 @RestController
@@ -33,7 +53,13 @@ public class CustomerController extends BaseController {
 	
 	@Autowired
 	private MemberService memberService;
-
+	
+	@Value("${attachment.path.customer.profile_image}")
+	private String profileImagePath;
+	
+	@Autowired
+	private FileService fileService;
+	
 	/**
 	 * Receives a customer list.
 	 * Adds logs to track from sometime cannot return a result.
@@ -279,6 +305,33 @@ public class CustomerController extends BaseController {
 			return ApiResponse.success(serviceResult.getResult());
 		} else {
 			return ApiResponse.fail();
+		}
+	}
+	
+	@GetMapping(value = "/profile_image/{fileName:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> getProfileImage(@PathVariable String fileName) {
+		Resource file = fileService.loadFile(profileImagePath + File.separator + fileName);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+	}
+	
+	
+	
+	@WritePermission
+	@PostMapping(value = "/upload")
+	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
+			@RequestParam("customerId") Long customerId) {
+		String message = "";
+	 
+		try {
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+			String fileName = customerId + "_"+timeStamp+ CommonUtil.getFileExtension(file);
+			fileService.saveFile(file, profileImagePath, fileName);
+			customerService.updateCustomerProfileImage(fileName, customerId);
+			return ResponseEntity.status(HttpStatus.OK).body(fileName);
+		} catch (Exception e) {
+			message = "FAIL to upload " + file.getOriginalFilename() + "!";
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
 		}
 	}
 }

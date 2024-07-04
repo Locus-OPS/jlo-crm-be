@@ -335,4 +335,11 @@
 		  	 
 		</where>
 	</select>
+	
+	<update id="updateCustomerProfileImage">
+		UPDATE tb_customer SET
+			  PICTURE_URL = #{pictureUrl}
+			, UPDATED_DATE = NOW()
+		WHERE CUSTOMER_ID = #{customerId}
+	</update>
 </mapper>

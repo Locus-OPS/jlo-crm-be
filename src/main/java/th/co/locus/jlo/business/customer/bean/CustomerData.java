@@ -63,6 +63,8 @@ public class CustomerData extends BaseModelBean {
 	
 	private Boolean isMemberFlag;
 	
+	private String pictureUrl;
+	
 	
 	
 }

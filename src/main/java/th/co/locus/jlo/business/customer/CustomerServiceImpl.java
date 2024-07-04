@@ -1,6 +1,7 @@
 package th.co.locus.jlo.business.customer;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -188,6 +189,11 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 	@Override
 	public ServiceResult<List<CustomerData>> getCustomerByPhoneNo(CustomerListCriteria criteria) {
 		return success(commonDao.selectList("customer.findCustomerByPhoneNo", criteria));
+	}
+
+	@Override
+	public void updateCustomerProfileImage(String fileName, Long customerId) {
+		commonDao.update("customer.updateCustomerProfileImage", Map.of("pictureUrl", fileName, "customerId", customerId));
 	}
 
  

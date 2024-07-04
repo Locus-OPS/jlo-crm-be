@@ -33,4 +33,6 @@ public interface CustomerService {
 	
 	
 	public ServiceResult<List<CustomerData>> getCustomerByPhoneNo(CustomerListCriteria criteria);
+	
+	public void updateCustomerProfileImage(String fileName, Long customerId);
 }
