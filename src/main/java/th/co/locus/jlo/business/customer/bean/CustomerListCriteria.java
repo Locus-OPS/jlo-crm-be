@@ -15,5 +15,7 @@ public class CustomerListCriteria extends SortingModelBean {
 	private String memberCardNo;
 	private Integer buId;
 	private String phoneNo;
+	private String customerStatus;
+	private String customerType;
 	
 }

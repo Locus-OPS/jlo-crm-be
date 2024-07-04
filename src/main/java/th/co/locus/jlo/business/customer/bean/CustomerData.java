@@ -7,10 +7,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.ToString;
+import th.co.locus.jlo.common.bean.BaseModelBean;
 
 @Data
 @ToString
-public class CustomerData {
+public class CustomerData extends BaseModelBean {
 	
 	private Long customerId;
 	private Boolean customerType;
@@ -34,6 +35,7 @@ public class CustomerData {
 	private String phoneNo;
 	private String email;
 	
+	 
 	private String customerStatus;
 	private String customerStatusName;
 	private String registrationChannel;

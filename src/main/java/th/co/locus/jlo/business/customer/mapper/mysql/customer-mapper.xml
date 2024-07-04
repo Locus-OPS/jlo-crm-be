@@ -13,10 +13,13 @@
          t.`CUSTOMER_STATUS`,
          cb.code_name as customerStatusName,
 		 
-        	CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME
-         , t.`APPROVED_DATE`
+        CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
+          t.`APPROVED_DATE`,
+         CONCAT(COALESCE(u3.FIRST_NAME,''), ' ',COALESCE( u3.LAST_NAME,'')) AS updatedByName,
+         t.UPDATED_DATE
 		from vw_customer_search_list t
         LEFT OUTER JOIN TB_USER u1 ON t.APPROVED_BY = u1.ID
+        LEFT JOIN TB_USER u3 ON t.UPDATED_BY = u3.ID
         INNER JOIN TB_CODEBOOK cb ON t.CUSTOMER_STATUS = cb.code_id and cb.code_type='CUSTOMER_CRM_STATUS'
 		<where>	
 			<if test="passportNo != null and passportNo != ''">
@@ -39,11 +42,12 @@
 				<bind name="buId" value="buId" />
 		  			AND t.`BU_ID` = #{buId}
 		  	</if>
-		  <!-- 	<if test="memberCardNo != null and memberCardNo != ''">
-				<bind name="memberCardNo" value="memberCardNo" />
-		    		AND t.MEMBER_CARD_NO = #{memberCardNo}
-		    		AND t.CARD_STATUS = '01'
-		  	</if> -->
+		   	<if test="customerStatus != null and customerStatus != ''">
+				 	AND t.`CUSTOMER_STATUS` = #{customerStatus}
+		  	</if>  
+		  	<if test="customerType != null and customerType != ''">
+				 	AND t.`CUSTOMER_TYPE` = #{customerType}
+		  	</if>   
 		  	<if test="phoneNo != null and phoneNo != ''">
 		    	AND t.PHONE_NO = #{phoneNo}
 		  	</if>
@@ -65,7 +69,7 @@
 		  		</if>
 		  	</when>
 		  	<otherwise>
-		  		ORDER BY 3 ASC
+		  		 ORDER BY t.CUSTOMER_ID,FULL_NAME ASC
 		  	</otherwise>
 	  	</choose>
 	</select>
