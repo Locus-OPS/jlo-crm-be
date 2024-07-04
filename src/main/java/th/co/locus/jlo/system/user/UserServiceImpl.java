@@ -2,6 +2,10 @@ package th.co.locus.jlo.system.user;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import th.co.locus.jlo.common.bean.Page;
@@ -17,6 +21,9 @@ import th.co.locus.jlo.system.user.dto.UserLoginDTO;
 
 @Service
 public class UserServiceImpl extends BaseService implements UserService {
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public ServiceResult<UserLoginDTO> getUserLoginByLoginId(String loginId) {
@@ -47,6 +54,10 @@ public class UserServiceImpl extends BaseService implements UserService {
 
 	@Override
 	public ServiceResult<UserDataModelBean> updateUser(UserDataModelBean user) {
+		if (StringUtils.isNotEmpty(user.getPassword())) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 		int result = commonDao.update("user.updateUser", user);
 		if (result > 0) {
 			return success(commonDao.selectOne("user.findUserById", user));
@@ -56,6 +67,10 @@ public class UserServiceImpl extends BaseService implements UserService {
 	
 	@Override
 	public ServiceResult<UserDataModelBean> createUser(UserDataModelBean user) {
+		if (StringUtils.isNotEmpty(user.getPassword())) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 		int result = commonDao.update("user.createUser", user);
 		if (result > 0) {
 			return success(commonDao.selectOne("user.findUserById", user));
