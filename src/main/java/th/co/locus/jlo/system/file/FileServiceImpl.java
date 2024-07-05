@@ -13,10 +13,12 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
+@Slf4j
 @Service
 public class FileServiceImpl extends BaseService implements FileService {
 
@@ -33,6 +35,7 @@ public class FileServiceImpl extends BaseService implements FileService {
 	public Resource loadFile(String filePath) {
 		try {
 			Path file = Paths.get(homeDirectory).resolve(filePath);
+
 			Resource resource = new UrlResource(file.toUri());
 			if (resource.exists() || resource.isReadable()) {
 				return resource;
@@ -48,7 +51,7 @@ public class FileServiceImpl extends BaseService implements FileService {
 	public ServiceResult<FileModelBean> createAttachment(FileModelBean bean) {
 		int rows = commonDao.insert("file.createAttachment", bean);
 		if (rows > 0) {
-			return success(bean);			
+			return success(bean);
 		}
 		return fail();
 	}

@@ -311,6 +311,7 @@ public class CustomerController extends BaseController {
 	@GetMapping(value = "/profile_image/{fileName:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> getProfileImage(@PathVariable String fileName) {
+		log.info("getProfileImage: "+profileImagePath + File.separator + fileName);
 		Resource file = fileService.loadFile(profileImagePath + File.separator + fileName);
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}

@@ -17,6 +17,10 @@ public class SecurityConfiguration {
     private static final String[] SWAGGER_WHITELIST = {
             "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources"
     };
+    
+    private static final String[] JLO_WHITELIST = {
+            "/api/customer/profile_image/**", "/api/user/profile_image/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -25,6 +29,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                        .requestMatchers(JLO_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
