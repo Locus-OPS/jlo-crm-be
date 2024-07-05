@@ -16,7 +16,8 @@
         CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
           t.`APPROVED_DATE`,
          CONCAT(COALESCE(u3.FIRST_NAME,''), ' ',COALESCE( u3.LAST_NAME,'')) AS updatedByName,
-         t.UPDATED_DATE
+         t.UPDATED_DATE,
+         t.PICTURE_URL
 		from vw_customer_search_list t
         LEFT OUTER JOIN TB_USER u1 ON t.APPROVED_BY = u1.ID
         LEFT JOIN TB_USER u3 ON t.UPDATED_BY = u3.ID
