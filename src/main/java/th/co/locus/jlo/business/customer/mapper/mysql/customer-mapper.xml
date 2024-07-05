@@ -76,7 +76,43 @@
 	</select>
 	
 	<select id="findCustomerById" resultType="CustomerData">
-		select * from TB_customer where customer_id = #{customerId}
+			SELECT 
+				`t`.`CUSTOMER_ID`,
+			    `t`.`CUSTOMER_TYPE`,
+			    `t`.`CUSTOMER_STATUS`,
+			    `t`.`CITIZEN_ID`,
+			    `t`.`PASSPORT_NO`,
+			    `t`.`TITLE`,
+			    `t`.`FIRST_NAME`,
+			    `t`.`LAST_NAME`,
+			    `t`.`BUSINESS_NAME`,
+			    `t`.`GENDER`,
+			    `t`.`NATIONALITY`,
+			    `t`.`BIRTHDATE`,
+			    `t`.`OCCUPATION`,
+			    `t`.`MARITAL_STATUS`,
+			    `t`.`IMAGE_URL`,
+			    `t`.`APPROVED_DATE`,
+			    `t`.`APPROVED_BY`,
+			    `t`.`REGISTRATION_STORE`,
+			    `t`.`REGISTRATION_CHANNEL`,
+			    `t`.`REMARK`,
+			    `t`.`BU_ID`,
+				 CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,	 
+			    `t`.`CREATED_DATE`,
+			     CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName,
+			    `t`.`UPDATED_DATE`,      
+			    `t`.`TAX_ID`,
+			    `t`.`BUSINESS_TYPE`,
+			    `t`.`PHONE_AREA`,
+			    `t`.`PHONE_NO`,
+			    `t`.`EMAIL`,
+			    `t`.`PROGRAM_ID`,
+			    `t`.`PICTURE_URL`
+			FROM `tb_customer` t
+			LEFT JOIN TB_USER u1 ON t.CREATED_BY = u1.ID
+			LEFT JOIN TB_USER u2 ON t.UPDATED_BY = u2.ID
+			WHERE t.customer_id = #{customerId}
 	</select>
 	
 	<select id="findCustomerByCitizenIdOrPassportNo" resultType="customerData"> 
