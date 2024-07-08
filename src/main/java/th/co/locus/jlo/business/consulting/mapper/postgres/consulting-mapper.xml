@@ -196,8 +196,9 @@
 			, cust.business_Name as businessName
 			, CASE cust.`CUSTOMER_TYPE` WHEN true THEN CONCAT(IFNULL(cust.FIRST_NAME,''),' ',IFNULL(cust.LAST_NAME,'')) ELSE cust.business_Name END AS customerName
             ,cust.`CUSTOMER_TYPE` as customerType
-			,cons.START_DATE as startDate
-			,cons.END_DATE as endDate
+			, CONCAT(DATE_FORMAT(cons.START_DATE ,'%d-%m-%Y %H:%m')) as startDate
+			,CONCAT(DATE_FORMAT(cons.END_DATE ,'%d-%m-%Y %H:%m')) as endDate
+	
 	
 			,cons.STATUS_CD as statusCd
 			,cb2.CODE_NAME as statusName

@@ -1,5 +1,7 @@
 package th.co.locus.jlo.business.consulting;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -88,5 +90,17 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 			PageRequest pageRequest) {
 		return success(commonDao.selectPage("consulting.findConsultingDataListByCustomerId", req, pageRequest));
 	}
+
+
+
+	@Override
+	public ServiceResult<List<ConsultingModelBean>> getConsultingTimelineDataListByCustomerId(
+			ConsultingModelBean bean) {
+		return success(commonDao.selectList("consulting.findConsultingDataListByCustomerId", bean)); 
+	}
+
+
+
+	 
 	
 }

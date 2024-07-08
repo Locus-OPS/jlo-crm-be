@@ -230,5 +230,25 @@ public class ConsultingController extends BaseController {
 		}
 	}
 	
+	
+	@PostMapping(value = "/getConsultingTimelineDataListByCustomerId", produces = "application/json")
+	public ApiResponse<List<ConsultingModelBean>> getConsultingTimelineDataListByCustomerId(
+			@RequestBody ApiRequest<ConsultingModelBean> request) {
+		try {
+			CommonUtil.nullifyObject(request.getData());
+			ServiceResult<List<ConsultingModelBean>> serviceResult = consultingService.getConsultingTimelineDataListByCustomerId(request.getData());
+
+			if (serviceResult.isSuccess()) {
+				return ApiResponse.success(serviceResult.getResult());
+			} else {
+				return ApiResponse.fail();
+			}
+		}catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}
+		return ApiResponse.fail();
+	
+	}
+	
 
 }
