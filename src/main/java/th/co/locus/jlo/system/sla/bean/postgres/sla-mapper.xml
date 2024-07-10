@@ -1,0 +1,102 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sla">
+	<select id="getSLAList" resultType="SLAModelBean">
+		SELECT
+			sla.SLA_ID as slaId,
+			sla.SLA_NAME as slaName,
+			sla.SLA_UNIT as
+			slaUnit,
+			sla.STATUS_CD as statusCd,
+			cb2.CODE_NAME as statusName,
+			sla.DESCP as descp,
+			sla.BU_ID as buId,
+			CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS
+			createdByName,
+			sla.CREATED_DATE AS createdDate ,
+			CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS
+			updatedByName,
+			sla.UPDATED_DATE AS updatedDate
+		FROM tb_sla sla
+		LEFT OUTER JOIN tb_codebook cb2 ON	sla.STATUS_CD = cb2.CODE_ID AND cb2.CODE_TYPE =	'ACTIVE_FLAG'
+		LEFT JOIN TB_USER u1 ON sla.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON	sla.UPDATED_BY = u2.ID
+		<where>
+			<if test="slaName != null and slaName != ''">
+				<bind name="slaName" value="'%' + slaName + '%'" />
+				AND sla.SLA_NAME LIKE #{slaName}
+			</if>
+
+		</where>
+		<choose>
+			<when test="sortColumn != null and sortColumn != ''">
+				<if test="sortColumn == 'slaName'">
+					order by sla.SLA_NAME ${sortDirection}
+				</if>
+
+			</when>
+			<otherwise>
+				order by sla.SLA_ID ASC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findSLAById" resultType="SLAModelBean">
+		SELECT
+		sla.SLA_ID,
+		sla.SLA_NAME,
+		sla.SLA_UNIT,
+		sla.STATUS_CD,
+		sla.DESCP,
+		sla.BU_ID,
+		sla.CREATED_DATE,
+		sla.CREATED_BY,
+		sla.UPDATED_DATE,
+		sla.UPDATED_BY
+		FROM
+		tb_sla sla
+		WHERE
+		sla.SLA_ID = #{slaId}
+
+	</select>
+
+	<insert id="createSLA" keyColumn="SLA_ID" keyProperty="slaId"
+		useGeneratedKeys="true">
+		INSERT INTO `tb_sla`
+		(
+		`SLA_NAME`,
+		`SLA_UNIT`,
+		`STATUS_CD`,
+		`DESCP`,
+		`BU_ID`,
+		`CREATED_DATE`,
+		`CREATED_BY`
+		)
+		VALUES
+		(
+		#{slaName},
+		#{slaUnit},
+		#{statusCd},
+		#{descp},
+		#{buId},
+		NOW(),
+		#{createdBy}
+		)
+	</insert>
+
+	<update id="updateSLA">
+		UPDATE tb_sla
+		SET
+		 SLA_NAME = #{slaName}
+		,SLA_UNIT = #{slaUnit}
+		,STATUS_CD = #{statusCd}
+		,DESCP = #{descp}
+		,UPDATED_BY = #{updatedBy}
+		,UPDATED_DATE = NOW()
+		WHERE SLA_ID = #{slaId}
+	</update>
+	<delete id="deleteSLA">
+		DELETE FROM tb_sla WHERE SLA_ID = #{slaId}
+	</delete>
+</mapper>
