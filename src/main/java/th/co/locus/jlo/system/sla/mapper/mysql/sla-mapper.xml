@@ -9,6 +9,7 @@
 			sla.SLA_NAME as slaName,
 			sla.SLA_UNIT as
 			slaUnit,
+			'ชั่วโมง' as unit,
 			sla.STATUS_CD as statusCd,
 			cb2.CODE_NAME as statusName,
 			sla.DESCP as descp,
@@ -48,6 +49,7 @@
 		sla.SLA_NAME,
 		sla.SLA_UNIT,
 		sla.STATUS_CD,
+		'ชั่วโมง' as unit,
 		sla.DESCP,
 		sla.BU_ID,
 		sla.CREATED_DATE,

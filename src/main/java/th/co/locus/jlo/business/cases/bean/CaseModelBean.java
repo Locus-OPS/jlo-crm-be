@@ -50,4 +50,7 @@ public class CaseModelBean extends BaseModelBean {
 
 	private Date openedDateDate;
 	private Date closedDateDate;
+	
+	private String caseSlaId;
+	private String outCaseNumber;
 }

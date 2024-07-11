@@ -11,6 +11,7 @@ public class SLAModelBean extends BaseModelBean {
 	private Long slaId;
 	private String slaName;
 	private String slaUnit;
+	private String unit;
 	private String statusCd;
 	private String statusName;
 	private String descp;

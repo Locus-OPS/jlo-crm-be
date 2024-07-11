@@ -1,7 +1,11 @@
 package th.co.locus.jlo.business.cases;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
 import th.co.locus.jlo.common.bean.Page;
@@ -9,6 +13,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 
+@Slf4j
 @Service
 public class CaseServiceImpl extends BaseService implements CaseService{
 
@@ -28,8 +33,10 @@ public class CaseServiceImpl extends BaseService implements CaseService{
 		String caseNumber = commonDao.selectOne("case.generateCaseNumber", bean);
 		if (caseNumber != null && caseNumber != "") {
 			bean.setCaseNumber(caseNumber);
-			int result = commonDao.update("case.createCase", bean);
-			if(result > 0) {
+			//int result = commonDao.update("case.createCase", bean); 
+			String result = commonDao.selectOne("case.createCaseProcedure", bean);
+			log.info("result > "+result);
+			if(result != null) {
 				return success(commonDao.selectOne("case.getCaseByCaseNumber", caseNumber));
 			}
 		}

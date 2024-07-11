@@ -75,11 +75,15 @@ public class CaseController extends BaseController {
     public ApiResponse<CaseModelBean> createCase(@RequestBody ApiPageRequest<CaseModelBean> request) {
 		
 		CommonUtil.nullifyObject(request.getData());
-		request.getData().setBuId(getBuId());
-		request.getData().setCreatedBy(getUserId());
-		request.getData().setUpdatedBy(getUserId());
 		
-		ServiceResult<CaseModelBean> serviceResult = caseService.createCase(request.getData());
+		
+		CaseModelBean bean = request.getData();
+		bean.setCaseSlaId("1");
+		bean.setBuId(getBuId());
+		bean.setCreatedBy(getUserId());
+		bean.setUpdatedBy(getUserId());
+		
+		ServiceResult<CaseModelBean> serviceResult = caseService.createCase(bean);
 		if (serviceResult.isSuccess()) {
 			return ApiResponse.success(serviceResult.getResult());
 		}
