@@ -30,6 +30,7 @@ public class CaseModelBean extends BaseModelBean {
 	private Long customerId;
 	private String owner;
 	private String displayName;
+	private Date dueDate;
 	private Date openedDate;
 	private Date closedDate;
 	private String typeName;
