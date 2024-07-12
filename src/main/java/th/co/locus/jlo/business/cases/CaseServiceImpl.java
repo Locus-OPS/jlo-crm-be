@@ -45,7 +45,8 @@ public class CaseServiceImpl extends BaseService implements CaseService{
 	
 	@Override
 	public ServiceResult<CaseModelBean> updateCase(CaseModelBean bean) {
-		int result = commonDao.update("case.updateCase", bean);
+		
+		int result = commonDao.update("case.updateCaseProc", bean);
 		if (result > 0) {
 			return success(commonDao.selectOne("case.getCaseByCaseNumber", bean));
 		}

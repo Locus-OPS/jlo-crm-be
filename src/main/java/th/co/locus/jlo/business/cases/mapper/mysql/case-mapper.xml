@@ -197,7 +197,27 @@
 		#{updatedBy}
 		)
 	</insert>
-
+	
+	
+	<update id="updateCaseProc">
+		CALL UPDATE_CASE_PROC(
+			 #{caseNumber},
+			 #{type},
+			 #{subType}, 
+			 #{priority},
+			 #{status}, 
+			 #{channel},
+			 #{subject},
+			 #{detail}, 
+			 #{contactName},
+			 #{customerId},
+			 #{owner},
+			 #{updatedBy},
+			 #{caseSlaId}
+			 );
+		
+	</update>
+	
 	<update id="updateCase">
 		UPDATE TB_CASE
 		SET
