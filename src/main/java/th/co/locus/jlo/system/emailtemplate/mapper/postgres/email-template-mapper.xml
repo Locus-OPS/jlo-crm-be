@@ -1,0 +1,116 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="emailTemplate">
+	<select id="getEmailTemplateList" resultType="EmailTemplateModelBean">
+			SELECT
+				template.`id`,
+				template.`ATT_ID`,
+			    template.`MODULE`,
+			    template.`TEMPLATE_NAME`,
+			    template.`STATUS_CD`,
+			    cb2.CODE_NAME as statusName,
+			    template.`DESCRIPTION`,
+			    template.`BU_ID`,
+			    template.`CREATED_DATE`,
+			    template.`CREATED_BY`,
+			    template.`UPDATED_DATE`,
+			    template.`UPDATED_BY`,	
+				CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS	createdByName, 
+				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName
+				
+			FROM `tb_email_template` template 
+			LEFT OUTER JOIN tb_codebook cb2 ON template.STATUS_CD = cb2.CODE_ID AND	cb2.CODE_TYPE = 'ACTIVE_FLAG'
+			LEFT JOIN TB_USER u1 ON template.CREATED_BY = u1.ID
+			LEFT JOIN TB_USER u2 ON template.UPDATED_BY = u2.ID
+		<where>			
+			<if test="module != null and module != ''">
+				<bind name="module" value="'%' + module + '%'" />
+				AND template.module LIKE #{module}
+			</if>
+			
+			<if test="templateName != null and templateName != ''">
+				<bind name="templateName" value="'%' + templateName + '%'" />
+				AND template.TEMPLATE_NAME LIKE #{templateName}
+			</if>
+			
+			<if test="statusCd != null and statusCd != ''">				 
+				AND template.STATUS_CD = #{statusCd}
+			</if>
+		</where>		
+		<choose>		 
+			<otherwise>
+				ORDER BY template.ID ASC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findEmailTemplateById" resultType="EmailTemplateModelBean">
+		SELECT
+				template.`id`,
+				template.`ATT_ID`,
+			    template.`MODULE`,
+			    template.`TEMPLATE_NAME`,
+			    template.`STATUS_CD`,
+			    cb2.CODE_NAME as statusName,
+			    template.`DESCRIPTION`,
+			    template.`BU_ID`,
+			    template.`CREATED_DATE`,
+			    template.`CREATED_BY`,
+			    template.`UPDATED_DATE`,
+			    template.`UPDATED_BY`,	
+				CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS	createdByName, 
+				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName
+				
+			FROM `tb_email_template` template 
+			LEFT OUTER JOIN tb_codebook cb2 ON template.STATUS_CD = cb2.CODE_ID AND	cb2.CODE_TYPE = 'ACTIVE_FLAG'
+			LEFT JOIN TB_USER u1 ON template.CREATED_BY = u1.ID
+			LEFT JOIN TB_USER u2 ON template.UPDATED_BY = u2.ID
+		WHERE
+		template.ID = #{id}
+
+	</select>
+
+	<insert id="createEmailTemplate" keyColumn="ID" keyProperty="id"
+		useGeneratedKeys="true">
+		
+		INSERT INTO `tb_email_template`
+				( 
+				`MODULE`,
+				`TEMPLATE_NAME`,
+				`STATUS_CD`,
+				`DESCRIPTION`,
+				`BU_ID`,
+				`CREATED_DATE`,
+				`CREATED_BY`,
+				`UPDATED_DATE`,
+				`UPDATED_BY`
+		)VALUES (
+				#{module},
+				#{templateName},
+				#{statusCd},
+				#{description},
+				#{buId},
+				NOW(),
+				#{CREATED_BY},
+				NOW(),
+				#{updatedBy}
+		 )
+	</insert>
+
+	<update id="updateEmailTemplate">
+		UPDATE tb_email_template
+		SET
+		 MODULE = #{module}
+		,TEMPLATE_NAME = #{templateName}
+		,STATUS_CD = #{statusCd}
+		,DESCRIPTION = #{description}
+		,UPDATED_BY = #{updatedBy}
+		,UPDATED_DATE = NOW()
+		WHERE ID = #{id}
+	</update>
+	
+	<delete id="deleteEmailTemplate">
+		DELETE FROM tb_email_template WHERE ID = #{id}
+	</delete>
+</mapper>
