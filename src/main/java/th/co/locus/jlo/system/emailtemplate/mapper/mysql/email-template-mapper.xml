@@ -18,9 +18,14 @@
 			    template.`UPDATED_DATE`,
 			    template.`UPDATED_BY`,	
 				CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS	createdByName, 
-				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName
+				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName,
+				B.FILE_PATH,
+			    B.FILE_NAME,
+			    B.FILE_EXTENSION,
+			    B.FILE_SIZE
 				
 			FROM `tb_email_template` template 
+			 INNER JOIN TB_ATT B ON template.ATT_ID = B.ATT_ID
 			LEFT OUTER JOIN tb_codebook cb2 ON template.STATUS_CD = cb2.CODE_ID AND	cb2.CODE_TYPE = 'ACTIVE_FLAG'
 			LEFT JOIN TB_USER u1 ON template.CREATED_BY = u1.ID
 			LEFT JOIN TB_USER u2 ON template.UPDATED_BY = u2.ID
@@ -60,9 +65,14 @@
 			    template.`UPDATED_DATE`,
 			    template.`UPDATED_BY`,	
 				CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS	createdByName, 
-				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName
+				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName,
+                B.FILE_PATH,
+			    B.FILE_NAME,
+			   B.FILE_EXTENSION,
+			   B.FILE_SIZE
 				
 			FROM `tb_email_template` template 
+            INNER JOIN TB_ATT B ON template.ATT_ID = B.ATT_ID
 			LEFT OUTER JOIN tb_codebook cb2 ON template.STATUS_CD = cb2.CODE_ID AND	cb2.CODE_TYPE = 'ACTIVE_FLAG'
 			LEFT JOIN TB_USER u1 ON template.CREATED_BY = u1.ID
 			LEFT JOIN TB_USER u2 ON template.UPDATED_BY = u2.ID
@@ -77,6 +87,7 @@
 		INSERT INTO `tb_email_template`
 				( 
 				`MODULE`,
+				`ATT_ID`,
 				`TEMPLATE_NAME`,
 				`STATUS_CD`,
 				`DESCRIPTION`,
@@ -87,12 +98,13 @@
 				`UPDATED_BY`
 		)VALUES (
 				#{module},
+				#{attId},
 				#{templateName},
 				#{statusCd},
 				#{description},
 				#{buId},
 				NOW(),
-				#{CREATED_BY},
+				#{createdBy},
 				NOW(),
 				#{updatedBy}
 		 )
@@ -105,6 +117,7 @@
 		,TEMPLATE_NAME = #{templateName}
 		,STATUS_CD = #{statusCd}
 		,DESCRIPTION = #{description}
+		,ATT_ID = #{attId}
 		,UPDATED_BY = #{updatedBy}
 		,UPDATED_DATE = NOW()
 		WHERE ID = #{id}

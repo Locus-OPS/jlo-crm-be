@@ -15,10 +15,16 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 public class EmailTemplateModelBean extends BaseModelBean {
 
 	private long id;
+	private long attId;
 	private String module;
 	private String templateName;
 	private String statusCd;
 	private String statusName;
 	private String description;
+
+	private String filePath;
+	private String fileName;
+	private String fileExtension;
+	private Long fileSize;
 
 }
