@@ -8,6 +8,7 @@
 				template.`id`,
 				template.`ATT_ID`,
 			    template.`MODULE`,
+			    cb1.code_name as moduleName,
 			    template.`TEMPLATE_NAME`,
 			    template.`STATUS_CD`,
 			    cb2.CODE_NAME as statusName,
@@ -26,6 +27,7 @@
 				
 			FROM `tb_email_template` template 
 			 INNER JOIN TB_ATT B ON template.ATT_ID = B.ATT_ID
+			LEFT OUTER JOIN tb_codebook cb1 ON template.MODULE = cb1.CODE_ID AND cb1.CODE_TYPE = 'EMAIL_TEMPLATE_MODULE'
 			LEFT OUTER JOIN tb_codebook cb2 ON template.STATUS_CD = cb2.CODE_ID AND	cb2.CODE_TYPE = 'ACTIVE_FLAG'
 			LEFT JOIN TB_USER u1 ON template.CREATED_BY = u1.ID
 			LEFT JOIN TB_USER u2 ON template.UPDATED_BY = u2.ID

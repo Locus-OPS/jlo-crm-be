@@ -17,6 +17,7 @@ public class EmailTemplateModelBean extends BaseModelBean {
 	private long id;
 	private long attId;
 	private String module;
+	private String moduleName;
 	private String templateName;
 	private String statusCd;
 	private String statusName;
