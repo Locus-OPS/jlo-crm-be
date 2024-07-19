@@ -13,6 +13,7 @@
 			    template.`STATUS_CD`,
 			    cb2.CODE_NAME as statusName,
 			    template.`DESCRIPTION`,
+		     	template.`TEMPLATE_HTML_CODE`,
 			    template.`BU_ID`,
 			    template.`CREATED_DATE`,
 			    template.`CREATED_BY`,
@@ -61,6 +62,7 @@
 			    template.`STATUS_CD`,
 			    cb2.CODE_NAME as statusName,
 			    template.`DESCRIPTION`,
+	            template.`TEMPLATE_HTML_CODE`,
 			    template.`BU_ID`,
 			    template.`CREATED_DATE`,
 			    template.`CREATED_BY`,
@@ -70,8 +72,8 @@
 				CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS	updatedByName,
                 B.FILE_PATH,
 			    B.FILE_NAME,
-			   B.FILE_EXTENSION,
-			   B.FILE_SIZE
+			    B.FILE_EXTENSION,
+			    B.FILE_SIZE
 				
 			FROM `tb_email_template` template 
             INNER JOIN TB_ATT B ON template.ATT_ID = B.ATT_ID
@@ -93,6 +95,7 @@
 				`TEMPLATE_NAME`,
 				`STATUS_CD`,
 				`DESCRIPTION`,
+				`TEMPLATE_HTML_CODE`,
 				`BU_ID`,
 				`CREATED_DATE`,
 				`CREATED_BY`,
@@ -104,6 +107,7 @@
 				#{templateName},
 				#{statusCd},
 				#{description},
+				#{templateHtmlCode},
 				#{buId},
 				NOW(),
 				#{createdBy},
@@ -119,6 +123,7 @@
 		,TEMPLATE_NAME = #{templateName}
 		,STATUS_CD = #{statusCd}
 		,DESCRIPTION = #{description}
+		,TEMPLATE_HTML_CODE= #{templateHtmlCode}
 		,ATT_ID = #{attId}
 		,UPDATED_BY = #{updatedBy}
 		,UPDATED_DATE = NOW()
@@ -128,4 +133,14 @@
 	<delete id="deleteEmailTemplate">
 		DELETE FROM tb_email_template WHERE ID = #{id}
 	</delete>
+	
+	<select id="findEmailTemplateByModule" resultType="EmailTemplateModelBean">
+		SELECT
+				template.*
+				
+			FROM `tb_email_template` template 
+           
+		WHERE template.MODULE = #{module}
+
+	</select>
 </mapper>

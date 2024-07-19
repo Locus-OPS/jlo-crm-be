@@ -1,10 +1,11 @@
 package th.co.locus.jlo.util;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeUtility;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,11 +15,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeUtility;
+import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
 @Slf4j
 @Component
@@ -198,6 +200,58 @@ public class JloMailSender {
 		log.info("Sending email...");
 		mailSender.send(message);
 		log.info("Done!");
+	}
+	
+	
+	public void sendEmailAttMultiWithTemplate(String from, String[] to, String[] cc, String[] bcc, String subject, String body,  List<FileModelBean> attFileList) throws Exception {
+//		// File attFile,String fileName
+//		System.setProperty("mail.mime.encodeparameters",  "false");
+//		MimeMessage message = mailSender.createMimeMessage();
+//
+//		// MimeMessageHelper helper = new MimeMessageHelper(message);
+//		MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+//
+//		Map<String, Object> model = new HashMap<String, Object>();
+//		model.put("body", body);
+//
+//		// set loading location to src/main/resources
+//		// You may want to use a subfolder such as /templates here
+//		freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/emailTemplates");
+//
+//		Template template = freemarkerConfig.getTemplate("welcome.ftl");
+//		String text = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+//
+//		helper.setFrom("",from);
+//		helper.setTo(to);
+//		if (cc[0] != "" && cc[0] != null) {
+//			helper.setCc(cc);
+//		}
+//		if (bcc[0] != "" && bcc[0] != null) {
+//			helper.setBcc(bcc);
+//		}
+//		
+//		helper.setSubject(subject);
+//		helper.setText(text, true);
+//		
+//		//helper.addAttachment(MimeUtility.encodeText(fileName,"UTF-8",null), attFile);
+//		
+//		
+//		for(FileModelBean attFile: attFileList) {
+//			String filePath = attFile.getFilePath();
+//			Resource fileObject = fileService.loadFile(filePath);
+//			String fullPath = fileObject.getFile().getPath();
+//			
+//			log.info(attFile.getFileName()+" Path >>:>>  " + fullPath);
+//			// Open streams.
+//			File myFilePath = new File(fullPath);
+//			
+//			helper.addAttachment(MimeUtility.encodeText(attFile.getFileName(),"UTF-8",null), myFilePath);
+//			
+//		}
+//		
+//		log.info("Sending email...");
+//		mailSender.send(message);
+//		log.info("Done!");
 	}
 
 }

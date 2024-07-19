@@ -22,6 +22,7 @@ public class EmailTemplateModelBean extends BaseModelBean {
 	private String statusCd;
 	private String statusName;
 	private String description;
+	private String templateHtmlCode;
 
 	private String filePath;
 	private String fileName;

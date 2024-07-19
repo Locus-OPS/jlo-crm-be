@@ -86,4 +86,9 @@ public class EmailTemplateServiceImpl extends BaseService implements EmailTempla
 		
 	}
 
+	@Override
+	public ServiceResult<EmailTemplateModelBean> getEmailTemplateByModule(EmailTemplateModelBean criteria) {
+		return success(commonDao.selectOne("emailTemplate.findEmailTemplateByModule", criteria));
+	}
+
 }

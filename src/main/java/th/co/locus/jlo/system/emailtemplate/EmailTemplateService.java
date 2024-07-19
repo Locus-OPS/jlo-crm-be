@@ -13,7 +13,9 @@ import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 public interface EmailTemplateService {
 
 	public ServiceResult<Page<EmailTemplateModelBean>> getEmailTemplateList(EmailTemplateModelBean criteria, PageRequest pageRequest);
-
+	
+	public ServiceResult<EmailTemplateModelBean> getEmailTemplateByModule(EmailTemplateModelBean criteria);
+	
 	public ServiceResult<EmailTemplateModelBean> createEmailTemplate(EmailTemplateModelBean bean);
 
 	public ServiceResult<EmailTemplateModelBean> updateEmailTemplate(EmailTemplateModelBean bean);

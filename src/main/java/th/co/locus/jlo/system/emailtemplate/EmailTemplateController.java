@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
@@ -33,6 +35,7 @@ import th.co.locus.jlo.system.emailtemplate.bean.EmailTemplateModelBean;
 import th.co.locus.jlo.system.file.FileService;
 import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
+@Slf4j
 @RestController
 @RequestMapping("api/email-template")
 public class EmailTemplateController extends BaseController {
@@ -45,10 +48,6 @@ public class EmailTemplateController extends BaseController {
 	
 	@Value("${attachment.path.email.att}")
 	private String emailPath;
-	
-	 
-	
- 
 	
 	@Autowired
 	private FileService fileService;
@@ -70,29 +69,23 @@ public class EmailTemplateController extends BaseController {
 			return ApiPageResponse.fail();
 		}
 	}
+		
 
-	@WritePermission
-	@PostMapping(value = "/saveEmailTemplateOld", produces = "application/json")
-	public ApiResponse<EmailTemplateModelBean> saveEmailTemplateOld(
-			@RequestBody ApiRequest<EmailTemplateModelBean> request) {
-
-		ServiceResult<EmailTemplateModelBean> serviceResult;
-		EmailTemplateModelBean emailtemplateBean = new EmailTemplateModelBean();
-		CommonUtil.nullifyObject(emailtemplateBean);
-		emailtemplateBean = request.getData();
-		emailtemplateBean.setCreatedBy(getUserId());
-		emailtemplateBean.setUpdatedBy(getUserId());
-		emailtemplateBean.setBuId(getBuId());
-
-		if (emailtemplateBean.getId() > 0) {
-			serviceResult = emailTemplateService.updateEmailTemplate(request.getData());
-		} else {
-			serviceResult = emailTemplateService.createEmailTemplate(request.getData());
-		}
+	@ReadPermission
+	@PostMapping(value = "/getEmailTemplateByModule", produces = "application/json")
+	public ApiResponse<EmailTemplateModelBean> getEmailTemplateByModule(@RequestBody ApiPageRequest<EmailTemplateModelBean> request) {
+		log.info("getEmailTemplateByModule Criteria : "+request.getData());
+		EmailTemplateModelBean emailTemplateData = request.getData();
+		emailTemplateData.setBuId(getBuId());
+		ServiceResult<EmailTemplateModelBean> serviceResult = emailTemplateService.getEmailTemplateByModule(emailTemplateData);
 		if (serviceResult.isSuccess()) {
-			return ApiResponse.success(serviceResult.getResult());
+			EmailTemplateModelBean emailTemplateDataList = serviceResult.getResult();
+			log.info("emailTemplateDataList : "+emailTemplateDataList);
+
+			return ApiResponse.success(emailTemplateDataList);			
+		} else {
+			return ApiResponse.fail();
 		}
-		return ApiResponse.fail();
 	}
 	
 	 
@@ -104,6 +97,7 @@ public class EmailTemplateController extends BaseController {
 			@RequestParam("attId") String attId,
 			@RequestParam("statusCd") String statusCd, 
 			@RequestParam("description") String description,
+			@RequestParam("templateHtmlCode") String templateHtmlCode,
 			@RequestParam("module") String module) throws IOException {
 
 		EmailTemplateModelBean emailTemplateBean = new EmailTemplateModelBean();
@@ -114,6 +108,7 @@ public class EmailTemplateController extends BaseController {
 		emailTemplateBean.setTemplateName(templateName);
 		emailTemplateBean.setStatusCd(statusCd);
 		emailTemplateBean.setDescription(description);
+		emailTemplateBean.setTemplateHtmlCode(templateHtmlCode);
 		emailTemplateBean.setModule(module);
 		emailTemplateBean.setBuId(getBuId());
 		emailTemplateBean.setCreatedBy(getUserId());
