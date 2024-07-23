@@ -9,10 +9,17 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,7 +58,10 @@ public class EmailTemplateController extends BaseController {
 	
 	@Autowired
 	private FileService fileService;
-
+	
+	@Value("${attachment.path.email.template_image}")
+	private String emailImagePath;
+	
 	@ReadPermission
 	@PostMapping(value = "/getEmailTemplateList", produces = "application/json")
 	public ApiPageResponse<List<EmailTemplateModelBean>> getEmailTemplateList(
@@ -147,4 +157,34 @@ public class EmailTemplateController extends BaseController {
 	public ApiResponse<Integer> deleteEmailTemplate(@RequestBody ApiRequest<EmailTemplateModelBean> request) {
 		return ApiResponse.success(emailTemplateService.deleteEmailTemplate(request.getData()).getResult());
 	}
+	
+	
+	@WritePermission
+	@PostMapping(value = "/upload")
+	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
+			@RequestParam("templateId") Long templateId) {
+		String message = "";
+	 
+		try {
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+			String fileName = templateId + "_"+timeStamp+ CommonUtil.getFileExtension(file);
+			fileService.saveFile(file, emailImagePath, fileName);
+			
+			//customerService.updateCustomerProfileImage(fileName, templateId);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(fileName);
+		} catch (Exception e) {
+			message = "FAIL to upload " + file.getOriginalFilename() + "!";
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+		}
+	}
+	
+	@GetMapping(value = "/email_template_image/{fileName:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
+		log.info("getProfileImage: "+emailImagePath + File.separator + fileName);
+		Resource file = fileService.loadFile(emailImagePath + File.separator + fileName);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+	}
+	
 }

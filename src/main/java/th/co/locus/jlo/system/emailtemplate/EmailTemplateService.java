@@ -26,5 +26,5 @@ public interface EmailTemplateService {
 	public ServiceResult<EmailTemplateModelBean> createEmailTemplate(EmailTemplateModelBean bean, FileModelBean fileBean, MultipartFile file) throws IOException;
 	
 	public ServiceResult<EmailTemplateModelBean> updateEmailTemplate(EmailTemplateModelBean bean, FileModelBean fileBean, MultipartFile file) throws IOException;
-	 
+	
 }
