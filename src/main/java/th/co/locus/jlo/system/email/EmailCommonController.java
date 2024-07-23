@@ -78,10 +78,21 @@ public class EmailCommonController extends BaseController {
 			String emailTo = "";
 			String emailCc = "";
 						
+			if(emailInfo.getCcEmail() != null && !emailInfo.getCcEmail().trim().isEmpty()) {
+				emailCcReq = emailInfo.getCcEmail();
+			}
 			
-			emailCcReq = (StringUtils.isEmpty(emailInfo.getCcEmail()) ? "" : emailInfo.getCcEmail());
-			subjectReq = (StringUtils.isEmpty(emailInfo.getSubjectEmail()) ? " no subject " : emailInfo.getSubjectEmail());
-			messageDesc = (StringUtils.isEmpty(emailInfo.getBodyEmail()) ? "" : emailInfo.getBodyEmail());
+			if(emailInfo.getSubjectEmail() != null && !emailInfo.getSubjectEmail().trim().isEmpty()) {
+				subjectReq = emailInfo.getSubjectEmail();
+			}
+			
+			if(emailInfo.getBodyEmail() != null && !emailInfo.getBodyEmail().trim().isEmpty()) {
+				messageDesc = emailInfo.getBodyEmail();
+			}
+					 
+			//emailCcReq = (StringUtils.isEmpty(emailInfo.getCcEmail()) ? "" : emailInfo.getCcEmail());
+			//subjectReq = (StringUtils.isEmpty(emailInfo.getSubjectEmail()) ? " no subject " : emailInfo.getSubjectEmail());
+			//messageDesc = (StringUtils.isEmpty(emailInfo.getBodyEmail()) ? "" : emailInfo.getBodyEmail());
 
 			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
 			
@@ -180,14 +191,22 @@ public class EmailCommonController extends BaseController {
 			String emailCcReq = "";
 			String subjectReq = "";
 			String messageDesc = "";
-			String fromName = "Makro Cats";
+			String fromName = "JLO CRM System";
 			String emailTo = "";
 			String emailCc = "";
 
-			emailCcReq = (StringUtils.isEmpty(emailInfo.getCcEmail()) ? "" : emailInfo.getCcEmail());
-			subjectReq = (StringUtils.isEmpty(emailInfo.getSubjectEmail()) ? " no subject " : emailInfo.getSubjectEmail());
-			messageDesc = (StringUtils.isEmpty(emailInfo.getBodyEmail()) ? "" : emailInfo.getBodyEmail());
-
+			if(emailInfo.getCcEmail() != null && !emailInfo.getCcEmail().trim().isEmpty()) {
+				emailCcReq = emailInfo.getCcEmail();
+			}
+			
+			if(emailInfo.getSubjectEmail() != null && !emailInfo.getSubjectEmail().trim().isEmpty()) {
+				subjectReq = emailInfo.getSubjectEmail();
+			}
+			
+			if(emailInfo.getBodyEmail() != null && !emailInfo.getBodyEmail().trim().isEmpty()) {
+				messageDesc = emailInfo.getBodyEmail();
+			}
+			
 			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
 			
 			 
@@ -298,14 +317,22 @@ public class EmailCommonController extends BaseController {
 			String emailCcReq = "";
 			String subjectReq = "";
 			String messageDesc = "";
-			String fromName = "Makro Internal Audit Management System";
+			String fromName = "JLO CRM System";
 			String emailTo = "";
 			String emailCc = "";
-
-			emailCcReq = (StringUtils.isEmpty(emailInfo.getCcEmail()) ? "" : emailInfo.getCcEmail());
-			subjectReq = (StringUtils.isEmpty(emailInfo.getSubjectEmail()) ? " no subject " : emailInfo.getSubjectEmail());
-			messageDesc = (StringUtils.isEmpty(emailInfo.getBodyEmail()) ? "" : emailInfo.getBodyEmail());
-
+			
+			if(emailInfo.getCcEmail() != null && !emailInfo.getCcEmail().trim().isEmpty()) {
+				emailCcReq = emailInfo.getCcEmail();
+			}
+			
+			if(emailInfo.getSubjectEmail() != null && !emailInfo.getSubjectEmail().trim().isEmpty()) {
+				subjectReq = emailInfo.getSubjectEmail();
+			}
+			
+			if(emailInfo.getBodyEmail() != null && !emailInfo.getBodyEmail().trim().isEmpty()) {
+				messageDesc = emailInfo.getBodyEmail();
+			}
+			
 			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
 			
 			 
