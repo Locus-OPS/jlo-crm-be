@@ -33,7 +33,7 @@ public class EmailServiceImpl extends BaseService implements EmailService {
 			param.put("xForwardedFor", request.getHeader("X-Forwarded-For"));
 			commonDao.insert("email.insertReadLog", param);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		return success(Boolean.TRUE);
 	}

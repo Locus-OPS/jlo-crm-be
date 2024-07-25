@@ -188,10 +188,10 @@ public class JloMailSender {
 
 		helper.setFrom(mailFrom, from);
 		helper.setTo(to);
-		if (cc[0] != "" && cc[0] != null) {
+		if (cc != null && cc[0] != "" && cc[0] != null) {
 			helper.setCc(cc);
 		}
-		if (bcc[0] != "" && bcc[0] != null) {
+		if (bcc != null && bcc[0] != "" && bcc[0] != null) {
 			helper.setBcc(bcc);
 		}
 		helper.setSubject(subject);
