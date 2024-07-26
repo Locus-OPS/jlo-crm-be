@@ -70,7 +70,7 @@ public class EmailCommonController extends BaseController {
 	private String port;
 	
 	@Value("${attachment.path.email.att}")
-	private String emailPath;
+	private String emailAttPath;
 	
 	
 
@@ -256,7 +256,7 @@ public class EmailCommonController extends BaseController {
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 				String fileName = "file_att_email_"+timeStamp+ CommonUtil.getFileExtension(file);
 				fileBean = new FileModelBean();
-				fileBean.setFilePath(emailPath + File.separator);
+				fileBean.setFilePath(emailAttPath);
 				fileBean.setFileExtension(CommonUtil.getFileExtension(file));
 				fileBean.setFileName(fileName);
 				fileBean.setFileSize(file.getSize());
@@ -264,7 +264,7 @@ public class EmailCommonController extends BaseController {
 				fileBean.setUpdatedBy(getUserId());
 				
 				fileBean = fileService.createAttachment(fileBean).getResult(); 
-				fileService.saveFile(file, fileBean.getFilePath(), fileBean.getFileName());
+				fileService.saveFile(file, emailAttPath, fileBean.getFileName());
 				
 				emailService.sendEmailAttTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, params, fileAtt,fileAtt.getName());
 			}else {
