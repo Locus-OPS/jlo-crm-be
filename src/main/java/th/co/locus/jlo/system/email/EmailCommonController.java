@@ -220,14 +220,16 @@ public class EmailCommonController extends BaseController {
 			if(toEmail != null && !toEmail.trim().isEmpty()) {
 				emailTo = toEmail.replaceAll("\\s", "");
 				emailInfo.setToEmail(toEmail);
-				arrayEmailTo = emailTo.replaceAll(";", ",").split(",");
+//				arrayEmailTo = emailTo.replaceAll(";", ",").split(",");
+				arrayEmailTo = emailTo.split(",");
 			}
 			
 			if(ccEmail != null && !ccEmail.trim().isEmpty()) {
 				emailCcReq = ccEmail;
 				emailInfo.setCcEmail(ccEmail);
 				emailCc = emailCcReq.replaceAll("\\s", "");
-				arrayEmailCc = emailCc.replaceAll(";", ",").split(",");
+//				arrayEmailCc = emailCc.replaceAll(";", ",").split(",");
+				arrayEmailCc = emailCc.split(",");
 			}
 			
 			if(subjectEmail != null && !subjectEmail.trim().isEmpty()) {

@@ -12,9 +12,10 @@
 		 t.`BUSINESS_NAME`, t.`TAX_ID`,
          t.`CUSTOMER_STATUS`,
          cb.code_name as customerStatusName,
+		 t.email,
 		 
-        CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
-          t.`APPROVED_DATE`,
+         CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
+         t.`APPROVED_DATE`,
          CONCAT(COALESCE(u3.FIRST_NAME,''), ' ',COALESCE( u3.LAST_NAME,'')) AS updatedByName,
          t.UPDATED_DATE,
          t.PICTURE_URL
@@ -89,6 +90,7 @@
 			    `t`.`GENDER`,
 			    `t`.`NATIONALITY`,
 			    `t`.`BIRTHDATE`,
+			    `t`.`email`,
 			    `t`.`OCCUPATION`,
 			    `t`.`MARITAL_STATUS`,
 			    `t`.`IMAGE_URL`,
