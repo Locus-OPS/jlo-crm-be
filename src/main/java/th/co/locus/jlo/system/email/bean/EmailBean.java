@@ -23,6 +23,6 @@ public class EmailBean extends BaseModelBean {
 	private String bodyEmail;
 	private Long attachmentId;
 	private String fromEmail;
-	
+	private String fromName;
 	
 }

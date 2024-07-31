@@ -177,6 +177,8 @@
 			,#{status}
 			,#{channel}
 			,#{subject}
+			,#{workNote} 
+            ,#{informName}      
 			,#{detail}
 			,#{contactName}
 			,#{customerId}
@@ -203,6 +205,8 @@
 		STATUS,
 		CHANNEL,
 		SUBJECT,
+		WORK_NOTE,
+		INFORM_NAME,
 		DETAIL,
 		CONTACT_NAME,
 		CUSTOMER_ID,
@@ -228,6 +232,8 @@
 		#{status},
 		#{channel},
 		#{subject},
+		,#{workNote} 
+        ,#{informName} 
 		#{detail},
 		#{contactName},
 		#{customerId},
@@ -260,7 +266,9 @@
 			 #{customerId},
 			 #{owner},
 			 #{updatedBy},
-			 #{caseSlaId}
+			 #{caseSlaId},
+			 #{workNote} ,
+        	 #{informName} 
 			 );
 		
 	</update>
@@ -278,6 +286,8 @@
 		CHANNEL = #{channel},
 		DETAIL = #{detail},
 		SUBJECT = #{subject},
+		WORK_NOTE =#{workNote} ,
+        INFORM_NAME =#{informName}, 
 		OWNER = #{owner},
 		CLOSED_DATE = CASE WHEN (#{status} = '04')
 		THEN NOW()

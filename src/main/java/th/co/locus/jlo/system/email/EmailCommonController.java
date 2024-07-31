@@ -72,7 +72,7 @@ public class EmailCommonController extends BaseController {
 	@Value("${attachment.path.email.att}")
 	private String emailAttPath;
 	
-	
+ 
 
 	@PostMapping(value = "/sendEmail", produces = "application/json")
 	public @ResponseBody ApiResponse<EmailBean> sendEmail(@RequestBody ApiRequest<EmailBean> request) throws Exception {
@@ -127,8 +127,9 @@ public class EmailCommonController extends BaseController {
 			sendEmailResult.setResponseDescription("Delivered successfully");
 
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -163,8 +164,9 @@ public class EmailCommonController extends BaseController {
 
 		} catch (Exception e) {
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -204,7 +206,9 @@ public class EmailCommonController extends BaseController {
 		EmailBean emailInfo = new EmailBean();
 
 		try {
-
+			emailInfo.setParentModule(parentModule);
+			emailInfo.setFromEmail(fromEmail != null ? fromEmail : mailFrom);
+			
 			String emailCcReq = "";
 			String subjectReq = "";
 			String messageDesc = "";
@@ -265,7 +269,7 @@ public class EmailCommonController extends BaseController {
 				
 				fileBean = fileService.createAttachment(fileBean).getResult(); 
 				fileService.saveFile(file, emailAttPath, fileBean.getFileName());
-				
+				emailInfo.setAttachmentId(fileBean.getAttId());
 				emailService.sendEmailAttTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, params, fileAtt,fileAtt.getName());
 			}else {
 				emailService.sendEmailTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, "",null);
@@ -280,8 +284,9 @@ public class EmailCommonController extends BaseController {
 			sendEmailResult.setResponseDescription("Delivered successfully");
 
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -295,7 +300,7 @@ public class EmailCommonController extends BaseController {
 				logBean.setStatusCode("1");
 				logBean.setStatusDesc("Successfully");
 
-			//	emailLogService.createEmailLog(logBean);
+				emailLogService.createEmailLog(logBean);
 
 				return ApiResponse.success(sendEmailResult.getResult());
 			} else {
@@ -303,7 +308,7 @@ public class EmailCommonController extends BaseController {
 				logBean.setStatusCode("2");
 				logBean.setStatusDesc("	Failure");
 
-			//	emailLogService.createEmailLog(logBean);
+				emailLogService.createEmailLog(logBean);
 
 				sendEmailResult = new ServiceResult<EmailBean>();
 				sendEmailResult.setResult(emailInfo);
@@ -316,8 +321,9 @@ public class EmailCommonController extends BaseController {
 
 		} catch (Exception e) {
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -329,7 +335,7 @@ public class EmailCommonController extends BaseController {
 			logBean.setStatusCode("2");
 			logBean.setStatusDesc("	Failure");
 			logBean.setDeliverDesc(e.getMessage());
-		//	emailLogService.createEmailLog(logBean);
+			emailLogService.createEmailLog(logBean);
 
 			ServiceResult<EmailBean> sendEmailResult = new ServiceResult<EmailBean>();
 			sendEmailResult.setResult(emailInfo);
@@ -415,8 +421,9 @@ public class EmailCommonController extends BaseController {
 			sendEmailResult.setResponseDescription("Delivered successfully");
 
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -451,8 +458,9 @@ public class EmailCommonController extends BaseController {
 
 		} catch (Exception e) {
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -536,8 +544,9 @@ public class EmailCommonController extends BaseController {
 			sendEmailResult.setResponseDescription("Delivered successfully");
 
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
@@ -573,14 +582,15 @@ public class EmailCommonController extends BaseController {
 		} catch (Exception e) {
 			
 			EmailLogBean logBean = new EmailLogBean();
-			logBean.setParentId(emailInfo.getParentId());
+			//logBean.setParentId(emailInfo.getParentId());
 			logBean.setParentModule(emailInfo.getParentModule());
+			logBean.setFormEmail(emailInfo.getFromEmail());
 			logBean.setToEmail(emailInfo.getToEmail());
 			logBean.setCcEmail(emailInfo.getCcEmail());
 			logBean.setSubjectEmail(emailInfo.getSubjectEmail());
 			logBean.setBodyEmail(emailInfo.getBodyEmail());
 			logBean.setAttachmentId(emailInfo.getAttachmentId());
-
+			
 			logBean.setCreatedBy(getUserId());
 			logBean.setUpdatedBy(getUserId());
 			logBean.setStatusCode("2");

@@ -1,0 +1,44 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="emaillog">
+	<insert id="createEmailLog">
+		INSERT INTO `tb_email_log`
+		(
+		`PARENT_MODULE`,
+		`STATUS_CODE`,
+		`STATUS_DESC`,
+		`FORM_EMAIL`,
+		`TO_EMAIL`,
+		`CC_EMAIL`,
+		`SUBJECT_EMAIL`,
+		`BODY_EMAIL`,
+		`DELIVER_DESC`,
+		`ATTACHMENT_ID`,
+		`CREATED_BY`,
+		`CREATED_DATE`)
+		VALUES
+		(
+		#{parentModule},
+		#{statusCode} ,
+		#{statusDesc} ,
+		#{formEmail} ,
+		#{toEmail} ,
+		#{ccEmail} ,
+		#{subjectEmail},
+		#{bodyEmail} ,
+		#{deliverDesc} ,
+		#{attachmentId},
+		#{createdBy},
+		NOW()
+		)
+	</insert>
+
+	<select id="findEmailById" resultType="EmailLogBean">
+		SELECT
+		*
+		FROM
+		tb_email_log
+		WHERE
+		ID = #{Id}
+	</select>
+</mapper>
