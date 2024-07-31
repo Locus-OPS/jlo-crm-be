@@ -19,7 +19,8 @@ import th.co.locus.jlo.common.bean.SortingModelBean;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SearchCaseModelBean extends SortingModelBean {
-	
+	private String divisionTypeCode;
+	private String categoryTypeCode;
 	private String caseNumber;
 	private String type;
 	private String subType;

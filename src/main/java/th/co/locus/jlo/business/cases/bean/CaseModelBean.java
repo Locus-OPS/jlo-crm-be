@@ -54,4 +54,14 @@ public class CaseModelBean extends BaseModelBean {
 	
 	private String caseSlaId;
 	private String outCaseNumber;
-}
+	
+	private String divisionTypeCode;
+	private String categoryTypeCode;
+	private String serviceAreaCode;
+	private String workNote;
+	private String dslNumber;
+	private String incNumber;
+	private String dslStatus;
+	private String informName;
+	
+}	

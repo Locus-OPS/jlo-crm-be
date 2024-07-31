@@ -1,44 +1,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="case">
-    <select id="getCaseList" resultType="CaseModelBean">
-		SELECT 		
-			IFNULL(LMB.FIRST_NAME, TCM.FIRST_NAME) AS FIRST_NAME,
-			IFNULL(LMB.LAST_NAME, TCM.LAST_NAME) AS LAST_NAME,
-			IFNULL(LMB.BUSINESS_NAME, TCM.BUSINESS_NAME) AS BUSINESS_NAME,
-			IFNULL(LMB.MEMBER_TYPE, TCM.CUSTOMER_TYPE) AS MEMBER_TYPE,
-			IFNULL(LMB.TITLE, TCM.TITLE) AS TITLE,
-			IFNULL(LMB.PHONE_NO, TCM.PHONE_NO) AS PHONE_NO,
-			IFNULL(LMB.EMAIL, TCM.EMAIL) AS EMAIL,
+	<select id="getCaseList" resultType="CaseModelBean">
+		SELECT 
+		    TCM.FIRST_NAME AS FIRST_NAME,
+		    TCM.LAST_NAME AS LAST_NAME,
+		    TCM.BUSINESS_NAME AS BUSINESS_NAME,
+		    TCM.CUSTOMER_TYPE AS MEMBER_TYPE,
+		    TCM.TITLE AS TITLE,
+		    TCM.PHONE_NO AS PHONE_NO,
+		    TCM.EMAIL AS EMAIL,
 		    LC.CASE_NUMBER,
-			LC.DETAIL,
+		    LC.DETAIL,
 		    LC.TYPE,
-			LC.SUBTYPE,
+		    LC.SUBTYPE,
 		    LC.PRIORITY,
 		    LC.STATUS,
 		    LC.CHANNEL,
 		    LC.OWNER,
 		    LC.SUBJECT,
+		    LC.DUE_DATE,
 		    LC.OPENED_DATE,
 		    LC.CLOSED_DATE,
 		    LC.BU_ID,
 		    LC.CUSTOMER_ID,
-			LC.CREATED_DATE,
-			LC.CREATED_BY,
-			LC.UPDATED_DATE,
-			LC.UPDATED_BY,
-            CONCAT(USR.FIRST_NAME,' ',USR.LAST_NAME) AS displayName,
-            CB1.CODE_NAME AS typeName,
-            CB2.CODE_NAME AS subTypeName,
-            CB3.CODE_NAME AS priorityName
-		FROM
-		    TB_CASE LC
-            INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
-			INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
-	        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
-	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
-            INNER JOIN TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
-            LEFT JOIN LOY_MEMBER LMB ON LC.CUSTOMER_ID = LMB.CUSTOMER_ID
+		    LC.CREATED_DATE,
+		    LC.CREATED_BY,
+		    LC.UPDATED_DATE,
+		    LC.UPDATED_BY,
+		    CONCAT(COALESCE(u1.FIRST_NAME, ''),
+		            ' ',
+		            COALESCE(u1.LAST_NAME, '')) AS createdByName,
+		    CONCAT(COALESCE(u2.FIRST_NAME, ''),
+		            ' ',
+		            COALESCE(u2.LAST_NAME, '')) AS updatedByName,
+		    CONCAT(USR.FIRST_NAME, ' ', USR.LAST_NAME) AS displayName,
+		    CB1.CODE_NAME AS typeName,
+		    CB2.CODE_NAME AS subTypeName,
+		    CB3.CODE_NAME AS priorityName,
+	     	CB4.CODE_NAME AS divisionTypeName,
+			CB5.CODE_NAME AS categoryTypeName,
+			CB6.CODE_NAME AS serviceAreaName,
+			LC.DIVISION_TYPE_CODE as divisionTypeCode,
+			LC.CATEGORY_TYPE_CODE as categoryTypeCode,
+		    LC.SERVICE_AREA_CODE as serviceAreaCode,
+			LC.WORK_NOTE as workNote,
+			LC.DSL_NUMBER as dslNumber,
+			LC.INC_NUMBER as incNumber,
+			LC.DSL_STATUS as dslStatus,
+			LC.INFORM_NAME as informName
+			
+	FROM TB_CASE LC
+        INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+    	INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+		INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+		INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+        INNER JOIN TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
+        INNER JOIN TB_CODEBOOK CB5 ON LC.CATEGORY_TYPE_CODE = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_CATEGORY'
+        INNER JOIN TB_CODEBOOK CB6 ON LC.SERVICE_AREA_CODE = CB6.CODE_ID AND CB6.CODE_TYPE = 'CASE_SERVICE_AREA'
+        INNER JOIN   TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
+        LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
+        LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
+		
 		<where>
 			<if test="caseNumber != null and caseNumber != ''">
 				AND LC.CASE_NUMBER = #{caseNumber}
@@ -74,124 +97,204 @@
 				<![CDATA[ AND DATE(LC.CLOSED_DATE) <= #{closedDateEnd, jdbcType=DATE} ]]>
 			</if>
 		</where>
-		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC 
+		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC
 	</select>
-	
-    <select id="getCaseByCaseNumber" resultType="caseModelBean">
-		SELECT 		
-			IFNULL(LMB.FIRST_NAME, TCM.FIRST_NAME) AS FIRST_NAME,
-			IFNULL(LMB.LAST_NAME, TCM.LAST_NAME) AS LAST_NAME,
-			IFNULL(LMB.BUSINESS_NAME, TCM.BUSINESS_NAME) AS BUSINESS_NAME,
-			IFNULL(LMB.MEMBER_TYPE, TCM.CUSTOMER_TYPE) AS MEMBER_TYPE,
-			IFNULL(LMB.TITLE, TCM.TITLE) AS TITLE,
-			IFNULL(LMB.PHONE_NO, TCM.PHONE_NO) AS PHONE_NO,
-			IFNULL(LMB.EMAIL, TCM.EMAIL) AS EMAIL,
-		    LC.CASE_NUMBER,
-			LC.DETAIL,
-		    LC.TYPE,
-			LC.SUBTYPE,
-		    LC.PRIORITY,
-		    LC.STATUS,
-		    LC.CHANNEL,
-		    LC.OWNER,
-		    LC.SUBJECT,
-		    LC.OPENED_DATE,
-		    LC.CLOSED_DATE,
-		    LC.BU_ID,
-		    LC.CUSTOMER_ID,
-			LC.CREATED_DATE,
-			LC.CREATED_BY,
-			LC.UPDATED_DATE,
-			LC.UPDATED_BY,
-            CONCAT(USR.FIRST_NAME,' ',USR.LAST_NAME) AS displayName,
-            CB1.CODE_NAME AS typeName,
-            CB2.CODE_NAME AS subTypeName,
-            CB3.CODE_NAME AS priorityName
+
+	<select id="getCaseByCaseNumber" resultType="caseModelBean">
+		SELECT
+		TCM.FIRST_NAME AS FIRST_NAME,
+		TCM.LAST_NAME AS LAST_NAME,
+		TCM.BUSINESS_NAME AS BUSINESS_NAME,
+		TCM.CUSTOMER_TYPE AS MEMBER_TYPE,
+		 TCM.TITLE AS TITLE,
+		TCM.PHONE_NO AS PHONE_NO,
+		 TCM.EMAIL AS EMAIL,
+		LC.CASE_NUMBER,
+		LC.DETAIL,
+		LC.TYPE,
+		LC.SUBTYPE,
+		LC.PRIORITY,
+		LC.STATUS,
+		LC.CHANNEL,
+		LC.OWNER,
+		LC.SUBJECT,
+		LC.DUE_DATE,
+		LC.OPENED_DATE,
+		LC.CLOSED_DATE,
+        
+       	CB4.CODE_NAME AS divisionTypeName,
+		CB5.CODE_NAME AS categoryTypeName,
+		CB6.CODE_NAME AS serviceAreaName,
+	 	LC.SERVICE_AREA_CODE as serviceAreaCode,
+		LC.DIVISION_TYPE_CODE as divisionTypeCode,
+		LC.CATEGORY_TYPE_CODE as categoryTypeCode,
+		LC.WORK_NOTE as workNote,
+		LC.DSL_NUMBER as dslNumber,
+		LC.INC_NUMBER as incNumber,
+		LC.DSL_STATUS as dslStatus,
+		LC.INFORM_NAME as informName,
+		
+		LC.BU_ID,
+		LC.CUSTOMER_ID,
+		LC.CREATED_DATE,
+		LC.CREATED_BY,
+		LC.UPDATED_DATE,
+		LC.UPDATED_BY,
+		CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,
+   		 CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName,
+		CONCAT(USR.FIRST_NAME,' ',USR.LAST_NAME) AS displayName,
+		CB1.CODE_NAME AS typeName,
+		CB2.CODE_NAME AS subTypeName,
+		CB3.CODE_NAME AS priorityName
 		FROM
-		    TB_CASE LC
-            INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
-			INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
-	        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
-	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
-            INNER JOIN TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
-            LEFT JOIN LOY_MEMBER LMB ON LC.CUSTOMER_ID = LMB.CUSTOMER_ID
+		TB_CASE LC
+		INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+		INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+		INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+		INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+        INNER JOIN TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
+        INNER JOIN TB_CODEBOOK CB5 ON LC.CATEGORY_TYPE_CODE = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_CATEGORY'
+        INNER JOIN TB_CODEBOOK CB6 ON LC.SERVICE_AREA_CODE = CB6.CODE_ID AND CB6.CODE_TYPE = 'CASE_SERVICE_AREA'
+		INNER JOIN TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID		 
+		LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
 		WHERE
-		  (CASE_NUMBER = #{caseNumber})
-		   limit 1
+		(CASE_NUMBER = #{caseNumber})
+		limit 1
 	</select>
-	
-    <insert id="createCase">
+
+	<select id="createCaseProcedure" resultType="String" statementType="CALLABLE">
+		
+		CALL `INSERT_CASE_PROC`
+			(#{caseNumber}
+			,#{consultingNumber}
+			,#{divisionTypeCode}
+			,#{categoryTypeCode}
+			,#{type}
+			,#{subType}
+			,#{serviceAreaCode}
+			,#{priority}
+			,#{status}
+			,#{channel}
+			,#{subject}
+			,#{detail}
+			,#{contactName}
+			,#{customerId}
+			,#{owner}
+			,#{buId}
+			,#{createdBy}
+			,#{updatedBy}
+			,#{caseSlaId})
+		
+
+	</select>
+
+
+	<insert id="createCase">
 		INSERT INTO TB_CASE (
-			CASE_NUMBER,
-			CONSULTING_NUMBER,
-			TYPE,
-			SUBTYPE,
-			PRIORITY,
-			STATUS,
-			CHANNEL,
-			SUBJECT,
-			DETAIL,
-			CONTACT_NAME,
-			CUSTOMER_ID,
-			OWNER,
-			OPENED_DATE,
-			CLOSED_DATE,
-			BU_ID,
-			CREATED_DATE,
-			CREATED_BY,
-			UPDATED_DATE,
-			UPDATED_BY
-	  	 ) 
-	  	 VALUES
-		 (
-		 	#{caseNumber},
-		 	#{consultingNumber},
-			#{type},
-			#{subType},
-			#{priority},
-			#{status},
-			#{channel},
-			#{subject},
-			#{detail},
-			#{contactName},
-			#{customerId},
-			#{owner},
-			NOW(),
-			#{closedDate},
-			#{buId},
-			NOW(),
-			#{createdBy},
-			NOW(),
-			#{updatedBy}
-		 )
+		CASE_NUMBER,
+		CONSULTING_NUMBER,
+		DIVISION_TYPE_CODE,
+		CATEGORY_TYPE_CODE,
+		TYPE,
+		SUBTYPE,
+		SERVICE_AREA_CODE,
+		PRIORITY,
+		STATUS,
+		CHANNEL,
+		SUBJECT,
+		DETAIL,
+		CONTACT_NAME,
+		CUSTOMER_ID,
+		OWNER,
+		OPENED_DATE,
+		CLOSED_DATE,
+		BU_ID,
+		CREATED_DATE,
+		CREATED_BY,
+		UPDATED_DATE,
+		UPDATED_BY
+		)
+		VALUES
+		(
+		#{caseNumber},
+		#{consultingNumber},
+		#{divisionTypeCode},
+		#{categoryTypeCode},
+		#{type},
+		#{subType},
+		#{serviceAreaCode},
+		#{priority},
+		#{status},
+		#{channel},
+		#{subject},
+		#{detail},
+		#{contactName},
+		#{customerId},
+		#{owner},
+		NOW(),
+		#{closedDate},
+		#{buId},
+		NOW(),
+		#{createdBy},
+		NOW(),
+		#{updatedBy}
+		)
 	</insert>
 	
-    <update id="updateCase">
+	
+	<update id="updateCaseProc">
+		CALL UPDATE_CASE_PROC(
+			 #{caseNumber},
+			 #{divisionTypeCode},
+			 #{categoryTypeCode},
+			 #{type},
+			 #{subType},
+			 #{serviceAreaCode}, 
+			 #{priority},
+			 #{status}, 
+			 #{channel},
+			 #{subject},
+			 #{detail}, 
+			 #{contactName},
+			 #{customerId},
+			 #{owner},
+			 #{updatedBy},
+			 #{caseSlaId}
+			 );
+		
+	</update>
+	
+	<update id="updateCase">
 		UPDATE TB_CASE
 		SET
-			TYPE = #{type},
-			SUBTYPE = #{subType},
-			PRIORITY = #{priority},
-			STATUS = #{status},
-			CHANNEL = #{channel},
-			DETAIL = #{detail},
-			SUBJECT = #{subject},
-			OWNER = #{owner},
-			CLOSED_DATE = CASE WHEN (#{status} = '04') 
-						THEN NOW()
-              			ELSE NULL END,
-			BU_ID = #{buId},
-			UPDATED_DATE = NOW(),
-			UPDATED_BY = #{updatedBy}
+		DIVISION_TYPE_CODE= #{divisionTypeCode},
+		CATEGORY_TYPE_CODE= #{categoryTypeCode},
+		TYPE = #{type},
+		SUBTYPE = #{subType},
+		SERVICE_AREA_CODE = #{serviceAreaCode},
+		PRIORITY = #{priority},
+		STATUS = #{status},
+		CHANNEL = #{channel},
+		DETAIL = #{detail},
+		SUBJECT = #{subject},
+		OWNER = #{owner},
+		CLOSED_DATE = CASE WHEN (#{status} = '04')
+		THEN NOW()
+		ELSE NULL END,
+		BU_ID = #{buId},
+		UPDATED_DATE = NOW(),
+		UPDATED_BY = #{updatedBy}
 		WHERE
 		(CASE_NUMBER = #{caseNumber})
 	</update>
-	
-	<select id="generateCaseNumber" resultType="String" statementType="CALLABLE">
-	  	call GEN_NEW_SEQUENCE(
-	  		'CASE_SEQUENCE',
-	    	#{buId, jdbcType = INTEGER, mode = IN}
-	  	)
-	 </select>
- 
+
+	<select id="generateCaseNumber" resultType="String"
+		statementType="CALLABLE">
+		call GEN_NEW_SEQUENCE(
+		'CASE_SEQUENCE',
+		#{buId, jdbcType = INTEGER, mode = IN}
+		)
+	</select>
+
 </mapper>
