@@ -37,8 +37,50 @@
 		SELECT
 		*
 		FROM
-		tb_email_log
+		TB_EMAIL_LOG
 		WHERE
 		ID = #{id}
 	</select>
+	
+	
+	<select id="getEmailLogList" resultType="EmailLogBean">
+		SELECT
+			log.ID AS id,			 
+			log.PARENT_MODULE	AS parentModule,
+			log.STATUS_CODE		AS statusCode,
+			cb0.CODE_NAME		AS statusDesc,
+            log.FORM_EMAIL 		AS formEmail,			
+			log.TO_EMAIL		AS toEmail,
+			log.CC_EMAIL		AS ccEmail,
+			log.SUBJECT_EMAIL	AS subjectEmail,
+			log.BODY_EMAIL		AS bodyEmail,
+			log.DELIVER_DESC 	AS deliverDesc,
+            log.ATTACHMENT_ID	AS attachmentId,
+			CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName,
+            log.created_date 	AS createdDate
+     
+		FROM TB_EMAIL_LOG log		
+		INNER JOIN TB_CODEBOOK cb0 ON log.STATUS_CODE = cb0.CODE_ID AND cb0.CODE_TYPE = 'EMAIL_LOG_STATUS' AND cb0.ACTIVE_FLAG = 'Y' 
+		INNER JOIN TB_USER u1 ON log.CREATED_BY = u1.ID 
+		<where>
+			 1=1
+			 AND cb0.bu_id = #{buId}
+			 <if test="statusCode != null and statusCode != ''">
+				AND log.STATUS_CODE = #{statusCode}
+			</if>
+		</where>
+		ORDER BY log.id DESC
+	</select>
+	
+	<update id="updateEmailLog">
+		UPDATE TB_EMAIL_LOG
+		SET
+		 STATUS_CODE= #{statusCode},
+		 STATUS_DESC=#{statusDesc},
+
+		UPDATED_BY=#{updatedBy},
+		UPDATED_DATE=NOW()
+		
+		WHERE id = #{id}
+	</update>
 </mapper>

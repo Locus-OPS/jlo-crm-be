@@ -148,7 +148,7 @@ public class EmailCommonController extends BaseController {
 				return ApiResponse.success(sendEmailResult.getResult());
 			} else {
 
-				logBean.setStatusCode("2");
+				logBean.setStatusCode("0");
 				logBean.setStatusDesc("	Failure");
 
 			//	emailLogService.createEmailLog(logBean);
@@ -175,7 +175,7 @@ public class EmailCommonController extends BaseController {
 
 			logBean.setCreatedBy(getUserId());
 			logBean.setUpdatedBy(getUserId());
-			logBean.setStatusCode("2");
+			logBean.setStatusCode("0");
 			logBean.setStatusDesc("	Failure");
 			logBean.setDeliverDesc(e.getMessage());
 		//	emailLogService.createEmailLog(logBean);
@@ -305,7 +305,7 @@ public class EmailCommonController extends BaseController {
 				return ApiResponse.success(sendEmailResult.getResult());
 			} else {
 
-				logBean.setStatusCode("2");
+				logBean.setStatusCode("0"); 
 				logBean.setStatusDesc("	Failure");
 
 				emailLogService.createEmailLog(logBean);
@@ -332,7 +332,7 @@ public class EmailCommonController extends BaseController {
 
 			logBean.setCreatedBy(getUserId());
 			logBean.setUpdatedBy(getUserId());
-			logBean.setStatusCode("2");
+			logBean.setStatusCode("0");
 			logBean.setStatusDesc("	Failure");
 			logBean.setDeliverDesc(e.getMessage());
 			emailLogService.createEmailLog(logBean);
@@ -442,7 +442,7 @@ public class EmailCommonController extends BaseController {
 				return ApiResponse.success(sendEmailResult.getResult());
 			} else {
 
-				logBean.setStatusCode("2");
+				logBean.setStatusCode("0");
 				logBean.setStatusDesc("	Failure");
 
 			//	emailLogService.createEmailLog(logBean);
@@ -469,7 +469,7 @@ public class EmailCommonController extends BaseController {
 
 			logBean.setCreatedBy(getUserId());
 			logBean.setUpdatedBy(getUserId());
-			logBean.setStatusCode("2");
+			logBean.setStatusCode("0");
 			logBean.setStatusDesc("	Failure");
 			logBean.setDeliverDesc(e.getMessage());
 			emailLogService.createEmailLog(logBean);
@@ -565,8 +565,8 @@ public class EmailCommonController extends BaseController {
 				return ApiResponse.success(sendEmailResult.getResult());
 			} else {
 
-				logBean.setStatusCode("2");
-				logBean.setStatusDesc("	Failure");
+				logBean.setStatusCode("0");
+				logBean.setStatusDesc("Failure");
 
 				emailLogService.createEmailLog(logBean);
 
@@ -593,7 +593,7 @@ public class EmailCommonController extends BaseController {
 			
 			logBean.setCreatedBy(getUserId());
 			logBean.setUpdatedBy(getUserId());
-			logBean.setStatusCode("2");
+			logBean.setStatusCode("0");
 			logBean.setStatusDesc("	Failure");
 			logBean.setDeliverDesc(e.getMessage());
 			emailLogService.createEmailLog(logBean);
