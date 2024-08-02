@@ -86,18 +86,18 @@
 	<select id="getChartPieDataList" resultType="DashboardChartsBarBean">
 
 		SELECT  
-			cb1.code_name as 'name',
+				cb1.code_name as 'name',
 			CASE
-				WHEN c.type = '01' THEN count(c.type)
-				WHEN c.type = '02' THEN count(c.type)
-                WHEN c.type = '03' THEN count(c.type)
-                WHEN c.type = '04' THEN count(c.type)
-                WHEN c.type = '05' THEN count(c.type)
+				WHEN c.DIVISION_TYPE_CODE = '01' THEN count(c.DIVISION_TYPE_CODE)
+				WHEN c.DIVISION_TYPE_CODE = '02' THEN count(c.DIVISION_TYPE_CODE)
+                WHEN c.DIVISION_TYPE_CODE = '03' THEN count(c.DIVISION_TYPE_CODE)
+                WHEN c.DIVISION_TYPE_CODE = '04' THEN count(c.DIVISION_TYPE_CODE)
+                WHEN c.DIVISION_TYPE_CODE = '05' THEN count(c.DIVISION_TYPE_CODE)
 				ELSE "OTHER"
-			END
+			END    
 		    	AS 'value'    
 		 	FROM TB_CASE c 
-			LEFT OUTER JOIN tb_codebook cb1  on c.type = cb1.CODE_ID  and cb1.CODE_TYPE ='CASE_TYPE' 	 		    
+			LEFT OUTER JOIN tb_codebook cb1  on c.DIVISION_TYPE_CODE = cb1.CODE_ID  and cb1.CODE_TYPE ='CASE_DIVISION' 	 		    
 		
 		<where>
 			<if test="ownerId != null and ownerId != ''"> 
@@ -107,8 +107,8 @@
 				and c.OWNER = #{orgId}
 			</if>
 		</where>
-		     group by cb1.code_name,c.type
-		     order by c.type asc
+		     group by cb1.code_name,c.DIVISION_TYPE_CODE
+			order by c.DIVISION_TYPE_CODE asc
 		    
 	</select>
 	
