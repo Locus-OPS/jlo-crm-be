@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>th.co.locus.jlo</groupId>
 			<artifactId>jlo-common-lib</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>

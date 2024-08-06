@@ -51,9 +51,6 @@ public class CustomerController extends BaseController {
 	@Autowired
 	private CustomerService customerService;
 	
-	@Autowired
-	private MemberService memberService;
-	
 	@Value("${attachment.path.customer.profile_image}")
 	private String profileImagePath;
 	
@@ -243,40 +240,40 @@ public class CustomerController extends BaseController {
 		}
 	}
 
-	@ExtraPermission
-	@PostMapping(value = "/createMember", produces = "application/json")
-	public ApiResponse<MemberData> createMember(@RequestBody ApiRequest<MemberData> request) {
-		MemberData mData = request.getData();
-		CommonUtil.nullifyObject(mData);
-		mData.setCreatedBy(getUserId());
-		mData.setUpdatedBy(getUserId());
-		mData.setApprovedBy(getUserId());
-		mData.setBuId(getBuId());
-		log.debug(mData.toString());
-		ServiceResult<MemberData> serviceResult = memberService.createMember(mData);
-		if (serviceResult.isSuccess()) {
-			return ApiResponse.success(serviceResult.getResult());
-		} else {
-			return ApiResponse.fail();
-		}
-	}
+//	@ExtraPermission
+//	@PostMapping(value = "/createMember", produces = "application/json")
+//	public ApiResponse<MemberData> createMember(@RequestBody ApiRequest<MemberData> request) {
+//		MemberData mData = request.getData();
+//		CommonUtil.nullifyObject(mData);
+//		mData.setCreatedBy(getUserId());
+//		mData.setUpdatedBy(getUserId());
+//		mData.setApprovedBy(getUserId());
+//		mData.setBuId(getBuId());
+//		log.debug(mData.toString());
+//		ServiceResult<MemberData> serviceResult = memberService.createMember(mData);
+//		if (serviceResult.isSuccess()) {
+//			return ApiResponse.success(serviceResult.getResult());
+//		} else {
+//			return ApiResponse.fail();
+//		}
+//	}
 
 	//=========================================================================================================
 	//===================================================== Case ==============================================
 	//=========================================================================================================
-	@ReadPermission
-	@PostMapping(value = "/getCustomerCaseList", produces = "application/json")
-	public ApiPageResponse<List<CaseModelBean>> getCustomerCaseList(@RequestBody ApiPageRequest<CaseModelBean> request) {
-		log.info("CaseModelBean : " + request.getData());
-		request.getData().setBuId(getBuId());
-		PageRequest pageRequest = getPageRequest(request);
-		ServiceResult<Page<CaseModelBean>> serviceResult = memberService.getMemberCaseList(request.getData(), pageRequest);
-		if (serviceResult.isSuccess()) {
-			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
-		} else {
-			return ApiPageResponse.fail();
-		}
-	}
+//	@ReadPermission
+//	@PostMapping(value = "/getCustomerCaseList", produces = "application/json")
+//	public ApiPageResponse<List<CaseModelBean>> getCustomerCaseList(@RequestBody ApiPageRequest<CaseModelBean> request) {
+//		log.info("CaseModelBean : " + request.getData());
+//		request.getData().setBuId(getBuId());
+//		PageRequest pageRequest = getPageRequest(request);
+//		ServiceResult<Page<CaseModelBean>> serviceResult = memberService.getMemberCaseList(request.getData(), pageRequest);
+//		if (serviceResult.isSuccess()) {
+//			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
+//		} else {
+//			return ApiPageResponse.fail();
+//		}
+//	}
 
 	@ReadPermission
 	@PostMapping(value = "/getCustomerByCitizenIdOrPassportNo", produces = "application/json")

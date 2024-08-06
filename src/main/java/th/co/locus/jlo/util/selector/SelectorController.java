@@ -12,7 +12,7 @@ import th.co.locus.jlo.common.bean.ApiRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
-import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
+import th.co.locus.jlo.common.util.selector.bean.SelectorModelBean;
 
 @RestController
 @RequestMapping("api/selector")

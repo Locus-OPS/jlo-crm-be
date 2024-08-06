@@ -12,7 +12,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
-import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
+import th.co.locus.jlo.common.util.selector.bean.SelectorModelBean;
 
 @Service
 public class SelectorServiceImpl extends BaseService implements SelectorService {

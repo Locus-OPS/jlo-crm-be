@@ -2,7 +2,7 @@ package th.co.locus.jlo.util.selector;
 
 import java.util.List;
 import th.co.locus.jlo.common.bean.ServiceResult;
-import th.co.locus.jlo.util.selector.bean.SelectorModelBean;
+import th.co.locus.jlo.common.util.selector.bean.SelectorModelBean;
 
 public interface SelectorService {
 

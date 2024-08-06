@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
 import th.co.locus.jlo.business.customer.CustomerService;
-import th.co.locus.jlo.business.customer.MemberService;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
-import th.co.locus.jlo.business.customer.bean.MemberData;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
-import th.co.locus.jlo.common.bean.*;
+import th.co.locus.jlo.common.bean.ApiPageRequest;
+import th.co.locus.jlo.common.bean.ApiPageResponse;
+import th.co.locus.jlo.common.bean.ApiResponse;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
 
@@ -39,8 +42,7 @@ public class CaseController extends BaseController {
 	private CaseService caseService;
 	@Autowired
 	private CustomerService customerService;
-	@Autowired
-	private MemberService memberService;
+
 	 
 	@ReadPermission
     @PostMapping(value = "/getCaseList", produces = "application/json")
@@ -120,17 +122,6 @@ public class CaseController extends BaseController {
 		}
 	}
 	
-	@PostMapping(value = "/getMemberById", produces = "application/json")
-	public ApiResponse<MemberData> getMemberById(@RequestBody ApiPageRequest<MemberData> request) {
-		MemberData cusData = request.getData();
-		cusData.setBuId(getBuId());
-		ServiceResult<MemberData> serviceResult = memberService.getMemberById(cusData);
-		if (serviceResult.isSuccess()) {
-			MemberData customerList = serviceResult.getResult();
-			return ApiResponse.success(customerList);			
-		} else {
-			return ApiResponse.fail();
-		}
-	}
+	
 	
 }
