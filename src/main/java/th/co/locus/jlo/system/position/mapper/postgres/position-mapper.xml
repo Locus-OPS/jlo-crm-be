@@ -14,8 +14,12 @@
 		    , A.CREATED_DATE
 		    , A.UPDATED_BY
 		    , A.UPDATED_DATE
+		    ,CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName
+		    ,CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName
 		FROM TB_POSITION A 
 		INNER JOIN TB_POSITION B ON A.PARENT_POS_ID = B.POS_ID
+		INNER JOIN TB_USER u1 ON A.CREATED_BY = u1.ID 
+		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID 
 		<where>
 			<if test="posName != null and posName != ''">
 				<bind name="pPosName" value="'%' + posName + '%'" />

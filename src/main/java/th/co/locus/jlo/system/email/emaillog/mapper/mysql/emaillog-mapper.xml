@@ -15,7 +15,9 @@
 		`DELIVER_DESC`,
 		`ATTACHMENT_ID`,
 		`CREATED_BY`,
-		`CREATED_DATE`)
+		`CREATED_DATE`,
+		`UPDATED_BY`,
+		`UPDATED_DATE`)
 		VALUES
 		(
 		#{parentModule},
@@ -29,6 +31,8 @@
 		#{deliverDesc} ,
 		#{attachmentId},
 		#{createdBy},
+		NOW(),
+		#{updatedBy},
 		NOW()
 		)
 	</insert>

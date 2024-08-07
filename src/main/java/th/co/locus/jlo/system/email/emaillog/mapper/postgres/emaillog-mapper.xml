@@ -15,7 +15,9 @@
 		`DELIVER_DESC`,
 		`ATTACHMENT_ID`,
 		`CREATED_BY`,
-		`CREATED_DATE`)
+		`CREATED_DATE`,
+		`UPDATED_BY`,
+		`UPDATED_DATE`)
 		VALUES
 		(
 		#{parentModule},
@@ -29,6 +31,8 @@
 		#{deliverDesc} ,
 		#{attachmentId},
 		#{createdBy},
+		NOW(),
+		#{updatedBy},
 		NOW()
 		)
 	</insert>
@@ -57,11 +61,15 @@
 			log.DELIVER_DESC 	AS deliverDesc,
             log.ATTACHMENT_ID	AS attachmentId,
 			CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName,
-            log.created_date 	AS createdDate
+            log.created_date 	AS createdDate,
+            CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName,
+            log.UPDATED_DATE 	AS updatedDate
      
 		FROM TB_EMAIL_LOG log		
 		INNER JOIN TB_CODEBOOK cb0 ON log.STATUS_CODE = cb0.CODE_ID AND cb0.CODE_TYPE = 'EMAIL_LOG_STATUS' AND cb0.ACTIVE_FLAG = 'Y' 
 		INNER JOIN TB_USER u1 ON log.CREATED_BY = u1.ID 
+		INNER JOIN TB_USER u2 ON log.UPDATED_BY = u2.ID 
+		
 		<where>
 			 1=1
 			 AND cb0.bu_id = #{buId}

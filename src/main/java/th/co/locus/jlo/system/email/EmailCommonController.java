@@ -3,6 +3,7 @@
  */
 package th.co.locus.jlo.system.email;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,8 +69,14 @@ public class EmailCommonController extends BaseController {
 	@Value("${spring.mail.port}")
 	private String port;
 	
+	
+	@Value("${attachment.home}")
+	private String attachmentHome;
+	
 	@Value("${attachment.path.email.att}")
 	private String emailAttPath;
+	
+	
 	
  
 
@@ -255,7 +261,9 @@ public class EmailCommonController extends BaseController {
 			log.info("subjectReq "+subjectReq);
 			
 			if (file != null) {
-				File fileAtt = convert(file);				
+//				File fileAtt = convert(file);		
+				//ByteArrayInputStream fileAtt = convert(file);		
+				//fileAtt
 				FileModelBean fileBean = null;
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 				String fileName = "file_att_email_"+timeStamp+ CommonUtil.getFileExtension(file);
@@ -267,10 +275,12 @@ public class EmailCommonController extends BaseController {
 				fileBean.setCreatedBy(getUserId());
 				fileBean.setUpdatedBy(getUserId());
 				
-				fileBean = fileService.createAttachment(fileBean).getResult(); 
-				fileService.saveFile(file, emailAttPath, fileBean.getFileName());
-				emailInfo.setAttachmentId(fileBean.getAttId());
-				emailService.sendEmailAttTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, params, fileAtt,fileAtt.getName());
+				fileBean = fileService.createAttachment(fileBean).getResult();				
+				fileService.saveFile(file, emailAttPath, fileBean.getFileName());				
+				File fileEail = new File(attachmentHome+"/"+ emailAttPath+"/"+fileBean.getFileName());
+				
+				emailInfo.setAttachmentId(fileBean.getAttId());			
+				emailService.sendEmailAttTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, params, fileEail,file.getName());
 			}else {
 				emailService.sendEmailTemplate(fromEmail, arrayEmailTo, arrayEmailCc, arrEmailBcc, subjectReq, messageDesc, fromName, "",null);
 			}
@@ -349,14 +359,17 @@ public class EmailCommonController extends BaseController {
 		}
 	}
 	
-	
-	public static File convert(MultipartFile file) throws IOException {
+	public static File convertFile(MultipartFile file) throws IOException {
 		File convFile = new File(file.getOriginalFilename());
 		convFile.createNewFile();
 		FileOutputStream fos = new FileOutputStream(convFile);
 		fos.write(file.getBytes());
 		fos.close();
 		return convFile;
+	}
+	
+	public static ByteArrayInputStream convert(MultipartFile file) throws IOException {
+		return new ByteArrayInputStream(file.getBytes());
 	}
 
 	@PostMapping(value = "/sendEmailWithAtt", produces = "application/json")

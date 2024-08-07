@@ -4,7 +4,34 @@
 
 <mapper namespace="codebook">
 	<select id="searchCodebook" resultType="codebookModelBean">
-		SELECT * FROM TB_CODEBOOK CB
+		SELECT 
+		    CB.`CODE_ID`,
+		    CB.`CODE_TYPE`,
+		    CB.`CODE_NAME`,
+		    CB.`PARENT_TYPE`,
+		    CB.`PARENT_ID`,
+		    CB.`LANG`,
+		    CB.`SEQ`,
+		    CB.`ETC1`,
+		    CB.`ETC2`,
+		    CB.`ETC3`,
+		    CB.`ETC4`,
+		    CB.`ETC5`,
+		    CB.`DESCRIPTION`,
+		    CB.`ACTIVE_FLAG`,
+		    CB.`SYNC_FLAG`,
+		    CB.`BU_ID`,
+		    CB.`CREATED_DATE`,
+		    CB.`CREATED_BY`,
+		    CB.`UPDATED_DATE`,
+		    CB.`UPDATED_BY`,
+			CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,
+			CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+			
+		FROM tb_codebook CB
+		LEFT JOIN TB_USER u1 ON CB.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON CB.UPDATED_BY = u2.ID
+		
 		WHERE 1=1 
 		<if test="codeId != null and codeId != ''">
 			<bind name="pCodeId" value="codeId + '%'" />

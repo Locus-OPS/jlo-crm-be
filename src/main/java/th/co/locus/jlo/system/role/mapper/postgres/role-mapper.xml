@@ -5,23 +5,27 @@
 <mapper namespace="role">
 	<select id="getRoleList" resultType="roleModelBean"> 
        	SELECT
-		    ID
-		    , ROLE_CODE
-		    , ROLE_NAME
-		    , USE_YN
-		    , CREATED_BY
-		    , CREATED_DATE
-		    , UPDATED_BY
-		    , UPDATED_DATE
-		FROM TB_ROLE
+		      R.ID
+		    , R.ROLE_CODE
+		    , R.ROLE_NAME
+		    , R.USE_YN
+		    , R.CREATED_BY
+		    , R.CREATED_DATE
+		    , R.UPDATED_BY
+		    , R.UPDATED_DATE
+	    	,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+	    	,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+		FROM TB_ROLE R
+		LEFT JOIN TB_USER u1 ON R.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON R.UPDATED_BY = u2.ID
 		<choose>
 		  	<when test="sortColumn != null and sortColumn != ''">
 		  		<if test="sortColumn == 'roleName'">
-		  			order by ROLE_NAME ${sortDirection}	  	
+		  			order by R.ROLE_NAME ${sortDirection}	  	
 		  		</if>
 		  	</when>
 		  	<otherwise>
-		  		order by ROLE_NAME ASC	  	
+		  		order by R.ROLE_NAME ASC	  	
 		  	</otherwise>
 	  	</choose>
 	</select>

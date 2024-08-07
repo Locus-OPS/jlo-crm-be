@@ -3,43 +3,47 @@
 <mapper namespace="menu">
     <select id="getMenuList" resultType="menuModelBean">
 		SELECT
-		  ID,
-		  NAME,
-		  TYPE,
-		  ICON,
-		  LINK,
-		  LANG,
-		  ACTIVE_FLAG,
-		  CREATED_BY,
-		  CREATED_DATE,
-		  UPDATED_BY,
-		  UPDATED_DATE,
-		  SEQ,
-		  PARENT_MENU_ID,
-		  API_PATH
+		  m.ID,
+		  m.NAME,
+		  m.TYPE,
+		  m.ICON,
+		  m.LINK,
+		  m.LANG,
+		  m.ACTIVE_FLAG,
+		  m.CREATED_BY,
+		  m.CREATED_DATE,
+		  m.UPDATED_BY,
+		  m.UPDATED_DATE,
+		  m.SEQ,
+		  m.PARENT_MENU_ID,
+		  m.API_PATH,
+		  CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,
+	      CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
 		FROM
-		  tb_menu
+		  tb_menu m
+		  LEFT JOIN TB_USER u1 ON m.CREATED_BY = u1.ID
+		 LEFT JOIN TB_USER u2 ON m.UPDATED_BY = u2.ID
 		<where>
 			<if test="name != null and name != ''">
 				<bind name="_name" value="name + '%'" />
-				AND NAME like #{_name}
+				AND m.NAME like #{_name}
 			</if>
 			<if test="parentMenuId != null and parentMenuId != ''">
 				<bind name="_parentMenuId" value="parentMenuId + '%'" />
-				AND PARENT_MENU_ID like #{_parentMenuId}
+				AND m.PARENT_MENU_ID like #{_parentMenuId}
 			</if>
 		</where>
 		<choose>
 			<when test="sortColumn != null">
 				<if test="sortColumn == 'name'">
-					ORDER BY NAME ${sortDirection}
+					ORDER BY m.NAME ${sortDirection}
 				</if>
 				<if test="sortColumn == 'seq'">
-					ORDER BY SEQ ${sortDirection}
+					ORDER BY m.SEQ ${sortDirection}
 				</if>
 			</when>
 			<otherwise>
-				ORDER BY ID ASC
+				ORDER BY m.ID ASC
 			</otherwise>
 		</choose>
 	</select>
