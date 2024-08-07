@@ -81,14 +81,17 @@
             ,U.LOGIN_TYPE
             ,U.PASSWORD
             ,U.PICTURE_URL
-            ,U.UPDATED_BY as updatedBy
-            ,U.UPDATED_DATE
-            ,U.CREATED_BY AS  createdBy
-            ,U.CREATED_DATE 
+            
+            ,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+			,U.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+			,U.UPDATED_DATE AS updatedDate 
 		FROM TB_USER U
 		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
 		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
 		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
 		WHERE 1=1 
 		<if test="userId != null and userId!= ''">
 			<bind name="pUserId" value="userId + '%'" />
