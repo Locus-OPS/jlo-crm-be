@@ -1,0 +1,280 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sr">
+	<select id="getSrList" resultType="ServiceRequestModelBean">
+		SELECT 
+		    TCM.FIRST_NAME AS FIRST_NAME,
+		    TCM.LAST_NAME AS LAST_NAME,
+		    TCM.BUSINESS_NAME AS BUSINESS_NAME,
+		    TCM.CUSTOMER_TYPE AS MEMBER_TYPE,
+		    TCM.TITLE AS TITLE,
+		    TCM.PHONE_NO AS PHONE_NO,
+		    TCM.EMAIL AS EMAIL,
+		    LC.SR_NUMBER as srNumber,
+		    LC.DETAIL,
+		    LC.TYPE,
+		    LC.SUBTYPE,
+		    LC.PRIORITY,
+		    LC.STATUS,
+		    LC.CHANNEL,
+		    LC.OWNER,
+		    LC.SUBJECT,
+		    LC.DUE_DATE,
+		    LC.OPENED_DATE,
+		    LC.CLOSED_DATE,
+		    LC.BU_ID,
+		    LC.CUSTOMER_ID,
+		    LC.CREATED_DATE,
+		    LC.CREATED_BY,
+		    LC.UPDATED_DATE,
+		    LC.UPDATED_BY,
+		    CONCAT(COALESCE(u1.FIRST_NAME, ''),
+		            ' ',
+		            COALESCE(u1.LAST_NAME, '')) AS createdByName,
+		    CONCAT(COALESCE(u2.FIRST_NAME, ''),
+		            ' ',
+		            COALESCE(u2.LAST_NAME, '')) AS updatedByName,
+		    CONCAT(USR.FIRST_NAME, ' ', USR.LAST_NAME) AS displayName,
+		    CB1.CODE_NAME AS typeName,
+		    CB2.CODE_NAME AS subTypeName,
+		    CB3.CODE_NAME AS priorityName,
+	     	CB4.CODE_NAME AS divisionTypeName,	
+			LC.DIVISION_TYPE_CODE as divisionTypeCode,
+			LC.WORK_NOTE as workNote,		
+			LC.INFORM_NAME as informName
+			
+	FROM TB_SR LC
+        INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+    	LEFT OUTER JOIN  TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+		LEFT OUTER JOIN  TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+		LEFT OUTER JOIN  TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'      
+          LEFT OUTER JOIN  TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
+        INNER JOIN  TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
+        LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
+        LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
+		
+		<where>
+			<if test="srNumber != null and srNumber != ''">
+				AND LC.SR_NUMBER = #{srNumber}
+			</if>
+			<if test="type != null and type != ''">
+				AND LC.TYPE = #{type}
+			</if>
+			<if test="subType != null and subType != ''">
+				AND LC.SUBTYPE = #{subType}
+			</if>
+			<if test="buId != null">
+				AND LC.BU_ID = #{buId}
+			</if>
+			<if test="status != null and status != ''">
+				AND LC.STATUS = #{status}
+			</if>
+			<if test="customerId != null and customerId != ''">
+				AND LC.CUSTOMER_ID = #{customerId}
+			</if>
+			<if test="ownerId != null and ownerId != ''">
+				AND LC.OWNER = #{ownerId}
+			</if>
+			<if test="openedDateStart != null">
+				<![CDATA[ AND DATE(LC.OPENED_DATE) >= #{openedDateStart, jdbcType=DATE}]]>
+			</if>
+			<if test="openedDateEnd != null">
+				<![CDATA[ AND DATE(LC.OPENED_DATE) <= #{openedDateEnd, jdbcType=DATE} ]]>
+			</if>
+			<if test="closedDateStart != null">
+				<![CDATA[ AND DATE(LC.CLOSED_DATE) >= #{closedDateStart, jdbcType=DATE}]]>
+			</if>
+			<if test="closedDateEnd != null">
+				<![CDATA[ AND DATE(LC.CLOSED_DATE) <= #{closedDateEnd, jdbcType=DATE} ]]>
+			</if>
+		</where>
+		ORDER BY LC.CREATED_DATE DESC,LC.SR_NUMBER DESC
+	</select>
+
+	<select id="getSrBySrNumber" resultType="ServiceRequestModelBean">
+		SELECT
+		TCM.FIRST_NAME AS FIRST_NAME,
+		TCM.LAST_NAME AS LAST_NAME,
+		TCM.BUSINESS_NAME AS BUSINESS_NAME,
+		TCM.CUSTOMER_TYPE AS MEMBER_TYPE,
+		 TCM.TITLE AS TITLE,
+		TCM.PHONE_NO AS PHONE_NO,
+		 TCM.EMAIL AS EMAIL,
+		LC.SR_NUMBER as srNumber,
+		LC.DETAIL,
+		LC.TYPE,
+		LC.SUBTYPE,
+		LC.PRIORITY,
+		LC.STATUS,
+		LC.CHANNEL,
+		LC.OWNER,
+		LC.SUBJECT,
+		LC.DUE_DATE,
+		LC.OPENED_DATE,
+		LC.CLOSED_DATE,        
+       	CB4.CODE_NAME AS divisionTypeName,
+		LC.DIVISION_TYPE_CODE as divisionTypeCode,		
+		LC.WORK_NOTE as workNote,
+		LC.INFORM_NAME as informName,		
+		LC.BU_ID,
+		LC.CUSTOMER_ID,
+		LC.CREATED_DATE,
+		LC.CREATED_BY,
+		LC.UPDATED_DATE,
+		LC.UPDATED_BY,
+		CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,
+   		 CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName,
+		CONCAT(USR.FIRST_NAME,' ',USR.LAST_NAME) AS displayName,
+		CB1.CODE_NAME AS typeName,
+		CB2.CODE_NAME AS subTypeName,
+		CB3.CODE_NAME AS priorityName
+		FROM
+		TB_SR LC
+		INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+		LEFT OUTER JOIN  TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+		LEFT OUTER JOIN  TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+		LEFT OUTER JOIN  TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+        LEFT OUTER JOIN  TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'  
+		LEFT OUTER JOIN  TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID		 
+		LEFT OUTER JOIN  TB_USER u1 ON LC.CREATED_BY = u1.ID
+		LEFT OUTER JOIN  TB_USER u2 ON LC.UPDATED_BY = u2.ID
+		WHERE
+		(SR_NUMBER = #{srNumber})
+		limit 1
+	</select>
+
+	<select id="createSrProcedure" resultType="String" statementType="CALLABLE">
+		
+		CALL `INSERT_SR_PROC`
+			(#{srNumber}
+			,#{consultingNumber}
+			,#{divisionTypeCode}
+			,#{type}
+			,#{subType}			
+			,#{priority}
+			,#{status}
+			,#{channel}
+			,#{subject}
+			,#{workNote} 
+            ,#{informName}      
+			,#{detail}
+			,#{contactName}
+			,#{customerId}
+			,#{owner}
+			,#{buId}
+			,#{createdBy}
+			,#{updatedBy}
+			,#{srSlaId})
+		
+
+	</select>
+
+
+	<insert id="createSr">
+		INSERT INTO TB_SR (
+		SR_NUMBER,
+		CONSULTING_NUMBER,
+		DIVISION_TYPE_CODE,
+		TYPE,
+		SUBTYPE,		
+		PRIORITY,
+		STATUS,
+		CHANNEL,
+		SUBJECT,
+		WORK_NOTE,
+		INFORM_NAME,
+		DETAIL,
+		CONTACT_NAME,
+		CUSTOMER_ID,
+		OWNER,
+		OPENED_DATE,
+		CLOSED_DATE,
+		BU_ID,
+		CREATED_DATE,
+		CREATED_BY,
+		UPDATED_DATE,
+		UPDATED_BY
+		)
+		VALUES
+		(
+		#{srNumber},
+		#{consultingNumber},
+		#{divisionTypeCode},
+		#{type},
+		#{subType},		
+		#{priority},
+		#{status},
+		#{channel},
+		#{subject},
+		,#{workNote} 
+        ,#{informName} 
+		#{detail},
+		#{contactName},
+		#{customerId},
+		#{owner},
+		NOW(),
+		#{closedDate},
+		#{buId},
+		NOW(),
+		#{createdBy},
+		NOW(),
+		#{updatedBy}
+		)
+	</insert>
+	
+	
+	<update id="updateSrProc">
+		CALL UPDATE_SR_PROC(
+			 #{srNumber},
+			 #{divisionTypeCode},			
+			 #{type},
+			 #{subType},			  
+			 #{priority},
+			 #{status}, 
+			 #{channel},
+			 #{subject},
+			 #{detail}, 
+			 #{contactName},
+			 #{customerId},
+			 #{owner},
+			 #{updatedBy},
+			 #{srSlaId},
+			 #{workNote} ,
+        	 #{informName} 
+			 );
+		
+	</update>
+	
+	<update id="updateSr">
+		UPDATE TB_SR
+		SET
+		DIVISION_TYPE_CODE= #{divisionTypeCode},		
+		TYPE = #{type},
+		SUBTYPE = #{subType},		
+		PRIORITY = #{priority},
+		STATUS = #{status},
+		CHANNEL = #{channel},
+		DETAIL = #{detail},
+		SUBJECT = #{subject},
+		WORK_NOTE =#{workNote} ,
+        INFORM_NAME =#{informName}, 
+		OWNER = #{owner},
+		CLOSED_DATE = CASE WHEN (#{status} = '04')
+		THEN NOW()
+		ELSE NULL END,
+		BU_ID = #{buId},
+		UPDATED_DATE = NOW(),
+		UPDATED_BY = #{updatedBy}
+		WHERE
+		(SR_NUMBER = #{srNumber})
+	</update>
+
+	<select id="generateSrNumber" resultType="String"
+		statementType="CALLABLE">
+		call GEN_NEW_SEQUENCE(
+		'SR_SEQUENCE',
+		#{buId, jdbcType = INTEGER, mode = IN}
+		)
+	</select>
+
+</mapper>
