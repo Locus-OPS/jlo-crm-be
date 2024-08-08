@@ -40,6 +40,7 @@
 		    CB3.CODE_NAME AS priorityName,
 	     	CB4.CODE_NAME AS divisionTypeName,	
 			LC.DIVISION_TYPE_CODE as divisionTypeCode,
+			LC.SERVICE_AREA_CODE as serviceAreaCode,
 			LC.WORK_NOTE as workNote,		
 			LC.INFORM_NAME as informName
 			
@@ -113,7 +114,9 @@
 		LC.OPENED_DATE,
 		LC.CLOSED_DATE,        
        	CB4.CODE_NAME AS divisionTypeName,
-		LC.DIVISION_TYPE_CODE as divisionTypeCode,		
+		LC.DIVISION_TYPE_CODE as divisionTypeCode,	
+		LC.CATEGORY_TYPE_CODE as categoryTypeCode,	
+		LC.SERVICE_AREA_CODE as serviceAreaCode,
 		LC.WORK_NOTE as workNote,
 		LC.INFORM_NAME as informName,		
 		LC.BU_ID,
@@ -149,8 +152,10 @@
 			(#{srNumber}
 			,#{consultingNumber}
 			,#{divisionTypeCode}
+			,#{categoryTypeCode}
 			,#{type}
-			,#{subType}			
+			,#{subType}	
+			,#{serviceAreaCode}		
 			,#{priority}
 			,#{status}
 			,#{channel}
@@ -176,7 +181,8 @@
 		CONSULTING_NUMBER,
 		DIVISION_TYPE_CODE,
 		TYPE,
-		SUBTYPE,		
+		SUBTYPE,	
+		SERVICE_AREA_CODE,	
 		PRIORITY,
 		STATUS,
 		CHANNEL,
@@ -201,7 +207,8 @@
 		#{consultingNumber},
 		#{divisionTypeCode},
 		#{type},
-		#{subType},		
+		#{subType},	
+		#{serviceAreaCode},
 		#{priority},
 		#{status},
 		#{channel},
@@ -226,9 +233,11 @@
 	<update id="updateSrProc">
 		CALL UPDATE_SR_PROC(
 			 #{srNumber},
-			 #{divisionTypeCode},			
+			 #{divisionTypeCode},	
+			 #{categoryTypeCode},		
 			 #{type},
-			 #{subType},			  
+			 #{subType},
+			 #{serviceAreaCode},			  
 			 #{priority},
 			 #{status}, 
 			 #{channel},
