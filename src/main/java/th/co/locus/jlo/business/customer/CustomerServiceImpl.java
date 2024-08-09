@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
@@ -194,6 +195,11 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 	@Override
 	public void updateCustomerProfileImage(String fileName, Long customerId) {
 		commonDao.update("customer.updateCustomerProfileImage", Map.of("pictureUrl", fileName, "customerId", customerId));
+	}
+
+	@Override
+	public ServiceResult<Page<CaseModelBean>> getCustomerCaseList(CaseModelBean data, PageRequest pageRequest) {
+		return success(commonDao.selectPage("customer.getCustomerCaseList", data, pageRequest));
 	}
 
  

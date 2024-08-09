@@ -381,4 +381,45 @@
 			, UPDATED_DATE = NOW()
 		WHERE CUSTOMER_ID = #{customerId}
 	</update>
+	
+	
+	<select id="getCustomerCaseList" resultType="CaseModelBean">
+		SELECT 		
+		    LC.CASE_NUMBER,
+			LC.DETAIL,
+		    LC.TYPE,
+			LC.SUBTYPE,
+		    LC.PRIORITY,
+		    LC.STATUS,
+		    LC.CHANNEL,
+		    LC.OWNER,
+		    LC.SUBJECT,
+		    LC.OPENED_DATE as openedDateDate,
+		    LC.CLOSED_DATE as closedDateDate,
+		    LC.BU_ID,
+		    LC.CUSTOMER_ID,
+            CB1.CODE_NAME AS typeName,
+            CB2.CODE_NAME AS subTypeName,
+            CB3.CODE_NAME AS priorityName,
+            CB4.CODE_NAME AS channelName,
+            CB5.CODE_NAME AS statusName,
+            CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) displayName
+		FROM
+		    TB_CASE LC
+			INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+	        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+	        INNER JOIN TB_CODEBOOK CB4 ON LC.CHANNEL = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_CHANNEL'
+	        INNER JOIN TB_CODEBOOK CB5 ON LC.STATUS = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_STATUS'
+	        LEFT JOIN tb_user U ON LC.OWNER = U.ID
+		<where>
+			<if test="customerId != null and customerId != ''">
+				AND LC.CUSTOMER_ID = #{customerId}
+			</if>
+			<if test="buId != null">
+				AND LC.BU_ID = #{buId}
+			</if>
+		</where>
+		ORDER BY LC.CASE_NUMBER DESC 
+	</select>
 </mapper>

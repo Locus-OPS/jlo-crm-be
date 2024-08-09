@@ -2,6 +2,7 @@ package th.co.locus.jlo.business.customer;
 
 import java.util.List;
 
+import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
@@ -18,7 +19,9 @@ public interface CustomerService {
 	public ServiceResult<CustomerData> updateCustomer(CustomerData customer);
 	public ServiceResult<CustomerData> createCustomer(CustomerData customer);
 	public ServiceResult<CustomerData> updateCustomerStatus(CustomerData cusData);
-
+	
+	ServiceResult<Page<CaseModelBean>> getCustomerCaseList(CaseModelBean data, PageRequest pageRequest);
+	
 	public ServiceResult<Page<AddressData>> getCustomerAddressList(AddressData data, PageRequest pageRequest);
 	public ServiceResult<AddressData> createCustomerAddress(AddressData addrData);
 	public ServiceResult<AddressData> updateCustomerAddress(AddressData addrData);

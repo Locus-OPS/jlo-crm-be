@@ -6,7 +6,6 @@ import th.co.locus.jlo.common.util.selector.bean.SelectorModelBean;
 
 public interface SelectorService {
 
-	public ServiceResult<List<SelectorModelBean>> getProgram();
 	public ServiceResult<List<SelectorModelBean>> getProvince(String parent);
 	public ServiceResult<List<SelectorModelBean>> getDistrict(String parent);
 	public ServiceResult<List<SelectorModelBean>> getSubDistrict(String parent);

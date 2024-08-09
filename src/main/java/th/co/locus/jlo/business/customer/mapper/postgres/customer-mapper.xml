@@ -12,9 +12,10 @@
 		 t.`BUSINESS_NAME`, t.`TAX_ID`,
          t.`CUSTOMER_STATUS`,
          cb.code_name as customerStatusName,
+		 t.email,
 		 
-        CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
-          t.`APPROVED_DATE`,
+         CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS APPROVED_BY_NAME,
+         t.`APPROVED_DATE`,
          CONCAT(COALESCE(u3.FIRST_NAME,''), ' ',COALESCE( u3.LAST_NAME,'')) AS updatedByName,
          t.UPDATED_DATE,
          t.PICTURE_URL
@@ -48,7 +49,7 @@
 		  	</if>  
 		  	<if test="customerType != null and customerType != ''">
 				 	AND t.`CUSTOMER_TYPE` = #{customerType}
-		  	</if>  
+		  	</if>   
 		  	<if test="phoneNo != null and phoneNo != ''">
 		    	AND t.PHONE_NO = #{phoneNo}
 		  	</if>
@@ -76,7 +77,44 @@
 	</select>
 	
 	<select id="findCustomerById" resultType="CustomerData">
-		select * from TB_customer where customer_id = #{customerId}
+			SELECT 
+				`t`.`CUSTOMER_ID`,
+			    `t`.`CUSTOMER_TYPE`,
+			    `t`.`CUSTOMER_STATUS`,
+			    `t`.`CITIZEN_ID`,
+			    `t`.`PASSPORT_NO`,
+			    `t`.`TITLE`,
+			    `t`.`FIRST_NAME`,
+			    `t`.`LAST_NAME`,
+			    `t`.`BUSINESS_NAME`,
+			    `t`.`GENDER`,
+			    `t`.`NATIONALITY`,
+			    `t`.`BIRTHDATE`,
+			    `t`.`email`,
+			    `t`.`OCCUPATION`,
+			    `t`.`MARITAL_STATUS`,
+			    `t`.`IMAGE_URL`,
+			    `t`.`APPROVED_DATE`,
+			    `t`.`APPROVED_BY`,
+			    `t`.`REGISTRATION_STORE`,
+			    `t`.`REGISTRATION_CHANNEL`,
+			    `t`.`REMARK`,
+			    `t`.`BU_ID`,
+				 CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName,	 
+			    `t`.`CREATED_DATE`,
+			     CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName,
+			    `t`.`UPDATED_DATE`,      
+			    `t`.`TAX_ID`,
+			    `t`.`BUSINESS_TYPE`,
+			    `t`.`PHONE_AREA`,
+			    `t`.`PHONE_NO`,
+			    `t`.`EMAIL`,
+			    `t`.`PROGRAM_ID`,
+			    `t`.`PICTURE_URL`
+			FROM `tb_customer` t
+			LEFT JOIN TB_USER u1 ON t.CREATED_BY = u1.ID
+			LEFT JOIN TB_USER u2 ON t.UPDATED_BY = u2.ID
+			WHERE t.customer_id = #{customerId}
 	</select>
 	
 	<select id="findCustomerByCitizenIdOrPassportNo" resultType="customerData"> 
@@ -335,5 +373,53 @@
 		  	</if>
 		  	 
 		</where>
+	</select>
+	
+	<update id="updateCustomerProfileImage">
+		UPDATE tb_customer SET
+			  PICTURE_URL = #{pictureUrl}
+			, UPDATED_DATE = NOW()
+		WHERE CUSTOMER_ID = #{customerId}
+	</update>
+	
+	
+	<select id="getCustomerCaseList" resultType="CaseModelBean">
+		SELECT 		
+		    LC.CASE_NUMBER,
+			LC.DETAIL,
+		    LC.TYPE,
+			LC.SUBTYPE,
+		    LC.PRIORITY,
+		    LC.STATUS,
+		    LC.CHANNEL,
+		    LC.OWNER,
+		    LC.SUBJECT,
+		    LC.OPENED_DATE as openedDateDate,
+		    LC.CLOSED_DATE as closedDateDate,
+		    LC.BU_ID,
+		    LC.CUSTOMER_ID,
+            CB1.CODE_NAME AS typeName,
+            CB2.CODE_NAME AS subTypeName,
+            CB3.CODE_NAME AS priorityName,
+            CB4.CODE_NAME AS channelName,
+            CB5.CODE_NAME AS statusName,
+            CONCAT(IFNULL(U.FIRST_NAME,''),' ',IFNULL(U.LAST_NAME,'')) displayName
+		FROM
+		    TB_CASE LC
+			INNER JOIN TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
+	        INNER JOIN TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
+	        INNER JOIN TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
+	        INNER JOIN TB_CODEBOOK CB4 ON LC.CHANNEL = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_CHANNEL'
+	        INNER JOIN TB_CODEBOOK CB5 ON LC.STATUS = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_STATUS'
+	        LEFT JOIN tb_user U ON LC.OWNER = U.ID
+		<where>
+			<if test="customerId != null and customerId != ''">
+				AND LC.CUSTOMER_ID = #{customerId}
+			</if>
+			<if test="buId != null">
+				AND LC.BU_ID = #{buId}
+			</if>
+		</where>
+		ORDER BY LC.CASE_NUMBER DESC 
 	</select>
 </mapper>

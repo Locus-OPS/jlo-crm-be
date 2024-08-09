@@ -21,15 +21,6 @@ public class SelectorController extends BaseController {
 	@Autowired
 	private SelectorService selectorService;
 
-	@PostMapping(value = "/getProgram", produces = "application/json")
-	public ApiResponse<List<SelectorModelBean>> getProgram(@RequestBody ApiRequest<String> request) {
-		ServiceResult<List<SelectorModelBean>> serviceResult = selectorService.getProgram();
-		if (serviceResult.isSuccess()) {
-			return ApiResponse.success(filterListWithBuId(serviceResult.getResult()));
-		} else {
-			return ApiResponse.fail();
-		}
-	}
 
 	@PostMapping(value = "/getProvince", produces = "application/json")
 	public ApiResponse<List<SelectorModelBean>> getProvince(@RequestBody ApiRequest<String> request) {
