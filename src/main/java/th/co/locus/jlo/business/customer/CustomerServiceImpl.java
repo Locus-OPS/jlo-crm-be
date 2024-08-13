@@ -17,6 +17,7 @@ import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
+import th.co.locus.jlo.business.sr.bean.ServiceRequestModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
@@ -26,10 +27,10 @@ import th.co.locus.jlo.common.service.BaseService;
 @Slf4j
 @Service
 public class CustomerServiceImpl extends BaseService implements CustomerService {
-	
+
 	@Autowired
 	private JloMailSender jloMailSender;
-	
+
 	@Value("${jlo.mail.from}")
 	private String mailFrom;
 
@@ -44,10 +45,10 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		if (result > 0) {
 			return success(commonDao.selectOne("customer.findCustomerById", customer));
 		}
-		
+
 		return fail();
 	}
-	
+
 	@Override
 	public ServiceResult<CustomerData> createCustomer(CustomerData customer) {
 		int result = commonDao.update("customer.createCustomer", customer);
@@ -65,19 +66,19 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		}
 		return fail();
 	}
-	
+
 	@Override
 	public ServiceResult<Page<AddressData>> getCustomerAddressList(AddressData data, PageRequest pageRequest) {
 		return success(commonDao.selectPage("customer.getCustomerAddressList", data, pageRequest));
 	}
-	
+
 	private void clearAddressPrimary(AddressData addrData) {
-		commonDao.update("customer.clearCustomerAddressPrimary",addrData);
+		commonDao.update("customer.clearCustomerAddressPrimary", addrData);
 	}
 
 	@Override
 	public ServiceResult<AddressData> createCustomerAddress(AddressData addrData) {
-		if("Y".equalsIgnoreCase(addrData.getPrimaryYn())) {
+		if ("Y".equalsIgnoreCase(addrData.getPrimaryYn())) {
 			clearAddressPrimary(addrData);
 		}
 		int result = commonDao.update("customer.createCustomerAddress", addrData);
@@ -86,11 +87,10 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		}
 		return fail();
 	}
-	
 
 	@Override
 	public ServiceResult<AddressData> updateCustomerAddress(AddressData addrData) {
-		if("Y".equalsIgnoreCase(addrData.getPrimaryYn())) {
+		if ("Y".equalsIgnoreCase(addrData.getPrimaryYn())) {
 			clearAddressPrimary(addrData);
 		}
 		int result = commonDao.update("customer.updateCustomerAddress", addrData);
@@ -99,12 +99,12 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		}
 		return fail();
 	}
-	
+
 	@Override
 	public ServiceResult<Integer> deleteCustomerAddress(AddressData bean) {
 		return success(commonDao.delete("customer.deleteCustomerAddress", bean));
 	}
-	
+
 	@Override
 	public ServiceResult<AddressData> getCustomerAddressByPrimary(AddressData addrData) {
 		return success(commonDao.selectOne("customer.findCustomerAddressById", addrData));
@@ -120,45 +120,43 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		try {
 			CustomerVerifyData verify = new CustomerVerifyData();
 			String genKey = new String(OTP(6));
-			verify.setKey(genKey);			
+			verify.setKey(genKey);
 			verify.setVerify(Base64Utils.encodeToString(genKey.getBytes()));
 			verify.setEmail(data.getEmail());
 			verify.setRef(RandomStringUtils.random(10, true, false));
-			
-			String body = "Verify Referance "+verify.getRef()+" Key = "+verify.getKey();
+
+			String body = "Verify Referance " + verify.getRef() + " Key = " + verify.getKey();
 			String title = "";
-			if(data.getFirstName()!=null && data.getFirstName().length()>0) {
-				title = "Verify Customer "+data.getFirstName()+" "+data.getLastName();
-			}else {
-				title = "Verify Customer "+data.getBusinessName();
+			if (data.getFirstName() != null && data.getFirstName().length() > 0) {
+				title = "Verify Customer " + data.getFirstName() + " " + data.getLastName();
+			} else {
+				title = "Verify Customer " + data.getBusinessName();
 			}
 			jloMailSender.sendMail(mailFrom, data.getEmail(), title, body);
 			verify.setKey("");
 			return success(verify);
 		} catch (Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 		}
 		return fail();
 	}
 
-	private static char[] OTP(int len) 
-    {   
-        String numbers = "0123456789"; 
-  
-        Random rndm_method = new Random(); 
-  
-        char[] otp = new char[len]; 
-  
-        for (int i = 0; i < len; i++) 
-        { 
-            otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length())); 
-        } 
-        return otp; 
-    }
-	
+	private static char[] OTP(int len) {
+		String numbers = "0123456789";
+
+		Random rndm_method = new Random();
+
+		char[] otp = new char[len];
+
+		for (int i = 0; i < len; i++) {
+			otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length()));
+		}
+		return otp;
+	}
+
 	private static boolean checkOTP(CustomerVerifyData data) {
 		String verify = new String(Base64Utils.decode(data.getVerify().getBytes()));
-		if(data.getKey().equals(verify)) {
+		if (data.getKey().equals(verify)) {
 			return true;
 		}
 		return false;
@@ -166,9 +164,9 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 
 	@Override
 	public ServiceResult<String> verifyValidate(CustomerVerifyData data) {
-		if(checkOTP(data)) {
+		if (checkOTP(data)) {
 			return success("OK");
-		}else {
+		} else {
 			return success("No");
 		}
 	}
@@ -194,7 +192,8 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 
 	@Override
 	public void updateCustomerProfileImage(String fileName, Long customerId) {
-		commonDao.update("customer.updateCustomerProfileImage", Map.of("pictureUrl", fileName, "customerId", customerId));
+		commonDao.update("customer.updateCustomerProfileImage",
+				Map.of("pictureUrl", fileName, "customerId", customerId));
 	}
 
 	@Override
@@ -202,6 +201,10 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		return success(commonDao.selectPage("customer.getCustomerCaseList", data, pageRequest));
 	}
 
- 
+	@Override
+	public ServiceResult<Page<ServiceRequestModelBean>> getCustomerSrList(ServiceRequestModelBean data,
+			PageRequest pageRequest) {
+		return success(commonDao.selectPage("customer.getCustomerSrList", data, pageRequest));
+	}
 
 }

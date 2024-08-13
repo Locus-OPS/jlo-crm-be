@@ -28,8 +28,7 @@ import th.co.locus.jlo.business.customer.bean.ContactData;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
-import th.co.locus.jlo.business.customer.bean.MemberData;
-import th.co.locus.jlo.common.annotation.ExtraPermission;
+import th.co.locus.jlo.business.sr.bean.ServiceRequestModelBean;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
@@ -250,6 +249,20 @@ public class CustomerController extends BaseController {
 		request.getData().setBuId(getBuId());
 		PageRequest pageRequest = getPageRequest(request);
 		ServiceResult<Page<CaseModelBean>> serviceResult = customerService.getCustomerCaseList(request.getData(), pageRequest);
+		if (serviceResult.isSuccess()) {
+			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
+		} else {
+			return ApiPageResponse.fail();
+		}
+	}
+	
+	@ReadPermission
+	@PostMapping(value = "/getCustomerSrList", produces = "application/json")
+	public ApiPageResponse<List<ServiceRequestModelBean>> getCustomerSrList(@RequestBody ApiPageRequest<ServiceRequestModelBean> request) {
+		log.info("ServiceRequestModelBean : " + request.getData());
+		request.getData().setBuId(getBuId());
+		PageRequest pageRequest = getPageRequest(request);
+		ServiceResult<Page<ServiceRequestModelBean>> serviceResult = customerService.getCustomerSrList(request.getData(), pageRequest);
 		if (serviceResult.isSuccess()) {
 			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
 		} else {
