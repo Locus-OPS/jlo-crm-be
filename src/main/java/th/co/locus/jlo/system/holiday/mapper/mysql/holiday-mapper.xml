@@ -1,0 +1,63 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="holiday">
+	<select id="getHolidayList" resultType="HolidayModelBean">
+		SELECT ID
+		, hd.`YEAR`
+		, hd.TYPE_CD
+		, hd.HOLIDAY_DATE
+		, hd.HOLIDAY_NAME
+		, hd.REMARK
+		, hd.CREATED_DATE
+		, hd.CREATED_BY
+		, hd.UPDATED_DATE
+		, hd.UPDATED_BY
+		FROM tb_holiday_info hd
+		where hd.`YEAR` =#{year} 
+	</select>
+	<select id="getHolidayDetail" resultType="HolidayModelBean">
+		SELECT ID
+		, hd.`YEAR`
+		, hd.TYPE_CD
+		, hd.HOLIDAY_DATE
+		, hd.HOLIDAY_NAME
+		, hd.REMARK
+		, hd.CREATED_DATE
+		, hd.CREATED_BY
+		, hd.UPDATED_DATE
+		, hd.UPDATED_BY
+		FROM tb_holiday_info hd
+		where hd.ID=#{id} 
+	</select>
+	<insert id="saveHoliday">
+		INSERT INTO tb_holiday_info
+		(`YEAR`, TYPE_CD, HOLIDAY_DATE, HOLIDAY_NAME, REMARK, CREATED_DATE, CREATED_BY, UPDATED_DATE, UPDATED_BY)
+		VALUES(
+		 #{year}
+		,#{typeCd}
+		,#{holidayDate}
+		,#{holiName}
+		,#{remark}
+		,now()
+		,#{createdBy}
+		,now()
+		,#{updatedBy}
+		)
+	</insert>
+	
+	<update id="editHoliday">
+		UPDATE tb_holiday_info
+		SET `YEAR`=#{year}
+		, TYPE_CD=#{typeCd}
+		, HOLIDAY_DATE=#{holidayDate}
+		, HOLIDAY_NAME=#{holidayName}
+		, REMARK=#{remark}
+		, UPDATED_DATE=now()
+		, UPDATED_BY=#{updatedBy}
+		WHERE ID=#{id}
+	</update>
+	
+	<delete id="deleteHoliday">
+		DELETE FROM tb_holiday_info WHERE ID=#{id}
+	</delete>
+	
+</mapper>
