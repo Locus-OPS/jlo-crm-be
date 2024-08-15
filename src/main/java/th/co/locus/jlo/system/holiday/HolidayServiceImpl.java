@@ -1,12 +1,12 @@
 package th.co.locus.jlo.system.holiday;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.extern.log4j.Log4j2;
 import th.co.locus.jlo.system.holiday.bean.HolidayModelBean;
-import th.co.locus.jlo.common.bean.Page;
-import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 
@@ -15,9 +15,9 @@ import th.co.locus.jlo.common.service.BaseService;
 public class HolidayServiceImpl extends BaseService implements HolidayService {
 
 	@Override
-	public ServiceResult<Page<HolidayModelBean>> getHolidayList(HolidayModelBean bean,PageRequest pageRequest) {
+	public ServiceResult<List<HolidayModelBean>> getHolidayList(HolidayModelBean bean) {
 		try {
-			return success(commonDao.selectPage("holiday.getHolidayList", bean, pageRequest));
+			return success(commonDao.selectList("holiday.getHolidayList", bean));
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
 			return fail("500",ex.getMessage());

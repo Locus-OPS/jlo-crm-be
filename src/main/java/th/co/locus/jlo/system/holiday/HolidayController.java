@@ -26,18 +26,17 @@ public class HolidayController extends BaseController {
 	private HolidayService holidayService;
 	
 	@PostMapping(value="/getholidaylist",produces = "application/json")
-	public ApiPageResponse<List<HolidayModelBean>> getHolidayList(@RequestBody ApiPageRequest<HolidayModelBean> request) {
+	public ApiResponse<List<HolidayModelBean>> getHolidayList(@RequestBody ApiRequest<HolidayModelBean> request) {
 		try {
-			PageRequest pageRequest = getPageRequest(request);
-			ServiceResult<Page<HolidayModelBean>> serviceResult=this.holidayService.getHolidayList(request.getData(),pageRequest);
+			ServiceResult<List<HolidayModelBean>> serviceResult=this.holidayService.getHolidayList(request.getData());
 			if(serviceResult.isSuccess()) {
-				return ApiPageResponse.success(serviceResult.getResult().getContent(),serviceResult.getResult().getTotalElements());
+				return ApiResponse.success(serviceResult.getResult());
 			}else {
-				return ApiPageResponse.fail(serviceResult.getResponseCode(),serviceResult.getResponseDescription());
+				return ApiResponse.fail(serviceResult.getResponseCode(),serviceResult.getResponseDescription());
 			}
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
-			return ApiPageResponse.fail("500",ex.getMessage());
+			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
 	
@@ -57,7 +56,7 @@ public class HolidayController extends BaseController {
 		}
 	}
 	
-	@PostMapping(value="/saveholiday",produces = "appliaction/json")
+	@PostMapping(value="/saveholiday",produces = "application/json")
 	public ApiResponse<HolidayModelBean> saveHoliday(@RequestBody ApiRequest<HolidayModelBean> request) {
 		try {
 			request.getData().setCreatedBy(getUserId());
