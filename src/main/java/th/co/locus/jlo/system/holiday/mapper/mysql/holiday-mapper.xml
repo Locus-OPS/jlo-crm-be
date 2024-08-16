@@ -2,15 +2,15 @@
 <mapper namespace="holiday">
 	<select id="getHolidayList" resultType="HolidayModelBean">
 		SELECT ID
-		, hd.`YEAR`
-		, hd.TYPE_CD
-		, hd.HOLIDAY_DATE
-		, hd.HOLIDAY_NAME
-		, hd.REMARK
-		, hd.CREATED_DATE
-		, hd.CREATED_BY
-		, hd.UPDATED_DATE
-		, hd.UPDATED_BY
+		, hd.`YEAR` as year
+		, hd.TYPE_CD as typeCd
+		, hd.HOLIDAY_DATE as holidayDate
+		, hd.HOLIDAY_NAME as holidayName
+		, hd.REMARK as remark
+		, hd.CREATED_DATE as createdDate
+		, hd.CREATED_BY as createdBy
+		, hd.UPDATED_DATE as updatedDate
+		, hd.UPDATED_BY as updatedBy
 		FROM tb_holiday_info hd
 		where hd.`YEAR` =#{year} 
 	</select>
@@ -35,7 +35,7 @@
 		 #{year}
 		,#{typeCd}
 		,#{holidayDate}
-		,#{holiName}
+		,#{holidayName}
 		,#{remark}
 		,now()
 		,#{createdBy}
