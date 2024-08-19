@@ -14,6 +14,24 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 		return success(commonDao.selectOne("qustionnaire.getQuestionnaireById", bean));
 	}
 
+	@Override
+	public ServiceResult<QuestionnaireHeaderModelBean> createHeaderQuestionnaire(QuestionnaireHeaderModelBean bean) {
+		int result = commonDao.update("qustionnaire.createHeaderQuestionnaire", bean);
+		if (result > 0) {
+			return success(commonDao.selectOne("qustionnaire.getQuestionnaireById", bean));
+		}
+		return fail(); 
+	}
+
+	@Override
+	public ServiceResult<QuestionnaireHeaderModelBean> updateHeaderQuestionnaire(QuestionnaireHeaderModelBean bean) {
+		int result = commonDao.update("qustionnaire.updateHeaderQuestionnaire", bean);
+		if (result > 0) {
+			return success(commonDao.selectOne("qustionnaire.getQuestionnaireById", bean));
+		}
+		return fail();
+	}
+
 	
 	
 	

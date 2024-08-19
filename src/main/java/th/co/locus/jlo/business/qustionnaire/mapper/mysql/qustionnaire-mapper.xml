@@ -5,4 +5,46 @@
 	<select id="findQuestionnaireById" resultType="QuestionnaireHeaderModelBean">
 		select * from tb_questionnaire_header where id = #{id}
 	</select>
+	
+	<insert id="createHeaderQuestionnaire" keyColumn="D" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO `tb_questionnaire_header`
+			(
+			`QUESTIONNAIRE_TYPE`,
+			`FORM_NAME`,
+			`SECTION_HEADER_TEXT`,
+			`STATUS_CD`,
+			`BU_ID`,
+			`CREATED_DATE`,
+			`CREATED_BY`,
+			`UPDATED_DATE`,
+			`UPDATED_BY`)
+		VALUES
+			(
+			#{questionnaireType},
+			#{formName},
+			#{sectionHeaderText},
+			#{statusCd},
+			#{buId},
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+		)
+					
+	</insert>
+	
+	<update id="updateHeaderQuestionnaire">
+		UPDATE  `tb_questionnaire_header`
+			SET
+			 
+			`QUESTIONNAIRE_TYPE` = #{questionnaireType},
+			`FORM_NAME` =#{formName},
+			`SECTION_HEADER_TEXT` = #{sectionHeaderText},
+			`STATUS_CD` = #{statusCd},
+			 
+			`UPDATED_DATE` = NOW(),
+			`UPDATED_BY` = #{updatedBy}
+			WHERE `ID` = #{id};
+	</update>
+	
 </mapper>
