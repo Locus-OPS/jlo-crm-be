@@ -18,4 +18,6 @@ public class HolidayModelBean extends BaseModelBean {
 	public Date holidayDate;
 	public String holidayName;
 	public String remark;
+	public String backgroundColor;
+	public String textColor;
 }

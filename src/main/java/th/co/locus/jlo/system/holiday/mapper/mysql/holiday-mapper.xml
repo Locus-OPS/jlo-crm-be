@@ -7,25 +7,32 @@
 		, hd.HOLIDAY_DATE as holidayDate
 		, hd.HOLIDAY_NAME as holidayName
 		, hd.REMARK as remark
+		, ht.ETC1 as backgroundColor
+		, ht.ETC2 as textColor
 		, hd.CREATED_DATE as createdDate
 		, hd.CREATED_BY as createdBy
 		, hd.UPDATED_DATE as updatedDate
 		, hd.UPDATED_BY as updatedBy
 		FROM tb_holiday_info hd
-		where hd.`YEAR` =#{year} 
+		left join tb_codebook ht on hd.TYPE_CD = ht.CODE_ID and ht.CODE_TYPE ='HOLIDAY_TYPE'
+		where 1=1
+		ORDER BY hd.HOLIDAY_DATE
 	</select>
 	<select id="getHolidayDetail" resultType="HolidayModelBean">
 		SELECT ID
-		, hd.`YEAR`
-		, hd.TYPE_CD
-		, hd.HOLIDAY_DATE
-		, hd.HOLIDAY_NAME
-		, hd.REMARK
-		, hd.CREATED_DATE
-		, hd.CREATED_BY
-		, hd.UPDATED_DATE
-		, hd.UPDATED_BY
+		, hd.`YEAR` as year
+		, hd.TYPE_CD as typeCd
+		, hd.HOLIDAY_DATE as holidayDate
+		, hd.HOLIDAY_NAME as holidayName
+		, hd.REMARK as remark
+		, ht.ETC1 as backgroundColor
+		, ht.ETC2 as textColor
+		, hd.CREATED_DATE as createdDate
+		, hd.CREATED_BY as createdBy
+		, hd.UPDATED_DATE as updatedDate
+		, hd.UPDATED_BY as updatedBy
 		FROM tb_holiday_info hd
+		left join tb_codebook ht on hd.TYPE_CD = ht.CODE_ID and ht.CODE_TYPE ='HOLIDAY_TYPE'
 		where hd.ID=#{id} 
 	</select>
 	<insert id="saveHoliday">
