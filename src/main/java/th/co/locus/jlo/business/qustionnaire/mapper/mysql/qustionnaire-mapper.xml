@@ -2,7 +2,7 @@
 <mapper namespace="questionnaire">
 
 
-	<select id="findQuestionnaireById" resultType="QustionnaireHeaderModelBean">
+	<select id="findQuestionnaireById" resultType="QuestionnaireHeaderModelBean">
 		select * from tb_questionnaire_header where id = #{id}
 	</select>
 </mapper>
