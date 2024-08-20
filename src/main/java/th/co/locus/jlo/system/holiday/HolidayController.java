@@ -10,12 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
 import th.co.locus.jlo.system.holiday.bean.HolidayModelBean;
-import th.co.locus.jlo.common.bean.ApiPageRequest;
-import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
-import th.co.locus.jlo.common.bean.Page;
-import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 @Log4j2

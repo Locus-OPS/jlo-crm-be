@@ -1,47 +1,98 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="questionnaire">
-
+	
+	<select id="getHeaderQuestionaireList" resultType="QuestionnaireHeaderModelBean">
+		SELECT 
+		hd.ID
+		, hd.QUESTIONNAIRE_TYPE
+		, hd.FORM_NAME
+		, hd.SECTION_HEADER_TEXT
+		, hd.STATUS_CD
+		, hd.BU_ID
+		, hd.CREATED_DATE
+		, hd.CREATED_BY
+		, hd.UPDATED_DATE
+		, hd.UPDATED_BY
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
+		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
+		FROM tb_questionnaire_header hd
+		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
+		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
+		WHERE hd.STATUS_CD=#{statusCd}
+		<if test="formName!=null and formName!=''">
+			<bind name="bformName" value="'%' + formName + '%'" />
+			AND hd.FORM_NAME like #{bformName}
+		</if>
+		<if test="questionnaireType!=null and questionnaireType!=''">
+			AND hd.QUESTIONNAIRE_TYPE=#{questionnaireType}
+		</if>
+		ORDER BY hd.CREATED_DATE DESC
+	</select>
 
 	<select id="findQuestionnaireById" resultType="QuestionnaireHeaderModelBean">
-		select * from tb_questionnaire_header where id = #{id}
+		SELECT 
+		hd.ID
+		, hd.QUESTIONNAIRE_TYPE
+		, hd.FORM_NAME
+		, hd.SECTION_HEADER_TEXT
+		, hd.STATUS_CD
+		, hd.BU_ID
+		, hd.CREATED_DATE
+		, hd.CREATED_BY
+		, hd.UPDATED_DATE
+		, hd.UPDATED_BY
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
+		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
+		FROM tb_questionnaire_header hd
+		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
+		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
+		WHERE hd.ID=#{id}
 	</select>
 	
-	<insert id="createHeaderQuestionnaire" keyColumn="D" keyProperty="id" useGeneratedKeys="true">
-		INSERT INTO `tb_questionnaire_header`
-			(
-			`QUESTIONNAIRE_TYPE`,
-			`FORM_NAME`,
-			`SECTION_HEADER_TEXT`,
-			`STATUS_CD`,
-			`BU_ID`,
-			`CREATED_DATE`,
-			`CREATED_BY`,
-			`UPDATED_DATE`,
-			`UPDATED_BY`)
-		VALUES
-			(
-			#{questionnaireType},
-			#{formName},
-			#{sectionHeaderText},
-			#{statusCd},
-			#{buId},
-			NOW(),
-			#{createdBy},
-			NOW(),
-			#{updatedBy}
-		)
-					
+	<insert id="createHeaderQuestionnaire" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+	    INSERT INTO `tb_questionnaire_header`
+	    (
+	        `QUESTIONNAIRE_TYPE`,
+	        `FORM_NAME`,
+	        `SECTION_HEADER_TEXT`,
+	        `STATUS_CD`,
+	        `BU_ID`,
+	        `CREATED_DATE`,
+	        `CREATED_BY`,
+	        `UPDATED_DATE`,
+	        `UPDATED_BY`
+	    )
+	    VALUES
+	    (
+	        #{questionnaireType},
+	        #{formName},
+	        #{sectionHeaderText},
+	        #{statusCd},
+	        #{buId},
+	        NOW(),
+	        #{createdBy},
+	        NOW(),
+	        #{updatedBy}
+	    )
 	</insert>
+
 	
 	<update id="updateHeaderQuestionnaire">
 		UPDATE  `tb_questionnaire_header`
 			SET
-			 
 			`QUESTIONNAIRE_TYPE` = #{questionnaireType},
 			`FORM_NAME` =#{formName},
 			`SECTION_HEADER_TEXT` = #{sectionHeaderText},
 			`STATUS_CD` = #{statusCd},
-			 
+			`UPDATED_DATE` = NOW(),
+			`UPDATED_BY` = #{updatedBy}
+			WHERE `ID` = #{id};
+	</update>
+	
+	<update id="deleteHeaderQuestionnaire">
+		UPDATE  `tb_questionnaire_header`
+			SET
+			`STATUS_CD` = #{statusCd},
 			`UPDATED_DATE` = NOW(),
 			`UPDATED_BY` = #{updatedBy}
 			WHERE `ID` = #{id};
