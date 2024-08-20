@@ -15,7 +15,7 @@ public class SecurityConfiguration {
             "/common/auth/login", "/common/auth/refreshToken"
     };
     private static final String[] SWAGGER_WHITELIST = {
-            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources"
+    		 "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources"
     };
     
     private static final String[] JLO_WHITELIST = {
