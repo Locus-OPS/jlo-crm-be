@@ -89,13 +89,102 @@
 			WHERE `ID` = #{id};
 	</update>
 	
-	<update id="deleteHeaderQuestionnaire">
-		UPDATE  `tb_questionnaire_header`
-			SET
-			`STATUS_CD` = #{statusCd},
-			`UPDATED_DATE` = NOW(),
-			`UPDATED_BY` = #{updatedBy}
-			WHERE `ID` = #{id};
+	<select id="getQuestionnaireQuestionList" resultType="QuestionnaireQuestionModelBean">
+		SELECT 
+		q.ID
+		, q.HEADER_ID
+		, q.QUESTION
+		, q.ANSWER_TYPE
+		, q.DESCRIPTION
+		, q.IMAGE_URL
+		, q.STATUS_CD
+		, q.REQUIRED_FLG
+		, q.SEQ_NO
+		, q.BU_ID
+		, q.CREATED_DATE
+		, q.CREATED_BY
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+		, q.UPDATED_DATE
+		, q.UPDATED_BY
+		,concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		FROM tb_questionnaire_q_master q
+		left join tb_user cr on q.CREATED_BY = cr.USER_ID 
+		left join tb_user upd on q.UPDATED_BY =upd.USER_ID 
+		where q.HEADER_ID=#{headerId}
+	</select>
+	<select id="getQuestionnairequestionDetail" resultType="QuestionnaireQuestionModelBean">
+		SELECT 
+		q.ID
+		, q.HEADER_ID
+		, q.QUESTION
+		, q.ANSWER_TYPE
+		, q.DESCRIPTION
+		, q.IMAGE_URL
+		, q.STATUS_CD
+		, q.REQUIRED_FLG
+		, q.SEQ_NO
+		, q.BU_ID
+		, q.CREATED_DATE
+		, q.CREATED_BY
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+		, q.UPDATED_DATE
+		, q.UPDATED_BY
+		,concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		FROM tb_questionnaire_q_master q
+		left join tb_user cr on q.CREATED_BY = cr.USER_ID 
+		left join tb_user upd on q.UPDATED_BY =upd.USER_ID 
+		where q.ID=#{id}
+	</select>
+	
+	<insert id="createQuestionnaireQuestion" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+	    INSERT INTO tb_questionnaire_q_master
+		( HEADER_ID
+		, QUESTION
+		, ANSWER_TYPE
+		, DESCRIPTION
+		, IMAGE_URL
+		, STATUS_CD
+		, REQUIRED_FLG
+		, SEQ_NO
+		, BU_ID
+		, CREATED_DATE
+		, CREATED_BY
+		, UPDATED_DATE
+		, UPDATED_BY
+		)
+		VALUES(
+		#{headerId}
+		, #{question}
+		, #{answerType}
+		, #{description}
+		, #{imageUrl}
+		, #{statusCd}
+		, #{requiredFlg}
+		, #{seqNo}
+		, #{buId}
+		, NOW()
+		, #{createdBy}
+		, NOW()
+		, #{updatedBy}
+		)
+	</insert>
+	
+	<update id="updateQuestionnaireQuestion">
+		UPDATE tb_questionnaire_q_master
+		SET 
+		  QUESTION=#{question}
+		, ANSWER_TYPE=#{answerType}
+		, DESCRIPTION=#{description}
+		, IMAGE_URL=#{imageUrl}
+		, STATUS_CD=#{statusCd}
+		, REQUIRED_FLG=#{requiredFlg}
+		, SEQ_NO=#{seqNo}
+		, BU_ID=#{buId}
+		, UPDATED_DATE=NOW()
+		, UPDATED_BY=#{updatedBy}
+		WHERE ID=#{id}
 	</update>
+	
+
 	
 </mapper>
