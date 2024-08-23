@@ -137,6 +137,8 @@ public class QustionnaireController extends BaseController {
 	@PostMapping(value="/createquestionnairequestion")
 	public ApiResponse<QuestionnaireQuestionModelBean> createQuestionnaireQuestion(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
 		try {
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setCreatedBy(getUserId());
 			ServiceResult<QuestionnaireQuestionModelBean> resultService=this.qtnService.createQuestionnaireQuestion(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
@@ -151,6 +153,7 @@ public class QustionnaireController extends BaseController {
 	@PostMapping(value="/updateQuestionnaireQuestion",produces = "application/json")
 	public ApiResponse<QuestionnaireQuestionModelBean> updateQuestionnaireQuestion(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
 		try {
+			request.getData().setUpdatedBy(getUserId());
 			ServiceResult<QuestionnaireQuestionModelBean> resultService=this.qtnService.updateQuestionnaireQuestion(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());

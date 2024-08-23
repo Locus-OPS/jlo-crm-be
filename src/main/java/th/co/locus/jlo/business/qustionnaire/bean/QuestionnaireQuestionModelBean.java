@@ -14,10 +14,13 @@ public class QuestionnaireQuestionModelBean extends BaseModelBean implements Ser
 	private Long headerId;
 	private String question;
 	private String answerType;
+	private String answerTypeName;
+	private String options;
 	private String description;
 	private String imageUrl;
 	private String statusCd;
 	private Boolean requiredFlg;
 	private Long seqNo;
+	private String componentType;
 
 }

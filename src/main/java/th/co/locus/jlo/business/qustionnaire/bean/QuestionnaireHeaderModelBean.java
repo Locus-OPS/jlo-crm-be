@@ -1,5 +1,7 @@
 package th.co.locus.jlo.business.qustionnaire.bean;
 
+import java.util.List;
+
 //import java.io.Serializable;
 
 import lombok.Data;
@@ -19,4 +21,5 @@ public class QuestionnaireHeaderModelBean extends BaseModelBean
 	private String formName;
 	private String sectionHeaderText;
 	private String statusCd;
+	private List<QuestionnaireQuestionModelBean> questionnaireList;
 }
