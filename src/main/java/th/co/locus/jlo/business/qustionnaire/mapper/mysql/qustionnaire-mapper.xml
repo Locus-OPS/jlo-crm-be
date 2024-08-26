@@ -95,6 +95,8 @@
 		, q.HEADER_ID
 		, q.QUESTION
 		, q.ANSWER_TYPE
+		, anstype.CODE_NAME  as answerTypename
+		, IFNULL(options.optionsStr,'') as OPTIONS
 		, q.DESCRIPTION
 		, q.IMAGE_URL
 		, q.STATUS_CD
@@ -106,11 +108,25 @@
 		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
 		, q.UPDATED_DATE
 		, q.UPDATED_BY
-		,concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, anstype.ETC1  as componentType
 		FROM tb_questionnaire_q_master q
+		left join tb_codebook anstype on q.ANSWER_TYPE = anstype.CODE_ID and anstype.CODE_TYPE ='ANSWER_TYPE'
 		left join tb_user cr on q.CREATED_BY = cr.USER_ID 
 		left join tb_user upd on q.UPDATED_BY =upd.USER_ID 
+		left join(
+			select 
+			hd.ID as headerId
+			,ans.QUESTION_ID as questionId
+			, TRIM(GROUP_CONCAT(ans.ANSWER ORDER BY ans.ID ASC SEPARATOR ' , ')) as optionsStr
+			from tb_questionnaire_ans_master ans
+			join tb_questionnaire_q_master q on q.ID = ans.QUESTION_ID 
+			join tb_questionnaire_header hd on q.HEADER_ID =hd.id
+			group by q.ID,ans.QUESTION_ID
+		) options on q.ID = options.questionId and q.HEADER_ID =options.headerId
 		where q.HEADER_ID=#{headerId}
+		and q.STATUS_CD='Y'
+		ORDER BY q.SEQ_NO
 	</select>
 	<select id="getQuestionnairequestionDetail" resultType="QuestionnaireQuestionModelBean">
 		SELECT 
@@ -118,6 +134,7 @@
 		, q.HEADER_ID
 		, q.QUESTION
 		, q.ANSWER_TYPE
+		, IFNULL(options.optionsStr,'') as OPTIONS
 		, q.DESCRIPTION
 		, q.IMAGE_URL
 		, q.STATUS_CD
@@ -133,6 +150,16 @@
 		FROM tb_questionnaire_q_master q
 		left join tb_user cr on q.CREATED_BY = cr.USER_ID 
 		left join tb_user upd on q.UPDATED_BY =upd.USER_ID 
+		left join(
+			select 
+			hd.ID as headerId
+			,ans.QUESTION_ID as questionId
+			, TRIM(GROUP_CONCAT(ans.ANSWER ORDER BY ans.ID ASC SEPARATOR ' , ')) as optionsStr
+			from tb_questionnaire_ans_master ans
+			join tb_questionnaire_q_master q on q.ID = ans.QUESTION_ID 
+			join tb_questionnaire_header hd on q.HEADER_ID =hd.id
+			group by q.ID,ans.QUESTION_ID
+		) options on q.ID = options.questionId and q.HEADER_ID =options.headerId
 		where q.ID=#{id}
 	</select>
 	
@@ -183,6 +210,176 @@
 		, UPDATED_DATE=NOW()
 		, UPDATED_BY=#{updatedBy}
 		WHERE ID=#{id}
+	</update>
+	
+	<select id="getQuestionnaireAnswerList" resultType="QuestionnaireAnswerModelBean">
+		SELECT 
+		ans.ID
+		, hd.ID as HEADER_ID
+		, ans.ANSWER_JSON
+		, ans.STATUS_CD
+		, ans.CREATED_DATE
+		, ans.CREATED_BY
+		, ans.UPDATED_DATE
+		, ans.UPDATED_BY
+		FROM tb_questionnaire_ans_master ans
+		join tb_questionnaire_q_master q on ans.QUESTION_ID = q.ID 
+		join tb_questionnaire_header hd on q.HEADER_ID = hd.ID 
+		where  hd.ID =#{headerId}
+		and hd.STATUS_CD ='Y' and q.STATUS_CD ='Y' and ans.STATUS_CD ='Y'
+		order by ans.ID,hd.ID,q.SEQ_NO 
+		
+	</select>
+	
+	<delete id="deleteQuestionnaireAnswerOption">
+		DELETE FROM tb_questionnaire_ans_master WHERE QUESTION_ID=#{questionId}
+	</delete>
+	
+	<insert id="createQuestionaireAnswerMaster" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_ans_master
+		( QUESTION_ID
+		, ANSWER
+		, STATUS_CD
+		, CREATED_DATE
+		, CREATED_BY
+		, UPDATED_DATE
+		, UPDATED_BY
+		)
+		VALUES(
+		 #{questionId}
+		, #{answer}
+		, #{statusCd}
+		, NOW()
+		, #{createdBy}
+		, NOW()
+		, #{updatedBy}
+		)
+	</insert>
+	
+	<insert id="createQuesuionnaireRespondent" keyColumn="RESPONDENT_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_respondents
+		(
+		 QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		)
+		VALUES(
+		 #{questionnaireHeaderId}
+		, #{name}
+		, #{age}
+		, #{gender}
+		, #{location}
+		, NOW()
+		)
+	</insert>
+	
+	<select id="getquestionaireRepondentList" resultType="QuestionnaireRepondentsModelBean">
+		SELECT 
+		RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		FROM tb_questionnaire_respondents
+		WHERE QUESTIONNAIRE_HEADER_ID=#{id}
+	</select>
+	
+	<select id="getquestionaireRepondentDetail" resultType="QuestionnaireRepondentsModelBean">
+		SELECT 
+		RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		FROM tb_questionnaire_respondents
+		WHERE RESPONDENT_ID=#{respondentId}
+	</select>
+	
+	<insert id="createQuestionnaireResponse" keyColumn="RESPONSE_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_responses
+		(
+			 RESPONDENT_ID
+			, QUESTIONNAIRE_HEADER_ID
+			, QUESTION_ID
+			, RESPONSE_TEXT
+			, CREATED_DATE
+			)
+			VALUES(
+			 #{respondentId}
+			, #{questionnaireHeaderId}
+			, #{questionId}
+			, #{responseText}
+			, NOW()
+		)
+	</insert>
+	
+	<select id="getQuestionnaireResponseList" resultType="QuestionnaireResponsesModelBean">
+		SELECT 
+		RESPONSE_ID
+		, RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, QUESTION_ID
+		, RESPONSE_TEXT
+		, CREATED_DATE
+		FROM tb_questionnaire_responses
+		WHERE RESPONDENT_ID=#{respondentId}
+	</select>
+	
+	
+	<select id="getQuestionnaireAnswerDetail" resultType="QuestionnaireAnswerModelBean">
+		SELECT 
+		ans.ID
+		, hd.ID as HEADER_ID
+		, ans.ANSWER_JSON
+		, ans.STATUS_CD
+		, ans.CREATED_DATE
+		, ans.CREATED_BY
+		, ans.UPDATED_DATE
+		, ans.UPDATED_BY
+		FROM tb_questionnaire_ans_master ans
+		join tb_questionnaire_header hd on ans.HEADER_ID = hd.ID 
+		where  hd.ID =#{headerId} and ans.ID=#{id}
+		and hd.STATUS_CD ='Y'  and ans.STATUS_CD ='Y'
+		order by ans.ID,hd.ID
+	</select>
+	
+	<insert id="createQuestionnareAnswer" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_ans_master
+		(
+			 HEADER_ID
+			, ANSWER_JSON
+			, STATUS_CD
+			, CREATED_DATE
+			, CREATED_BY
+			, UPDATED_DATE
+			, UPDATED_BY
+			)
+			VALUES(
+			 #{headerId}
+			, #{answerJson}
+			, #{statusCd}
+			, NOW()
+			, #{createdBy}
+			, NOW()
+			, #{updatedBy}
+		)
+	</insert>
+	<update id="updateQuestionnaireAnswer">
+		UPDATE tb_questionnaire_ans_master
+		SET 
+		  ANSWER_JSON=#{answerJson}
+		, STATUS_CD=#{statusCd}
+		, UPDATED_DATE=NOW()
+		, UPDATED_BY=#{updatedBy}
+		WHERE ID=#{id}
+		AND HEADER_ID=#{headerId}
 	</update>
 	
 
