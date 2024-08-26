@@ -19,7 +19,7 @@ public class SecurityConfiguration {
     };
     
     private static final String[] JLO_WHITELIST = {
-            "/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
+            "/api/landing/**","/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
     };
 
     @Bean

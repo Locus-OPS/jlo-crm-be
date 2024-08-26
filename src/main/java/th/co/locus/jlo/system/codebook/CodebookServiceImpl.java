@@ -1,5 +1,8 @@
 package th.co.locus.jlo.system.codebook;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import th.co.locus.jlo.common.bean.Page;
@@ -33,6 +36,24 @@ public class CodebookServiceImpl extends BaseService implements CodebookService 
 			return success(commonDao.selectOne("codebook.findCodebookById", bean));
 		}
 		return fail();
+	}
+
+	@Override
+	public ServiceResult<List<CodebookModelBean>> searchCodebookByCodeTypes(String[] codeTypes) {
+		List<String> codeTypeList = Arrays.asList(codeTypes);
+		return searchCodebookByCodeTypeList(codeTypeList);
+	}
+	
+	@Override
+	public ServiceResult<List<CodebookModelBean>> searchCodebookByCodeTypeList(List<String> codeTypeList) {
+		SearchCodebookCriteriaModelBean criteria = new SearchCodebookCriteriaModelBean();
+		criteria.setCodeTypeList(codeTypeList);
+		return searchCodebookNoPage(criteria);
+	}
+	
+	@Override
+	public ServiceResult<List<CodebookModelBean>> searchCodebookNoPage(SearchCodebookCriteriaModelBean criteria) {
+		return success(commonDao.selectList("codebook.searchCodebook", criteria));
 	}
 
 }

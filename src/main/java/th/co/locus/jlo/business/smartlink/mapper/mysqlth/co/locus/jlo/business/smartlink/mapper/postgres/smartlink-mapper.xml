@@ -1,0 +1,99 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="smartlink">
+    <select id="getSmartLinkList" resultType="SmartLinkModelBean">
+		SELECT
+			SL.ID,			 
+			SL.HEADER_ID,
+			SL.HASH_KEY,			 
+			SL.OTP_FLAG,
+			SL.OTP_DATE,
+			SL.URL_LINK,
+			SL.EXPIRE_DATE,
+			SL.CREATED_DATE,
+			SL.CREATED_BY,
+			SL.UPDATED_DATE,
+			SL.UPDATED_BY
+		FROM tb_questionnaire_smartlink SL
+	        
+		<where>
+			 
+			<if test="hashKey != null and hashKey != ''">
+				AND SL.HASH_KEY = #{hashKey}
+			</if>
+			<![CDATA[ AND DATE(SL.EXPIRE_DATE) <= DATE(NOW()) ]]>
+		</where>
+		ORDER BY SL.EXPIRE_DATE DESC
+	</select>
+	
+    <select id="getSmartLinkByHashKey" resultType="SmartLinkModelBean">
+		SELECT
+			SL.ID,			 
+			SL.HEADER_ID,
+			SL.HASH_KEY,			 
+			SL.OTP_FLAG,
+			SL.OTP_DATE,
+			SL.URL_LINK,
+			SL.EXPIRE_DATE,
+			SL.CREATED_DATE,
+			SL.CREATED_BY,
+			SL.UPDATED_DATE,
+			SL.UPDATED_BY
+		FROM tb_questionnaire_smartlink SL
+		WHERE
+			SL.HASH_KEY = #{hashKey}
+	</select>
+
+
+	<select id="getSmartLinkByHashKeyNotExpire" resultType="SmartLinkModelBean">
+		SELECT
+			SL.ID,			 
+			SL.HEADER_ID,
+			SL.HASH_KEY,			 
+			SL.OTP_FLAG,
+			SL.OTP_DATE,
+			SL.URL_LINK,
+			SL.EXPIRE_DATE,
+			SL.CREATED_DATE,
+			SL.CREATED_BY,
+			SL.UPDATED_DATE,
+			SL.UPDATED_BY
+		FROM tb_questionnaire_smartlink SL
+		WHERE
+			SL.HASH_KEY = #{hashKey}
+			<![CDATA[ AND SL.EXPIRE_DATE >= NOW() ]]>
+	</select>
+
+	 
+
+    <insert id="createSmartLink" keyColumn="ID" keyProperty="smartlinkId" useGeneratedKeys="true">
+		 INSERT INTO `tb_questionnaire_smartlink`
+			( 
+			`HEADER_ID`,
+			`HASH_KEY`,
+			`OTP_FLAG`,
+			`OTP_DATE`,
+			`URL_LINK`,
+			`EXPIRE_DATE`,
+			`CREATED_DATE`,
+			`CREATED_BY`,
+			`UPDATED_DATE`,
+			`UPDATED_BY`)
+			VALUES
+			( 
+			#{headerId},
+			#{hashKey},
+			#{otpFlag},
+			#{otpDate},
+			#{urlLink}, 
+			CAST(DATE_ADD(NOW(), INTERVAL #{expireDay} day) AS datetime),
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+			)
+	</insert>
+
+	
+
+</mapper>
