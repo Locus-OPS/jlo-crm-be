@@ -15,7 +15,7 @@
 		, hd.UPDATED_BY
 		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
-		FROM tb_questionnaire_header hd
+		FROM tb_questionnaire_header_master hd
 		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
 		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
 		WHERE hd.STATUS_CD=#{statusCd}
@@ -43,14 +43,14 @@
 		, hd.UPDATED_BY
 		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
-		FROM tb_questionnaire_header hd
+		FROM tb_questionnaire_header_master hd
 		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
 		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
 		WHERE hd.ID=#{id}
 	</select>
 	
 	<insert id="createHeaderQuestionnaire" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
-	    INSERT INTO `tb_questionnaire_header`
+	    INSERT INTO `tb_questionnaire_header_master`
 	    (
 	        `QUESTIONNAIRE_TYPE`,
 	        `FORM_NAME`,
@@ -78,7 +78,7 @@
 
 	
 	<update id="updateHeaderQuestionnaire">
-		UPDATE  `tb_questionnaire_header`
+		UPDATE  `tb_questionnaire_header_master`
 			SET
 			`QUESTIONNAIRE_TYPE` = #{questionnaireType},
 			`FORM_NAME` =#{formName},
@@ -121,7 +121,7 @@
 			, TRIM(GROUP_CONCAT(ans.ANSWER ORDER BY ans.ID ASC SEPARATOR ' , ')) as optionsStr
 			from tb_questionnaire_ans_master ans
 			join tb_questionnaire_q_master q on q.ID = ans.QUESTION_ID 
-			join tb_questionnaire_header hd on q.HEADER_ID =hd.id
+			join tb_questionnaire_header_master hd on q.HEADER_ID =hd.id
 			group by q.ID,ans.QUESTION_ID
 		) options on q.ID = options.questionId and q.HEADER_ID =options.headerId
 		where q.HEADER_ID=#{headerId}
@@ -157,7 +157,7 @@
 			, TRIM(GROUP_CONCAT(ans.ANSWER ORDER BY ans.ID ASC SEPARATOR ' , ')) as optionsStr
 			from tb_questionnaire_ans_master ans
 			join tb_questionnaire_q_master q on q.ID = ans.QUESTION_ID 
-			join tb_questionnaire_header hd on q.HEADER_ID =hd.id
+			join tb_questionnaire_header_master hd on q.HEADER_ID =hd.id
 			group by q.ID,ans.QUESTION_ID
 		) options on q.ID = options.questionId and q.HEADER_ID =options.headerId
 		where q.ID=#{id}
@@ -224,7 +224,7 @@
 		, ans.UPDATED_BY
 		FROM tb_questionnaire_ans_master ans
 		join tb_questionnaire_q_master q on ans.QUESTION_ID = q.ID 
-		join tb_questionnaire_header hd on q.HEADER_ID = hd.ID 
+		join tb_questionnaire_header_master hd on q.HEADER_ID = hd.ID 
 		where  hd.ID =#{headerId}
 		and hd.STATUS_CD ='Y' and q.STATUS_CD ='Y' and ans.STATUS_CD ='Y'
 		order by ans.ID,hd.ID,q.SEQ_NO 
@@ -344,7 +344,7 @@
 		, ans.UPDATED_DATE
 		, ans.UPDATED_BY
 		FROM tb_questionnaire_ans_master ans
-		join tb_questionnaire_header hd on ans.HEADER_ID = hd.ID 
+		join tb_questionnaire_header_master hd on ans.HEADER_ID = hd.ID 
 		where  hd.ID =#{headerId} and ans.ID=#{id}
 		and hd.STATUS_CD ='Y'  and ans.STATUS_CD ='Y'
 		order by ans.ID,hd.ID
