@@ -13,13 +13,7 @@ public class QuestionnaireAnswerModelBean extends BaseModelBean implements Seria
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private Long headerId;
 	private Long questionId;
 	private String answer;
-//	private String requiredFlg;
 	private String statusCd;
-	private Long seqNo;
-	private String qAndA;
-	
-
 }

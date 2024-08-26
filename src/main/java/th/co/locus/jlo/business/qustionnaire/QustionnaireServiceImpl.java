@@ -15,6 +15,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Log4j2
@@ -94,6 +95,18 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 		try {
 			int result=commonDao.insert("questionnaire.createQuestionnaireQuestion", bean);
 			if(result>0) {
+				String[] options = bean.getOptions().split(" , ");
+				List<String> optionList = Arrays.asList(options);
+				commonDao.delete("questionnaire.deleteQuestionnaireAnswerOption", Map.of("questionId",bean.getId()));
+			    for (String item : optionList) {
+			    	QuestionnaireAnswerModelBean answer=new QuestionnaireAnswerModelBean();
+			    	answer.setQuestionId(bean.getId());
+			    	answer.setAnswer(item);
+			    	answer.setStatusCd("Y");
+			    	answer.setCreatedBy(bean.getCreatedBy());
+			    	answer.setUpdatedBy(bean.getUpdatedBy());
+			    	commonDao.insert("questionnaire.createQuestionaireAnswerMaster", answer);
+		        }
 				return success(commonDao.selectOne("questionnaire.getQuestionnairequestionDetail", bean));
 			}
 			return fail("500","Unable to create because something wrong.");
@@ -107,6 +120,18 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 		try {
 			int result=commonDao.update("questionnaire.updateQuestionnaireQuestion", bean);
 			if(result>0) {
+				String[] options = bean.getOptions().split(" , ");
+				List<String> optionList = Arrays.asList(options);
+				commonDao.delete("questionnaire.deleteQuestionnaireAnswerOption", Map.of("questionId",bean.getId()));
+			    for (String item : optionList) {
+			    	QuestionnaireAnswerModelBean answer=new QuestionnaireAnswerModelBean();
+			    	answer.setQuestionId(bean.getId());
+			    	answer.setAnswer(item);
+			    	answer.setStatusCd("Y");
+			    	answer.setCreatedBy(bean.getUpdatedBy());
+			    	answer.setUpdatedBy(bean.getUpdatedBy());
+			    	commonDao.insert("questionnaire.createQuestionaireAnswerMaster", answer);
+		        }
 				return success(commonDao.selectOne("questionnaire.getQuestionnairequestionDetail", bean));
 			}
 			return fail("500","Unable to edit because data not found.");
@@ -135,29 +160,15 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 	}
 
 	@Override
-	public ServiceResult<List<QuestionnaireAnswerModelBean>> createQuestionnaireAnswer(List<QuestionnaireAnswerModelBean> bean) {
+	public ServiceResult<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(QuestionnaireAnswerModelBean bean) {
 		try {
-			long id=0,headerId=0;
-			if(bean.size()>0) {
-				headerId=bean.get(0).getHeaderId();
+			int result=commonDao.insert("questionnaire.createQuestionnareAnswer", bean);
+			if(result>0) {
+				return success(commonDao.selectOne("questionnaire.getQuestionnaireAnswerDetail", bean));
+			}else {
+				return fail("500","Unable to create because something wrong.");
 			}
-			id=commonDao.selectOne("questionnaire.genQuestionnaireAnswerId", Map.of("headerId",headerId));
-			id+=1;
-			
-			for (QuestionnaireAnswerModelBean answer : bean) {
-			    try {
-			    	answer.setId(id);
-			    	answer.setUpdatedBy(0L);
-			    	answer.setCreatedBy(0L);
-			        commonDao.insert("questionnaire.createQuestionnareAnswer", answer);
-			    }catch(Exception ex) {
-			    	log.error(ex.getMessage());
-			    }
-			}
-			
-			List<QuestionnaireAnswerModelBean> anslist=commonDao.selectList("questionnaire.getQuestionnaireAnswerDetail", bean);
-			return success(anslist);
-			
+				
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
 			return fail("500",ex.getMessage());
@@ -171,7 +182,7 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 			long id=0,headerId=0;
 			if(bean.size()>0) {
 				id=bean.get(0).getId();
-				headerId=bean.get(0).getHeaderId();
+//				headerId=bean.get(0).getHeaderId();
 			}
 			
 			for (QuestionnaireAnswerModelBean answer : bean) {

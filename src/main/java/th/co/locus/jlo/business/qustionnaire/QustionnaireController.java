@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireAnswerModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
@@ -155,6 +156,22 @@ public class QustionnaireController extends BaseController {
 		try {
 			request.getData().setUpdatedBy(getUserId());
 			ServiceResult<QuestionnaireQuestionModelBean> resultService=this.qtnService.updateQuestionnaireQuestion(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}else {
+				return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+			}
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/createQuestionnaireAnswer")
+	public ApiResponse<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(@RequestBody ApiRequest<QuestionnaireAnswerModelBean> request) {
+		try {
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
+			ServiceResult<QuestionnaireAnswerModelBean> resultService=this.qtnService.createQuestionnaireAnswer(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
 			}else {
