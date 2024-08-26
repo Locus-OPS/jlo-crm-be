@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireAnswerModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireResponsesModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
@@ -166,12 +169,10 @@ public class QustionnaireController extends BaseController {
 		}
 	}
 	
-	@PostMapping(value="/createQuestionnaireAnswer")
-	public ApiResponse<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(@RequestBody ApiRequest<QuestionnaireAnswerModelBean> request) {
+	@PostMapping(value="/createQuestionnaireResponse",produces = "application/json")
+	public ApiResponse<QuesionnaireRepondentResponseModelBean> createQuestionnaireResponse(@RequestBody ApiRequest<QuesionnaireRepondentResponseModelBean> request) {
 		try {
-			request.getData().setCreatedBy(getUserId());
-			request.getData().setUpdatedBy(getUserId());
-			ServiceResult<QuestionnaireAnswerModelBean> resultService=this.qtnService.createQuestionnaireAnswer(request.getData());
+			ServiceResult<QuesionnaireRepondentResponseModelBean> resultService=this.qtnService.createQuestionnaireResponse(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
 			}else {
@@ -181,5 +182,51 @@ public class QustionnaireController extends BaseController {
 			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
+	
+	@PostMapping(value="/getquestionnairerepondentList",produces = "application/json")
+	public ApiPageResponse<List<QuestionnaireRepondentsModelBean>> getQuestionnaireRepondentList(@RequestBody ApiPageRequest<QuestionnaireHeaderModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<QuestionnaireRepondentsModelBean>> resultServiceResult=this.qtnService.getQuestionnaireRepondentsList(request.getData(), pageRequest);
+			if(resultServiceResult.isSuccess()) {
+				return ApiPageResponse.success(resultServiceResult.getResult().getContent(),resultServiceResult.getResult().getTotalElements());
+			}else {
+				return ApiPageResponse.fail(resultServiceResult.getResponseCode(),resultServiceResult.getResponseDescription());
+			}
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getquestionnaireresponselist",produces = "application/json")
+	public ApiPageResponse<List<QuestionnaireResponsesModelBean>> getQuestionnaireResponseList(@RequestBody ApiPageRequest<QuestionnaireRepondentsModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<QuestionnaireResponsesModelBean>> resultService=this.qtnService.getQuestionnaireResponseList(request.getData(),pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}else {
+				return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+			}
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+//	@PostMapping(value="/createQuestionnaireAnswer")
+//	public ApiResponse<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(@RequestBody ApiRequest<QuestionnaireAnswerModelBean> request) {
+//		try {
+//			request.getData().setCreatedBy(getUserId());
+//			request.getData().setUpdatedBy(getUserId());
+//			ServiceResult<QuestionnaireAnswerModelBean> resultService=this.qtnService.createQuestionnaireAnswer(request.getData());
+//			if(resultService.isSuccess()) {
+//				return ApiResponse.success(resultService.getResult());
+//			}else {
+//				return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+//			}
+//		}catch(Exception ex) {
+//			return ApiResponse.fail("500",ex.getMessage());
+//		}
+//	}
 
 }

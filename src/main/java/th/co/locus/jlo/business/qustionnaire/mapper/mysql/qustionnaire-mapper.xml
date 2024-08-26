@@ -256,6 +256,82 @@
 		)
 	</insert>
 	
+	<insert id="createQuesuionnaireRespondent" keyColumn="RESPONDENT_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_respondents
+		(
+		 QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		)
+		VALUES(
+		 #{questionnaireHeaderId}
+		, #{name}
+		, #{age}
+		, #{gender}
+		, #{location}
+		, NOW()
+		)
+	</insert>
+	
+	<select id="getquestionaireRepondentList" resultType="QuestionnaireRepondentsModelBean">
+		SELECT 
+		RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		FROM tb_questionnaire_respondents
+		WHERE QUESTIONNAIRE_HEADER_ID=#{id}
+	</select>
+	
+	<select id="getquestionaireRepondentDetail" resultType="QuestionnaireRepondentsModelBean">
+		SELECT 
+		RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, NAME
+		, AGE
+		, GENDER
+		, LOCATION
+		, CREATED_DATE
+		FROM tb_questionnaire_respondents
+		WHERE RESPONDENT_ID=#{respondentId}
+	</select>
+	
+	<insert id="createQuestionnaireResponse" keyColumn="RESPONSE_ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_questionnaire_responses
+		(
+			 RESPONDENT_ID
+			, QUESTIONNAIRE_HEADER_ID
+			, QUESTION_ID
+			, RESPONSE_TEXT
+			, CREATED_DATE
+			)
+			VALUES(
+			 #{respondentId}
+			, #{questionnaireHeaderId}
+			, #{questionId}
+			, #{responseText}
+			, NOW()
+		)
+	</insert>
+	
+	<select id="getQuestionnaireResponseList" resultType="QuestionnaireResponsesModelBean">
+		SELECT 
+		RESPONSE_ID
+		, RESPONDENT_ID
+		, QUESTIONNAIRE_HEADER_ID
+		, QUESTION_ID
+		, RESPONSE_TEXT
+		, CREATED_DATE
+		FROM tb_questionnaire_responses
+		WHERE RESPONDENT_ID=#{respondentId}
+	</select>
+	
 	
 	<select id="getQuestionnaireAnswerDetail" resultType="QuestionnaireAnswerModelBean">
 		SELECT 

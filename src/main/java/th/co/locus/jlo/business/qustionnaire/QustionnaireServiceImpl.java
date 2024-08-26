@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Maps;
 
 import lombok.extern.log4j.Log4j2;
+import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireAnswerModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireResponsesModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
@@ -141,71 +144,128 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 	}
 
 	@Override
-	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerList(QuestionnaireAnswerModelBean bean, PageRequest page) {
+	public ServiceResult<QuesionnaireRepondentResponseModelBean> createQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean) {
 		try {
-			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerList", bean, page));
-		}
-		catch(Exception ex) {
-			return fail("500",ex.getMessage());
-		}
-	}
-
-	@Override
-	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerResult(QuestionnaireAnswerModelBean bean, PageRequest page) {
-		try {
-			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerResultList", bean, page));
-		}catch(Exception ex) {
-			return fail("500",ex.getMessage());
-		}
-	}
-
-	@Override
-	public ServiceResult<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(QuestionnaireAnswerModelBean bean) {
-		try {
-			int result=commonDao.insert("questionnaire.createQuestionnareAnswer", bean);
-			if(result>0) {
-				return success(commonDao.selectOne("questionnaire.getQuestionnaireAnswerDetail", bean));
-			}else {
-				return fail("500","Unable to create because something wrong.");
+			int resultRespodent=commonDao.insert("questionnaire.createQuesuionnaireRespondent",bean.getRespodent());
+			if(resultRespodent>0) {
+				for (QuestionnaireResponsesModelBean response : bean.getResponses()) {
+					response.setRespondentId(bean.getRespodent().getRespondentId());
+					response.setQuestionnaireHeaderId(bean.getRespodent().getQuestionnaireHeaderId());
+					commonDao.insert("questionnaire.createQuestionnaireResponse", response);
+				}
+				return this.getQuestionnaireResponse(bean);
 			}
-				
-		}catch(Exception ex) {
-			log.error(ex.getMessage());
-			return fail("500",ex.getMessage());
-		}
-		
-	}
-
-	@Override
-	public ServiceResult<List<QuestionnaireAnswerModelBean>> updateQuestionnaireAnswer(List<QuestionnaireAnswerModelBean> bean) {
-		try {
-			long id=0,headerId=0;
-			if(bean.size()>0) {
-				id=bean.get(0).getId();
-//				headerId=bean.get(0).getHeaderId();
-			}
+			return fail("500","Unable to create because something wrong.");
 			
-			for (QuestionnaireAnswerModelBean answer : bean) {
-			    try {
-			    	answer.setUpdatedBy(0L);
-			        commonDao.insert("questionnaire.updateQuestionnaireAnswer", answer);
-			    }catch(Exception ex) {
-			    	log.error(ex.getMessage());
-			    }
-			}
-			List<QuestionnaireAnswerModelBean> anslist=commonDao.selectList("questionnaire.getQuestionnaireAnswerDetail", Map.of("id",id,"headerId",headerId));
-			return success(anslist);
 		}catch(Exception ex) {
-			log.error(ex.getMessage());
 			return fail("500",ex.getMessage());
 		}
 	}
 
+	@Override
+	public ServiceResult<QuesionnaireRepondentResponseModelBean> getQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean) {
+		try {
+			QuestionnaireRepondentsModelBean respondent=commonDao.selectOne("questionnaire.getquestionaireRepondentDetail", bean.getRespodent());
+			if(respondent!=null) {
+				List<QuestionnaireResponsesModelBean> responseList=commonDao.selectList("questionnaire.getQuestionnaireResponseList", respondent);
+				QuesionnaireRepondentResponseModelBean newRespondent=new QuesionnaireRepondentResponseModelBean();
+				newRespondent.setRespodent(respondent);
+				newRespondent.setResponses(responseList);
+				return success(newRespondent);
+			}
+			return fail("500","Unable to create because something wrong.");
+			
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
 
+	}
 
+	@Override
+	public ServiceResult<Page<QuestionnaireRepondentsModelBean>> getQuestionnaireRepondentsList(QuestionnaireHeaderModelBean bean, PageRequest page) {
+		try {
+			return success(commonDao.selectPage("questionnaire.getquestionaireRepondentList", Map.of("id",bean.getId()), page));
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+	}
+
+	@Override
+	public ServiceResult<Page<QuestionnaireResponsesModelBean>> getQuestionnaireResponseList(QuestionnaireRepondentsModelBean bean, PageRequest page) {
+		try {
+			return success(commonDao.selectPage("questionnaire.getQuestionnaireResponseList", bean, page));
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+	}
+	
+	
 
 
 	
 	
+
+//	@Override
+//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerList(QuestionnaireAnswerModelBean bean, PageRequest page) {
+//		try {
+//			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerList", bean, page));
+//		}
+//		catch(Exception ex) {
+//			return fail("500",ex.getMessage());
+//		}
+//	}
+//
+//	@Override
+//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerResult(QuestionnaireAnswerModelBean bean, PageRequest page) {
+//		try {
+//			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerResultList", bean, page));
+//		}catch(Exception ex) {
+//			return fail("500",ex.getMessage());
+//		}
+//	}
+//
+//	@Override
+//	public ServiceResult<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(QuestionnaireAnswerModelBean bean) {
+//		try {
+//			int result=commonDao.insert("questionnaire.createQuestionnareAnswer", bean);
+//			if(result>0) {
+//				return success(commonDao.selectOne("questionnaire.getQuestionnaireAnswerDetail", bean));
+//			}else {
+//				return fail("500","Unable to create because something wrong.");
+//			}
+//				
+//		}catch(Exception ex) {
+//			log.error(ex.getMessage());
+//			return fail("500",ex.getMessage());
+//		}
+//		
+//	}
+//
+//	@Override
+//	public ServiceResult<List<QuestionnaireAnswerModelBean>> updateQuestionnaireAnswer(List<QuestionnaireAnswerModelBean> bean) {
+//		try {
+//			long id=0,headerId=0;
+//			if(bean.size()>0) {
+//				id=bean.get(0).getId();
+////				headerId=bean.get(0).getHeaderId();
+//			}
+//			
+//			for (QuestionnaireAnswerModelBean answer : bean) {
+//			    try {
+//			    	answer.setUpdatedBy(0L);
+//			        commonDao.insert("questionnaire.updateQuestionnaireAnswer", answer);
+//			    }catch(Exception ex) {
+//			    	log.error(ex.getMessage());
+//			    }
+//			}
+//			List<QuestionnaireAnswerModelBean> anslist=commonDao.selectList("questionnaire.getQuestionnaireAnswerDetail", Map.of("id",id,"headerId",headerId));
+//			return success(anslist);
+//		}catch(Exception ex) {
+//			log.error(ex.getMessage());
+//			return fail("500",ex.getMessage());
+//		}
+//	}
+
+
 	
 }
