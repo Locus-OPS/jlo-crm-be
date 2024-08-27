@@ -15,9 +15,21 @@
 		, hd.UPDATED_BY
 		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
+		, smllink2.URL_LINK
+		, smllink2.HASH_KEY
 		FROM tb_questionnaire_header_master hd
 		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
 		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
+		left join 
+		(
+			select 
+			subsml.HEADER_ID
+			,max(subsml.ID)  as ID
+			from tb_questionnaire_smartlink subsml
+			where subsml.HEADER_ID is not null
+			group by subsml.HEADER_ID
+		) smlLink on hd.ID = smlLink.HEADER_ID
+		left join tb_questionnaire_smartlink smlLink2 on smlLink.ID=smlLink2.ID
 		WHERE hd.STATUS_CD=#{statusCd}
 		<if test="formName!=null and formName!=''">
 			<bind name="bformName" value="'%' + formName + '%'" />
@@ -43,9 +55,21 @@
 		, hd.UPDATED_BY
 		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) AS createdByName
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) AS updatedByName
+		, smllink2.URL_LINK
+		, smllink2.HASH_KEY
 		FROM tb_questionnaire_header_master hd
 		LEFT JOIN tb_user cr  on hd.CREATED_BY =cr.ID 
 		LEFT JOIN tb_user upd on hd.UPDATED_BY = upd.ID 
+		left join 
+		(
+			select 
+			subsml.HEADER_ID
+			,max(subsml.ID)  as ID
+			from tb_questionnaire_smartlink subsml
+			where subsml.HEADER_ID is not null
+			group by subsml.HEADER_ID
+		) smlLink on hd.ID = smlLink.HEADER_ID
+		left join tb_questionnaire_smartlink smlLink2 on smlLink.ID=smlLink2.ID
 		WHERE hd.ID=#{id}
 	</select>
 	

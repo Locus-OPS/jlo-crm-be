@@ -21,5 +21,7 @@ public class QuestionnaireHeaderModelBean extends BaseModelBean
 	private String formName;
 	private String sectionHeaderText;
 	private String statusCd;
+	private String urlLink;
+	private String hashKey;
 	private List<QuestionnaireQuestionModelBean> questionnaireList;
 }
