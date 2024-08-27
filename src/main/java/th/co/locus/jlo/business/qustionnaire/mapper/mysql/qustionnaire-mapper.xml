@@ -280,7 +280,7 @@
 		)
 	</insert>
 	
-	<insert id="createQuesuionnaireRespondent" keyColumn="RESPONDENT_ID" keyProperty="id" useGeneratedKeys="true">
+	<insert id="createQuesuionnaireRespondent" keyColumn="RESPONDENT_ID" keyProperty="respondentId" useGeneratedKeys="true">
 		INSERT INTO tb_questionnaire_respondents
 		(
 		 QUESTIONNAIRE_HEADER_ID
@@ -326,7 +326,7 @@
 		WHERE RESPONDENT_ID=#{respondentId}
 	</select>
 	
-	<insert id="createQuestionnaireResponse" keyColumn="RESPONSE_ID" keyProperty="id" useGeneratedKeys="true">
+	<insert id="createQuestionnaireResponse">
 		INSERT INTO tb_questionnaire_responses
 		(
 			 RESPONDENT_ID
@@ -334,7 +334,7 @@
 			, QUESTION_ID
 			, RESPONSE_TEXT
 			, CREATED_DATE
-			)
+		)
 			VALUES(
 			 #{respondentId}
 			, #{questionnaireHeaderId}

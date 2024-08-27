@@ -146,11 +146,13 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 	@Override
 	public ServiceResult<QuesionnaireRepondentResponseModelBean> createQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean) {
 		try {
+			log.info("Data: "+bean.toString());
 			int resultRespodent=commonDao.insert("questionnaire.createQuesuionnaireRespondent",bean.getRespodent());
 			if(resultRespodent>0) {
 				for (QuestionnaireResponsesModelBean response : bean.getResponses()) {
 					response.setRespondentId(bean.getRespodent().getRespondentId());
 					response.setQuestionnaireHeaderId(bean.getRespodent().getQuestionnaireHeaderId());
+					log.info("Data response: "+response.toString());
 					commonDao.insert("questionnaire.createQuestionnaireResponse", response);
 				}
 				return this.getQuestionnaireResponse(bean);
@@ -158,6 +160,7 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 			return fail("500","Unable to create because something wrong.");
 			
 		}catch(Exception ex) {
+			log.error("Error : "+ex.getMessage());
 			return fail("500",ex.getMessage());
 		}
 	}
