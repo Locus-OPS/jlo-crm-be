@@ -3,13 +3,19 @@ package th.co.locus.jlo;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class Test {
 
 	public static void main(String[] args) throws ParseException {
 		 
-		System.out.println(checkExpiryDate(new Date()));
-		
+		//System.out.println(checkExpiryDate(new Date()));
+		System.out.println(generateHashKeyUID());
+	}
+	
+	private static String generateHashKeyUID() {
+		System.out.println(UUID.randomUUID().toString().length());
+		return UUID.randomUUID().toString();
 	}
 	
 	private static boolean checkExpiryDate(Date input) throws ParseException {

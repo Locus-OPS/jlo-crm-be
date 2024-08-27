@@ -1,6 +1,7 @@
 package th.co.locus.jlo.business.smartlink;
 
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class SmartLinkServiceImpl extends BaseService implements SmartLinkServic
 
 	@Override
 	public ServiceResult<SmartLinkModelBean> createSmartLink(SaveSmartLinkModelBean bean) {
-		String hashKey = generateHashKey(bean.getHeaderId());
+		String hashKey = generateHashKeyUID(); //generateHashKey(bean.getHeaderId());
 		log.debug("hashKey : " + hashKey);
 
 		if (hashKey != null && !"".equals(hashKey)) {
@@ -46,26 +47,37 @@ public class SmartLinkServiceImpl extends BaseService implements SmartLinkServic
 
 		return fail();
 	}
-
-	private String generateHashKey(Long profileId) {
-//		if (profileId == null || systemId == null) {
-//			return null;
-//		}
-
+	
+	private String generateHashKeyUID() {
+		
+		String hashKey =  UUID.randomUUID().toString();
+		SmartLinkModelBean param = new SmartLinkModelBean();
+		param.setHashKey(hashKey);
+		SmartLinkModelBean result = commonDao.selectOne("smartlink.getSmartLinkByHashKey", param);
+		if (result == null) {
+			return hashKey;
+		} else {
+			return result.getHashKey();
+		}
+		
+		
+		
+	}
+	private String generateHashKey(Long headerId) { 
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 		Random rnd = new Random();
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 7; i++) {
 			sb.append(chars[rnd.nextInt(chars.length)]);
+		}
 		String hashKey = sb.toString();
 		SmartLinkModelBean param = new SmartLinkModelBean();
 		param.setHashKey(hashKey);
 		SmartLinkModelBean result = commonDao.selectOne("smartlink.getSmartLinkByHashKey", param);
 		if (result == null) {
-			System.out.println(hashKey);
 			return hashKey;
 		} else {
-			return generateHashKey(profileId);
+			return generateHashKey(headerId);
 		}
 	}
 
