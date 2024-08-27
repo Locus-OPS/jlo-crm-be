@@ -20,6 +20,7 @@ import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
 import th.co.locus.jlo.business.landingpage.bean.LandingPageModelBean;
 import th.co.locus.jlo.business.landingpage.bean.SearchLandingPageModelBean;
 import th.co.locus.jlo.business.qustionnaire.QustionnaireService;
+import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.smartlink.SmartLinkController;
 import th.co.locus.jlo.business.smartlink.SmartLinkService;
@@ -66,7 +67,7 @@ public class LandingPageController {
 	}
 	
 	@PostMapping(value = "/getLandingQuestionnaireMaster", produces = "application/json")
-	public ApiResponse<LandingPageModelBean> getLandingQuestionnaireMaster
+	public ApiResponse<QuestionnaireHeaderModelBean> getLandingQuestionnaireMaster
 			(@RequestBody ApiRequest<SearchLandingPageModelBean> request) 		
 					throws ParseException {
 		System.out.println("1##########getLandingQuestionnaireMaster#############");
@@ -91,17 +92,31 @@ public class LandingPageController {
 				return ApiResponse.fail(responseCode, responseDescription);
 			}
 		}
+		QuestionnaireHeaderModelBean qHeader=new QuestionnaireHeaderModelBean();
+		qHeader.setId(serviceResult.getResult().getHeaderId());
+		ServiceResult<QuestionnaireHeaderModelBean> resultQusetionnaireHeader=this.questionnaireService.getQuestionnaireById(qHeader);
+		
+		if(resultQusetionnaireHeader.isSuccess()) {
+			return ApiResponse.success(resultQusetionnaireHeader.getResult());
+		}
+		
+		return ApiResponse.fail("500",resultQusetionnaireHeader.getResponseDescription());
 
-//		ServiceResult<QuestionnaireHeaderModelBean> srQuestionnaireHeader = questionnaireService
-//				.getQuestionnaireById(qHeaderBean);
-//		QuestionnaireHeaderModelBean questionnaireHeaderBean = srQuestionnaireHeader.getResult();
-	 
-	//	if (srQuestionnaireHeader.isSuccess()) {
-			
-			return ApiResponse.success(new LandingPageModelBean());
-//		} else {
-//			return ApiResponse.fail();
-//		}
+	}
+	
+	//สร้างแบบสอบถามจากหน้าจอ Landing Page
+	@PostMapping(value="/createquestionnaire",produces = "application/json")
+	public ApiResponse<QuesionnaireRepondentResponseModelBean> createQuestionnaire(@RequestBody ApiRequest<QuesionnaireRepondentResponseModelBean> request) {
+		try {
+			ServiceResult<QuesionnaireRepondentResponseModelBean> resultService=this.questionnaireService.createQuestionnaireResponse(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}else {
+				return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+			}
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
 	}
 
 	private static boolean checkExpiryDate(Date input) throws ParseException {

@@ -26,9 +26,5 @@ public interface QustionnaireService {
 	public ServiceResult<QuesionnaireRepondentResponseModelBean> getQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean);
 	public ServiceResult<Page<QuestionnaireRepondentsModelBean>> getQuestionnaireRepondentsList(QuestionnaireHeaderModelBean bean,PageRequest page);
 	public ServiceResult<Page<QuestionnaireResponsesModelBean>> getQuestionnaireResponseList(QuestionnaireRepondentsModelBean bean,PageRequest page);
-//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerList(QuestionnaireAnswerModelBean bean,PageRequest page);
-//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerResult(QuestionnaireAnswerModelBean bean,PageRequest page);
-//	public ServiceResult<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(QuestionnaireAnswerModelBean bean);
-//	public ServiceResult<List<QuestionnaireAnswerModelBean>> updateQuestionnaireAnswer(List<QuestionnaireAnswerModelBean> bean);
 	
 }
