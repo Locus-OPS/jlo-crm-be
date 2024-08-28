@@ -201,73 +201,21 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 			return fail("500",ex.getMessage());
 		}
 	}
-	
-	
 
+	@Override
+	public ServiceResult<QuestionnaireQuestionModelBean> updateQuestionnaireQuestionImg(Long questionId,String imageUrl) {
+		try {
+			int result=commonDao.update("questionnaire.updateQuestionnaireQuestionImage", Map.of("imegeUrl",imageUrl,"id",questionId));
+			if(result>0) {
+				return success(commonDao.selectOne("questionnaire.getQuestionnairequestionDetail", Map.of("id",questionId)));
+			}else {
+				return fail("500","Unable to update because something wrong.");
+			}
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+	}
 
-	
-	
-
-//	@Override
-//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerList(QuestionnaireAnswerModelBean bean, PageRequest page) {
-//		try {
-//			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerList", bean, page));
-//		}
-//		catch(Exception ex) {
-//			return fail("500",ex.getMessage());
-//		}
-//	}
-//
-//	@Override
-//	public ServiceResult<Page<QuestionnaireAnswerModelBean>> getQuestionnaireAnswerResult(QuestionnaireAnswerModelBean bean, PageRequest page) {
-//		try {
-//			return success(commonDao.selectPage("questionnaire.getQuestionnaireAnswerResultList", bean, page));
-//		}catch(Exception ex) {
-//			return fail("500",ex.getMessage());
-//		}
-//	}
-//
-//	@Override
-//	public ServiceResult<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(QuestionnaireAnswerModelBean bean) {
-//		try {
-//			int result=commonDao.insert("questionnaire.createQuestionnareAnswer", bean);
-//			if(result>0) {
-//				return success(commonDao.selectOne("questionnaire.getQuestionnaireAnswerDetail", bean));
-//			}else {
-//				return fail("500","Unable to create because something wrong.");
-//			}
-//				
-//		}catch(Exception ex) {
-//			log.error(ex.getMessage());
-//			return fail("500",ex.getMessage());
-//		}
-//		
-//	}
-//
-//	@Override
-//	public ServiceResult<List<QuestionnaireAnswerModelBean>> updateQuestionnaireAnswer(List<QuestionnaireAnswerModelBean> bean) {
-//		try {
-//			long id=0,headerId=0;
-//			if(bean.size()>0) {
-//				id=bean.get(0).getId();
-////				headerId=bean.get(0).getHeaderId();
-//			}
-//			
-//			for (QuestionnaireAnswerModelBean answer : bean) {
-//			    try {
-//			    	answer.setUpdatedBy(0L);
-//			        commonDao.insert("questionnaire.updateQuestionnaireAnswer", answer);
-//			    }catch(Exception ex) {
-//			    	log.error(ex.getMessage());
-//			    }
-//			}
-//			List<QuestionnaireAnswerModelBean> anslist=commonDao.selectList("questionnaire.getQuestionnaireAnswerDetail", Map.of("id",id,"headerId",headerId));
-//			return success(anslist);
-//		}catch(Exception ex) {
-//			log.error(ex.getMessage());
-//			return fail("500",ex.getMessage());
-//		}
-//	}
 
 
 	

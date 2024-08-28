@@ -3,10 +3,15 @@ package th.co.locus.jlo.business.qustionnaire;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
@@ -15,6 +20,7 @@ import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireResponsesModelBean;
+import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
@@ -23,6 +29,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
+import th.co.locus.jlo.system.file.FileService;
 import th.co.locus.jlo.common.bean.Page;
 
 
@@ -31,9 +38,14 @@ import th.co.locus.jlo.common.bean.Page;
 @RequestMapping("api/questionnaire")
 public class QustionnaireController extends BaseController {
 	
+	@Value("${attachment.path.questionnaire_image}")
+	private String questionnaireImagePath;
 	
 	@Autowired
 	private QustionnaireService qtnService;
+	
+	@Autowired
+	private FileService fileService;
 	
 //	@WritePermission
     @PostMapping(value = "/createHeaderQuestionnaire", produces = "application/json")
@@ -213,20 +225,20 @@ public class QustionnaireController extends BaseController {
 		}
 	}
 	
-//	@PostMapping(value="/createQuestionnaireAnswer")
-//	public ApiResponse<QuestionnaireAnswerModelBean> createQuestionnaireAnswer(@RequestBody ApiRequest<QuestionnaireAnswerModelBean> request) {
-//		try {
-//			request.getData().setCreatedBy(getUserId());
-//			request.getData().setUpdatedBy(getUserId());
-//			ServiceResult<QuestionnaireAnswerModelBean> resultService=this.qtnService.createQuestionnaireAnswer(request.getData());
-//			if(resultService.isSuccess()) {
-//				return ApiResponse.success(resultService.getResult());
-//			}else {
-//				return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
-//			}
-//		}catch(Exception ex) {
-//			return ApiResponse.fail("500",ex.getMessage());
-//		}
-//	}
+	@WritePermission
+	@PostMapping(value = "/uploadImg")
+	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id) {
+		String message = "";
+		try {
+			String fileName = id + "_"+System.currentTimeMillis()+""+ CommonUtil.getFileExtension(file);
+			fileService.saveFile(file, questionnaireImagePath , questionnaireImagePath+"/"+fileName);
+			this.qtnService.updateQuestionnaireQuestionImg(id, questionnaireImagePath+"/"+fileName);
+			return ResponseEntity.status(HttpStatus.OK).body(fileName);
+		}catch(Exception ex) {
+			message = "FAIL to upload " + file.getOriginalFilename() + "!";
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+		}
+	}
+	
 
 }

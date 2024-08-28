@@ -406,6 +406,12 @@
 		AND HEADER_ID=#{headerId}
 	</update>
 	
+	<update id="updateQuestionnaireQuestionImage">
+		UPDATE tb_questionnaire_q_master
+		SET IMAGE_URL=#{imegeUrl}
+		WHERE ID=#{id}
+	</update>
+	
 
 	
 </mapper>
