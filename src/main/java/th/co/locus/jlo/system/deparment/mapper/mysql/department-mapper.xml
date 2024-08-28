@@ -1,0 +1,105 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="department">
+	<select id="getDepartmentList" resultType="departmentModelBean"> 
+       	SELECT
+		     A.ID
+		    , A.DEPARTMENT_NAME
+		    , A.STATUS_CD		   
+             ,cb.CODE_NAME as statusName
+		    , A.BU_ID
+		    , A.CREATED_BY
+		    , A.CREATED_DATE
+		    , A.UPDATED_BY
+		    , A.UPDATED_DATE
+		    ,CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName
+		    ,CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName
+		FROM tb_department A 	 
+        LEFT OUTER JOIN tb_codebook cb ON	A.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE =	'ACTIVE_FLAG'
+		INNER JOIN TB_USER u1 ON A.CREATED_BY = u1.ID 
+		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID
+		<where>
+			<if test="departmentName != null and departmentName != ''">
+				<bind name="pDepartmentName" value="'%' + posName + '%'" />
+				AND A.DEPARTMENT_NAME LIKE #{pPosName}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				AND A.STATUS_CD = #{statusCd}
+			</if>
+			<if test="buId != null">
+				AND A.BU_ID = #{buId}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'posName'">
+		  			order by A.DEPARTMENT_NAME ${sortDirection}	  	
+		  		</if>
+		  		 
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY A.DEPARTMENT_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="findDepartmentById" resultType="departmentModelBean">
+		SELECT 
+			A.`ID`,
+		    A.`DEPARTMENT_NAME`,
+		    A.`DESCRIPTION`,
+		    A.`CREATED_BY`,
+		    A.`CREATED_DATE`,
+		    A.`UPDATED_BY`,
+		    A.`UPDATED_DATE`
+		FROM  `tb_department` A
+		WHERE A.ID = #{id}
+	</select>
+	
+	<insert id="createDepartment"  keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO `tb_department`
+			(
+			`DEPARTMENT_NAME`,
+			`STATUS_CD`,
+			`DESCRIPTION`,
+			`BU_ID`,
+			`CREATED_BY`,
+			`CREATED_DATE`,
+			`UPDATED_BY`,
+			`UPDATED_DATE`)
+		VALUES
+			(
+			#{departmentName},
+			#{statusCd},
+			#{description},
+			#{buId},
+			#{createdBy},
+			NOW(),
+			#{updatedBy},
+			NOW()
+			)
+	</insert>
+	
+	<update id="updateDepartment">
+	UPDATE tb_department
+	SET 
+		  DEPARTMENT_NAME = #{departmentName}
+		, STATUS_CD = #{statusCd}
+		, DESCRIPTION = #{description}
+		, BU_ID = #{buId}
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = NOW()
+	WHERE
+		ID = #{id}
+	</update>
+	
+	
+	<delete id="deleteDepartment">
+		DELETE FROM tb_department WHERE ID = #{id} 
+	</delete>
+	
+	
+	
+</mapper>

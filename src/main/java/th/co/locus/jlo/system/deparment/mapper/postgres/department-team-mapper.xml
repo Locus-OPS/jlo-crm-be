@@ -1,0 +1,85 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="departmentTeam">
+	<select id="getDepartmentTeamByDepartmentIdList" resultType="departmentTeamModelBean"> 
+       	SELECT
+		     A.ID
+		    , A.TEAM_NAME
+		    , A.STATUS_CD		   
+             ,cb.CODE_NAME as statusName 
+		    , A.CREATED_BY
+		    , A.CREATED_DATE
+		    , A.UPDATED_BY
+		    , A.UPDATED_DATE
+		    ,CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName
+		    ,CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName
+		FROM tb_department_team A 	 
+        LEFT OUTER JOIN tb_codebook cb ON	A.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE =	'ACTIVE_FLAG'
+		INNER JOIN TB_USER u1 ON A.CREATED_BY = u1.ID 
+		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID
+        WHERE A.DEPARTMENT_ID = #{departmentId}		
+	    ORDER BY A.TEAM_NAME ASC	 
+	</select>
+	
+	<select id="findDepartmentTeamById" resultType="departmentTeamModelBean">
+		SELECT 
+			A.`ID`,
+		    A.`DEPARTMENT_ID`,
+		    A.`STATUS_CD`,
+		    A.`TEAM_NAME`,
+		    A.`DESCRIPTION`,
+		    A.`CREATED_BY`,
+		    A.`CREATED_DATE`,
+		    A.`UPDATED_BY`,
+		    A.`UPDATED_DATE`
+		FROM  `tb_department_team` A
+		WHERE A.ID = #{id}
+	</select>
+	
+	<insert id="createDepartmentTeam"  keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		 		
+			INSERT INTO `tb_department_team`
+				(
+				`DEPARTMENT_ID`,
+				`STATUS_CD`,
+				`TEAM_NAME`,
+				`DESCRIPTION`,
+				`CREATED_BY`,
+				`CREATED_DATE`,
+				`UPDATED_BY`,
+				`UPDATED_DATE`)
+			VALUES
+				(
+				#{departmentId},
+				#{statusCd},
+				#{teamName},
+				#{buId},
+				#{createdBy},
+				NOW(),
+				#{updatedBy},
+				NOW()
+			)
+	</insert>
+	
+	<update id="updateDepartmentTeam">
+		UPDATE tb_department_team
+		SET 
+			  DEPARTMENT_ID = #{departmentId}
+			, TEAM_NAME = #{teamName}  
+			, STATUS_CD = #{statusCd}
+			, DESCRIPTION = #{description}
+			, BU_ID = #{buId}
+			, UPDATED_BY = #{updatedBy}
+			, UPDATED_DATE = NOW()
+		WHERE
+		ID = #{id}
+	</update>
+	
+	<delete id="deleteDepartmentTeam">
+		DELETE FROM tb_department_team WHERE ID = #{id} 
+	</delete>
+	
+	
+</mapper>
