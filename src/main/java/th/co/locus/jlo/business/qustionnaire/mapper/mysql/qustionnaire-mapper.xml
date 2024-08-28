@@ -226,7 +226,6 @@
 		  QUESTION=#{question}
 		, ANSWER_TYPE=#{answerType}
 		, DESCRIPTION=#{description}
-		, IMAGE_URL=#{imageUrl}
 		, STATUS_CD=#{statusCd}
 		, REQUIRED_FLG=#{requiredFlg}
 		, SEQ_NO=#{seqNo}

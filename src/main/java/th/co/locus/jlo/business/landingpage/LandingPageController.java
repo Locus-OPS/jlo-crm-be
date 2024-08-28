@@ -3,15 +3,23 @@
  */
 package th.co.locus.jlo.business.landingpage;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +40,7 @@ import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.system.codebook.CodebookService;
+import th.co.locus.jlo.system.file.FileService;
 import th.co.locus.jlo.system.internationalization.InternationalizationService;
 
 /**
@@ -53,8 +62,14 @@ public class LandingPageController {
 	@Autowired
 	private SmartLinkService smartLinkService;
 
+	@Value("${attachment.path.questionnaire_image}")
+	private String questionnaireImagePath;
+	
 	@Autowired
 	private QustionnaireService questionnaireService;
+	
+	@Autowired
+	private FileService fileService;
 	
 	@PostMapping(value = "/getLandingQuestionnaireMaster1", produces = "application/json")
 	public ApiResponse<ConsultingModelBean> getLandingQuestionnaireMaster1(
@@ -88,7 +103,7 @@ public class LandingPageController {
 			
 			if(checkExpiryDate(expireDateLink)) {
 				String responseCode="401";
-				String responseDescription="Authorization Required : [Link has been expired]";				
+				String responseDescription="The link has expired, Please contact the administrator.";				
 				return ApiResponse.fail(responseCode, responseDescription);
 			}
 		}
@@ -100,7 +115,7 @@ public class LandingPageController {
 			return ApiResponse.success(resultQusetionnaireHeader.getResult());
 		}
 		
-		return ApiResponse.fail("500",resultQusetionnaireHeader.getResponseDescription());
+		return ApiResponse.fail("404",resultQusetionnaireHeader.getResponseDescription());
 
 	}
 	
@@ -136,6 +151,13 @@ public class LandingPageController {
 			return false;
 		}
 
+	}
+	
+	@GetMapping(value="/questionnaire_image/{fileName:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> getQuestionnaireImage(@PathVariable String fileName) {
+		Resource file = fileService.loadFile(questionnaireImagePath + File.separator + fileName);
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
 	}
 
 }
