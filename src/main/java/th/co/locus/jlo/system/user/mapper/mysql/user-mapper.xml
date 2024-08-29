@@ -4,7 +4,7 @@
 
 <mapper namespace="user">
 	<select id="getUserLoginByLoginId" resultType="userLoginDTO"> 
-      SELECT
+     SELECT
 		    U.ID
 		    ,U.USER_ID
 		    ,U.FIRST_NAME
@@ -19,7 +19,9 @@
 		    ,U.BU_ID
 		    ,B.BU_NAME
 		    ,U.DIV_ID
-		    ,'' AS DIV_NAME
+		    ,D.DEPARTMENT_NAME AS DIV_NAME	
+			,U.TEAM_ID
+            ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
             ,U.PASSWORD
@@ -29,7 +31,9 @@
             ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
 			,U.UPDATED_DATE AS updatedDate
             
-		FROM TB_USER U      
+		FROM TB_USER U   
+		LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
 		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
 		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
 		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
@@ -61,8 +65,8 @@
 		UPDATE TB_USER set LAST_SIGNON_DATE = NOW(), LAST_SIGNON_IP = #{ipAddress} where USER_ID = #{userId}
 	</update>
 	<select id="getUserList" resultType="userDataModelBean"> 
-       	SELECT
-		    U.USER_ID
+       SELECT
+		     U.USER_ID
 		    ,U.ID
 		    ,U.FIRST_NAME
 		    ,U.LAST_NAME
@@ -76,7 +80,9 @@
 		    ,U.BU_ID
 		    ,B.BU_NAME
 		    ,U.DIV_ID
-		    ,'' AS DIV_NAME	
+			,D.DEPARTMENT_NAME AS DIV_NAME	
+            ,U.TEAM_ID
+            ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
             ,U.PASSWORD
@@ -86,7 +92,10 @@
 			,U.CREATED_DATE AS createdDate 
             ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
 			,U.UPDATED_DATE AS updatedDate 
+            
 		FROM TB_USER U
+        LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
 		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
 		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
 		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
@@ -144,7 +153,9 @@
 		    ,U.BU_ID
 		    ,B.BU_NAME
 		    ,U.DIV_ID
-		    ,'' AS DIV_NAME	
+		    ,D.DEPARTMENT_NAME AS DIV_NAME	
+			,U.TEAM_ID
+            ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
             ,U.PASSWORD
@@ -156,6 +167,8 @@
 			,U.UPDATED_DATE AS updatedDate
             
 		FROM TB_USER U
+        LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
 		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
 		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
 		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
@@ -176,6 +189,8 @@
 			, ROLE_CODE = #{roleCode}
 			, BU_ID = #{buId}
 			, POS_ID = #{posId}
+			, DIV_ID = #{divId}
+			, TEAM_ID = #{teamId}
 			, UPDATED_BY = #{updatedBy}
 			, UPDATED_DATE = NOW()
 		where ID = #{id}
@@ -201,6 +216,8 @@
 			, ROLE_CODE
 			, BU_ID
 			, POS_ID
+			, DIV_ID
+			, TEAM_ID
 			, CREATED_BY
 			, CREATED_DATE
 		) 
@@ -217,6 +234,8 @@
 			, #{roleCode}
 			, #{buId}
 			, #{posId}
+			, #{divId}
+			, #{teamId}
 			, #{createdBy}
 			, NOW()
 		)

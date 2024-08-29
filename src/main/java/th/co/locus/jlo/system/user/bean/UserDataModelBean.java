@@ -28,4 +28,6 @@ public class UserDataModelBean extends BaseModelBean {
 	private String posName;
 	private String divName;
 	
+	private String teamId;
+	private String teamName;
 }
