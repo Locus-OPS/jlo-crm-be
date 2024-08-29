@@ -16,11 +16,13 @@ public interface QustionnaireService {
 	public ServiceResult<QuestionnaireHeaderModelBean> getQuestionnaireById(QuestionnaireHeaderModelBean bean);
 	public ServiceResult<QuestionnaireHeaderModelBean> createHeaderQuestionnaire(QuestionnaireHeaderModelBean bean);
 	public ServiceResult<QuestionnaireHeaderModelBean> updateHeaderQuestionnaire(QuestionnaireHeaderModelBean bean);
+
 	
 	public ServiceResult<List<QuestionnaireQuestionModelBean>> getQuestionnaireQuestionList(QuestionnaireQuestionModelBean bean);
 	public ServiceResult<QuestionnaireQuestionModelBean> getQuestionnaireQuestionDetail(QuestionnaireQuestionModelBean bean);
 	public ServiceResult<QuestionnaireQuestionModelBean> createQuestionnaireQuestion(QuestionnaireQuestionModelBean bean);
 	public ServiceResult<QuestionnaireQuestionModelBean> updateQuestionnaireQuestion(QuestionnaireQuestionModelBean bean);
+	public ServiceResult<QuestionnaireQuestionModelBean> updateQuestionnaireQuestionImg(Long questionId,String imageUrl);
 	
 	public ServiceResult<QuesionnaireRepondentResponseModelBean> createQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean);
 	public ServiceResult<QuesionnaireRepondentResponseModelBean> getQuestionnaireResponse(QuesionnaireRepondentResponseModelBean bean);

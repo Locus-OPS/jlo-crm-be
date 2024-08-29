@@ -226,7 +226,6 @@
 		  QUESTION=#{question}
 		, ANSWER_TYPE=#{answerType}
 		, DESCRIPTION=#{description}
-		, IMAGE_URL=#{imageUrl}
 		, STATUS_CD=#{statusCd}
 		, REQUIRED_FLG=#{requiredFlg}
 		, SEQ_NO=#{seqNo}
@@ -404,6 +403,12 @@
 		, UPDATED_BY=#{updatedBy}
 		WHERE ID=#{id}
 		AND HEADER_ID=#{headerId}
+	</update>
+	
+	<update id="updateQuestionnaireQuestionImage">
+		UPDATE tb_questionnaire_q_master
+		SET IMAGE_URL=#{imegeUrl}
+		WHERE ID=#{id}
 	</update>
 	
 
