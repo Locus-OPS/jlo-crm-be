@@ -3,7 +3,8 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="departmentTeam">
-	<select id="getDepartmentTeamByDepartmentIdList" resultType="departmentTeamModelBean"> 
+
+	<select id="getDepartmentTeamList" resultType="departmentTeamModelBean"> 
        	SELECT
 		     A.ID
 		    , A.TEAM_NAME
@@ -19,7 +20,35 @@
         LEFT OUTER JOIN tb_codebook cb ON	A.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE =	'ACTIVE_FLAG'
 		INNER JOIN TB_USER u1 ON A.CREATED_BY = u1.ID 
 		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID
-        WHERE A.DEPARTMENT_ID = #{departmentId}		
+        
+        <where>
+			<if test="teamName != null and teamName != ''">
+				<bind name="pTeamName" value="'%' + teamName + '%'" />
+				AND A.DEPARTMENT_NAME LIKE #{pTeamName}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				AND A.STATUS_CD = #{statusCd}
+			</if>
+			<if test="departmentId != null and departmentId != ''">
+				AND A.DEPARTMENT_ID = #{departmentId}
+			</if>
+			
+			<if test="buId != null">
+				AND A.BU_ID = #{buId}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'posName'">
+		  			order by A.DEPARTMENT_NAME ${sortDirection}	  	
+		  		</if>
+		  		 
+		  	</when>
+		  	<otherwise>
+		  		ORDER BY A.DEPARTMENT_NAME ASC	  	
+		  	</otherwise>
+	  	</choose>        
+        
 	    ORDER BY A.TEAM_NAME ASC	 
 	</select>
 	

@@ -76,13 +76,14 @@ public class DepartmentController extends BaseController {
 	
 	//Department Team
 	@ReadPermission
-	@PostMapping(value = "/getDepartmentTeamByDepartmentIdList", produces = "application/json")
-	public ApiPageResponse<List<DepartmentTeamModelBean>> getDepartmentTeamByDepartmentIdList(
+	@PostMapping(value = "/getDepartmentTeamList", produces = "application/json")
+	public ApiPageResponse<List<DepartmentTeamModelBean>> getDepartmentTeamList(
 			@RequestBody ApiPageRequest<DepartmentTeamCriteriaModelBean> request) {
 		CommonUtil.nullifyObject(request.getData());
 		request.getData().setBuId(getBuId());
 		PageRequest pageRequest = getPageRequest(request);
-		ServiceResult<Page<DepartmentTeamModelBean>> serviceResult = departmentService.getDepartmentTeamByDepartmentIdList(request.getData(),
+		
+		ServiceResult<Page<DepartmentTeamModelBean>> serviceResult = departmentService.getDepartmentTeamList(request.getData(),
 				pageRequest);
 		if (serviceResult.isSuccess()) {
 			return ApiPageResponse.success(serviceResult.getResult().getContent(),
@@ -96,10 +97,12 @@ public class DepartmentController extends BaseController {
 	@PostMapping(value = "/saveDepartmentTeam", produces = "application/json")
 	public ApiResponse<DepartmentTeamModelBean> saveDepartmentTeam(@RequestBody ApiRequest<DepartmentTeamModelBean> request) {
 		ServiceResult<DepartmentTeamModelBean> serviceResult;
+		
 		CommonUtil.nullifyObject(request.getData());
 		request.getData().setCreatedBy(getUserId());
 		request.getData().setUpdatedBy(getUserId());
 		request.getData().setBuId(getBuId());
+		
 		if (request.getData().getId() != null) {
 			serviceResult = departmentService.updateDepartmentTeam(request.getData());
 		} else {

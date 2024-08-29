@@ -9,4 +9,7 @@ import th.co.locus.jlo.common.bean.SortingModelBean;
 public class DepartmentTeamCriteriaModelBean extends SortingModelBean {
 
 	private String departmentId;
+	private String teamName;
+	private String statusCd;
+	private Integer buId;
 }

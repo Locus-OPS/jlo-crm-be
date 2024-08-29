@@ -17,7 +17,7 @@ public interface DepartmentService {
 	public ServiceResult<Integer> deleteDepartment(DepartmentModelBean bean);
 	
 	//Department Team
-	public ServiceResult<Page<DepartmentTeamModelBean>> getDepartmentTeamByDepartmentIdList(DepartmentTeamCriteriaModelBean criteria, PageRequest pageRequest);
+	public ServiceResult<Page<DepartmentTeamModelBean>> getDepartmentTeamList(DepartmentTeamCriteriaModelBean criteria, PageRequest pageRequest);
 	public ServiceResult<DepartmentTeamModelBean> createDepartmentTeam(DepartmentTeamModelBean bean);
 	public ServiceResult<DepartmentTeamModelBean> updateDepartmentTeam(DepartmentTeamModelBean bean);
 	public ServiceResult<Integer> deleteDepartmentTeam(DepartmentTeamModelBean bean);

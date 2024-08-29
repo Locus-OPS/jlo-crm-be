@@ -13,10 +13,11 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 public class DepartmentTeamModelBean extends BaseModelBean {
 
 	private Long id;
-	private Long departmentId;
+	private String departmentId;
 	private String teamName;
 	private String statusCd;
 	private String statusName;
 	private String description;
+	private String departmentName;
 
 }

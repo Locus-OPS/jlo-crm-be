@@ -3,24 +3,57 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="departmentTeam">
-	<select id="getDepartmentTeamByDepartmentIdList" resultType="departmentTeamModelBean"> 
-       	SELECT
-		     A.ID
+
+	<select id="getDepartmentTeamList" resultType="departmentTeamModelBean"> 
+      SELECT
+		      A.ID
 		    , A.TEAM_NAME
 		    , A.STATUS_CD		   
-             ,cb.CODE_NAME as statusName 
+            , cb.CODE_NAME as statusName 
+            , A.DEPARTMENT_ID
+            , D.DEPARTMENT_NAME
+            , A.BU_ID
 		    , A.CREATED_BY
 		    , A.CREATED_DATE
 		    , A.UPDATED_BY
 		    , A.UPDATED_DATE
-		    ,CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName
-		    ,CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName
+		    , CONCAT(u1.first_name,CONCAT(' ',u1.last_name)) AS createdByName
+		    , CONCAT(u2.first_name,CONCAT(' ',u2.last_name)) AS updatedByName
 		FROM tb_department_team A 	 
+        INNER JOIN tb_department D ON A.DEPARTMENT_ID = D.ID
         LEFT OUTER JOIN tb_codebook cb ON	A.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE =	'ACTIVE_FLAG'
 		INNER JOIN TB_USER u1 ON A.CREATED_BY = u1.ID 
 		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID
-        WHERE A.DEPARTMENT_ID = #{departmentId}		
-	    ORDER BY A.TEAM_NAME ASC	 
+        
+        <where>
+			<if test="teamName != null and teamName != ''">
+				<bind name="pTeamName" value="'%' + teamName + '%'" />
+				AND A.DEPARTMENT_NAME LIKE #{pTeamName}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				AND A.STATUS_CD = #{statusCd}
+			</if>
+			<if test="departmentId != null and departmentId != ''">
+				AND A.DEPARTMENT_ID = #{departmentId}
+			</if>
+			
+			<if test="buId != null">
+				AND A.BU_ID = #{buId}
+			</if>
+		</where>
+		<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'teamName'">
+		  			order by A.TEAM_NAME ${sortDirection}	  	
+		  		</if>
+		  		 
+		  	</when>
+		  	<otherwise>
+		  	 ORDER BY A.TEAM_NAME ASC  	
+		  	</otherwise>
+	  	</choose>      
+        
+	  
 	</select>
 	
 	<select id="findDepartmentTeamById" resultType="departmentTeamModelBean">
@@ -30,6 +63,7 @@
 		    A.`STATUS_CD`,
 		    A.`TEAM_NAME`,
 		    A.`DESCRIPTION`,
+		    A.`BU_ID`,
 		    A.`CREATED_BY`,
 		    A.`CREATED_DATE`,
 		    A.`UPDATED_BY`,
@@ -46,6 +80,7 @@
 				`STATUS_CD`,
 				`TEAM_NAME`,
 				`DESCRIPTION`,
+				`BU_ID`,
 				`CREATED_BY`,
 				`CREATED_DATE`,
 				`UPDATED_BY`,
@@ -55,12 +90,13 @@
 				#{departmentId},
 				#{statusCd},
 				#{teamName},
+				#{description},
 				#{buId},
 				#{createdBy},
 				NOW(),
 				#{updatedBy},
 				NOW()
-			)
+				)
 	</insert>
 	
 	<update id="updateDepartmentTeam">

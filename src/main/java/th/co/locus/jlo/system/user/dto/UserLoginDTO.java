@@ -33,5 +33,7 @@ public class UserLoginDTO {
 	private String posName;
 	private String divId;
 	private String divName;
-
+	
+	private String teamId;
+	private String teamName;
 }

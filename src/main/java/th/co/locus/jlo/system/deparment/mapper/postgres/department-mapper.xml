@@ -9,6 +9,7 @@
 		    , A.DEPARTMENT_NAME
 		    , A.STATUS_CD		   
              ,cb.CODE_NAME as statusName
+              , A.DESCRIPTION
 		    , A.BU_ID
 		    , A.CREATED_BY
 		    , A.CREATED_DATE

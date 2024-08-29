@@ -9,6 +9,7 @@
 		    , A.DEPARTMENT_NAME
 		    , A.STATUS_CD		   
              ,cb.CODE_NAME as statusName
+              , A.DESCRIPTION
 		    , A.BU_ID
 		    , A.CREATED_BY
 		    , A.CREATED_DATE
@@ -22,8 +23,8 @@
 		INNER JOIN TB_USER u2 ON A.UPDATED_BY = u2.ID
 		<where>
 			<if test="departmentName != null and departmentName != ''">
-				<bind name="pDepartmentName" value="'%' + posName + '%'" />
-				AND A.DEPARTMENT_NAME LIKE #{pPosName}
+				<bind name="pDepartmentName" value="'%' + departmentName + '%'" />
+				AND A.DEPARTMENT_NAME LIKE #{pDepartmentName}
 			</if>
 			<if test="statusCd != null and statusCd != ''">
 				AND A.STATUS_CD = #{statusCd}

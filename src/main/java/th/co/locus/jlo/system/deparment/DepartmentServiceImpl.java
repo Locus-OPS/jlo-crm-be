@@ -44,9 +44,9 @@ public class DepartmentServiceImpl extends BaseService implements DepartmentServ
 	}
 
 	@Override
-	public ServiceResult<Page<DepartmentTeamModelBean>> getDepartmentTeamByDepartmentIdList(DepartmentTeamCriteriaModelBean criteria,
+	public ServiceResult<Page<DepartmentTeamModelBean>> getDepartmentTeamList(DepartmentTeamCriteriaModelBean criteria,
 			PageRequest pageRequest) {
-		return success(commonDao.selectPage("departmentTeam.getDepartmentTeamByDepartmentIdList", criteria, pageRequest));
+		return success(commonDao.selectPage("departmentTeam.getDepartmentTeamList", criteria, pageRequest));
 	}
 
 	@Override
