@@ -9,6 +9,7 @@
 		    , R.ROLE_CODE
 		    , R.ROLE_NAME
 		    , R.USE_YN
+		    , R.BU_ID
 		    , R.CREATED_BY
 		    , R.CREATED_DATE
 		    , R.UPDATED_BY
@@ -35,6 +36,7 @@
 		    , ROLE_CODE
 		    , ROLE_NAME
 		    , USE_YN
+		    , BU_ID
 		    , CREATED_BY
 		    , CREATED_DATE
 		    , UPDATED_BY
@@ -44,13 +46,14 @@
 			ID = #{id}
 	</select>
 	<insert id="createRole"  keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
-		INSERT INTO TB_ROLE (ROLE_CODE, ROLE_NAME, USE_YN, CREATED_BY, CREATED_DATE)
-		VALUES (#{roleCode}, #{roleName}, #{useYn}, #{createdBy}, NOW())
+		INSERT INTO TB_ROLE (ROLE_CODE, ROLE_NAME, USE_YN, BU_ID, CREATED_BY, CREATED_DATE)
+		VALUES (#{roleCode}, #{roleName}, #{useYn}, #{buId},#{createdBy}, NOW())
 	</insert>
 	<update id="updateRole">
 	UPDATE TB_ROLE
 	SET 
 		ROLE_NAME = #{roleName}
+		, BU_ID =#{buId}
 		, USE_YN = #{useYn}
 		, UPDATED_BY = #{updatedBy}
 		, UPDATED_DATE = NOW()

@@ -43,7 +43,9 @@ public class RoleController extends BaseController {
 		CommonUtil.nullifyObject(roleModelBean);
 		roleModelBean.setCreatedBy(getUserId());
 		roleModelBean.setUpdatedBy(getUserId());
-		roleModelBean.setBuId(getBuId());
+		
+		//roleModelBean.setBuId(getBuId());
+		
 		ServiceResult<RoleModelBean> serviceResult;
 		if (request.getData().getId() != null) {
 			serviceResult = roleService.updateRole(request.getData());
