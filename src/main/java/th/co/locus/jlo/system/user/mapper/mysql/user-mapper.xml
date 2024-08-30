@@ -85,7 +85,7 @@
             ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
-            ,U.PASSWORD
+       
             ,U.PICTURE_URL
             
             ,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
@@ -158,7 +158,7 @@
             ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
-            ,U.PASSWORD
+           
             ,U.PICTURE_URL
             
             ,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
@@ -180,7 +180,9 @@
 		UPDATE TB_USER set
 			USER_ID = #{userId}
 			, USE_YN = #{useYn}
-			, PASSWORD = #{password}
+			<if test="password !=null and password != ''">
+				, PASSWORD = #{password}
+			</if>
 			, LOGIN_TYPE = #{loginType}
 			, FIRST_NAME = #{firstName}
 			, LAST_NAME = #{lastName}
