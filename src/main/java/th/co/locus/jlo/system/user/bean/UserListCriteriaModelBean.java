@@ -13,6 +13,8 @@ public class UserListCriteriaModelBean extends SortingModelBean {
 	private String lastName;
 	private String status;
 	private Integer buId;
+	private String divId;
+	private String teamId;
 	private String roleCode;
 	
 }

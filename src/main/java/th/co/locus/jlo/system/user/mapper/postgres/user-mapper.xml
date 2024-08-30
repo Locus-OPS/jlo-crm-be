@@ -120,6 +120,14 @@
 		<if test="buId != null">
 	    	AND U.BU_ID = #{buId}
 	  	</if>
+	  	
+	  	<if test="divId != null and divId != ''">
+	    	AND U.DIV_ID = #{divId}
+	  	</if>
+	  	<if test="teamId != null and teamId != ''">
+	    	AND U.TEAM_ID = #{teamId}
+	  	</if>
+	  	
 		<if test="roleCode != null and roleCode != ''">
 	    	AND U.ROLE_CODE = #{roleCode}
 	  	</if>
@@ -158,7 +166,7 @@
             ,T.TEAM_NAME AS TEAM_NAME
 		    ,U.EMAIL
             ,U.LOGIN_TYPE
-            ,U.PASSWORD
+           
             ,U.PICTURE_URL
             
             ,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
