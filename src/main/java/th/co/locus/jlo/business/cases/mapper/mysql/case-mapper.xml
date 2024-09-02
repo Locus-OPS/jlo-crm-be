@@ -18,6 +18,7 @@
 		    LC.STATUS,
 		    LC.CHANNEL,
 		    LC.OWNER,
+		    LC.OWNER_DEPT,
 		    LC.SUBJECT,
 		    LC.DUE_DATE,
 		    LC.OPENED_DATE,
@@ -44,11 +45,11 @@
 			LC.INFORM_NAME as informName
 			
 	FROM TB_CASE LC
-        INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+        LEFT OUTER JOIN TB_USER USR ON LC.OWNER = USR.ID
     	LEFT OUTER JOIN  TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
 		LEFT OUTER JOIN  TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
 		LEFT OUTER JOIN  TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'      
-          LEFT OUTER JOIN  TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
+        LEFT OUTER JOIN  TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
         INNER JOIN  TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
         LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
         LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
@@ -130,7 +131,7 @@
 		CB3.CODE_NAME AS priorityName
 		FROM
 		TB_CASE LC
-		INNER JOIN TB_USER USR ON LC.OWNER = USR.ID
+		LEFT OUTER JOIN TB_USER USR ON LC.OWNER = USR.ID
 		LEFT OUTER JOIN  TB_CODEBOOK CB1 ON LC.TYPE = CB1.CODE_ID AND CB1.CODE_TYPE = 'CASE_TYPE'
 		LEFT OUTER JOIN  TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
 		LEFT OUTER JOIN  TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'
@@ -161,6 +162,8 @@
 			,#{contactName}
 			,#{customerId}
 			,#{owner}
+			,#{ownerDeptTeam}
+			,#{ownerDept}
 			,#{buId}
 			,#{createdBy}
 			,#{updatedBy}
@@ -168,6 +171,31 @@
 		
 
 	</select>
+	
+	<update id="updateCaseProc">
+		CALL UPDATE_CASE_PROC(
+			 #{caseNumber},
+			 #{divisionTypeCode},			
+			 #{type},
+			 #{subType},			  
+			 #{priority},
+			 #{status}, 
+			 #{channel},
+			 #{subject},
+			 #{detail}, 
+			 #{contactName},
+			 #{customerId},
+			 #{owner},
+			 #{ownerDeptTeam},
+			 #{ownerDept},			 
+			 #{updatedBy},
+			 #{caseSlaId},
+			 #{workNote} ,
+        	 #{informName} 
+			 );
+		
+	</update>
+	
 
 
 	<insert id="createCase">
@@ -187,6 +215,8 @@
 		CONTACT_NAME,
 		CUSTOMER_ID,
 		OWNER,
+		OWNER_DEPT,
+		OWNER_DEPT_TEAM,
 		OPENED_DATE,
 		CLOSED_DATE,
 		BU_ID,
@@ -212,6 +242,8 @@
 		#{contactName},
 		#{customerId},
 		#{owner},
+		#{ownerDept},
+		#{ownerDeptTeam},
 		NOW(),
 		#{closedDate},
 		#{buId},
@@ -223,27 +255,7 @@
 	</insert>
 	
 	
-	<update id="updateCaseProc">
-		CALL UPDATE_CASE_PROC(
-			 #{caseNumber},
-			 #{divisionTypeCode},			
-			 #{type},
-			 #{subType},			  
-			 #{priority},
-			 #{status}, 
-			 #{channel},
-			 #{subject},
-			 #{detail}, 
-			 #{contactName},
-			 #{customerId},
-			 #{owner},
-			 #{updatedBy},
-			 #{caseSlaId},
-			 #{workNote} ,
-        	 #{informName} 
-			 );
-		
-	</update>
+	
 	
 	<update id="updateCase">
 		UPDATE TB_CASE

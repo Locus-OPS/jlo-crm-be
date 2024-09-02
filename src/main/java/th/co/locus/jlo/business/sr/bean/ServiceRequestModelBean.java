@@ -30,6 +30,11 @@ public class ServiceRequestModelBean extends BaseModelBean {
 	private Long customerId;
 	private String owner;
 	private String displayName;
+	private String ownerDeptTeam;
+	private String ownerDeptTeamName;
+	private String ownerDept;
+	private String ownerDeptName;
+	
 	private Date dueDate;
 	private Date openedDate;
 	private Date closedDate;
