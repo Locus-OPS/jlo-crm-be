@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="questionnaire-dashboard">
+	<select id="getQuestionnaireGenderGroup" resultType="QuestionnaireDashboardGenderGroupModelBean">
+		select 
+		count(*) as totalRespondent,
+		count(case when rd.GENDER='male' then 1 end) as totalMale,
+		count(case when rd.GENDER='female' then 1 end) as totalFemale,
+		count(case when rd.GENDER='others' then 1 end) as totalOthers
+		from tb_questionnaire_respondents rd
+		join tb_questionnaire_header_master hdq on rd.QUESTIONNAIRE_HEADER_ID =hdq.ID 
+		where hdq.ID =#{headerId}
+	</select>
+	<select id="getQuestionnaireAgeGroupList" resultType="QuestionnaireDashboardValueModelBean">
+		select 
+		tc.CODE_NAME as name
+		,count(rd.RESPONDENT_ID) AS value
+		from tb_questionnaire_respondents rd
+		join tb_codebook tc on tc.CODE_TYPE='AGE_RANGE'  and  rd.age between tc.ETC1 and tc.ETC2
+		where rd.QUESTIONNAIRE_HEADER_ID =#{headerId}
+		group by tc.CODE_NAME;
+	</select>
+	<select id="getQuestionnaireRespondentList" resultType="QuestionnaireRepondentsModelBean">
+		select 
+		rd.RESPONDENT_ID 
+		,rd.QUESTIONNAIRE_HEADER_ID 
+		,rd.NAME 
+		,rd.AGE 
+		,rd.GENDER 
+		,rd.CREATED_DATE 
+		from tb_questionnaire_respondents rd
+		join tb_questionnaire_header_master hdq on rd.QUESTIONNAIRE_HEADER_ID = hdq.ID 
+		where hdq.ID =#{headerId}
+	</select>
+</mapper>
