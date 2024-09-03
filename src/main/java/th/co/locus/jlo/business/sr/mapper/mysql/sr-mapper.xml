@@ -166,6 +166,8 @@
 			,#{contactName}
 			,#{customerId}
 			,#{owner}
+			,#{ownerDeptTeam}
+			,#{ownerDept}
 			,#{buId}
 			,#{createdBy}
 			,#{updatedBy}
@@ -174,7 +176,33 @@
 
 	</select>
 
-
+<update id="updateSrProc">
+		CALL UPDATE_SR_PROC(
+			 #{srNumber},
+			 #{divisionTypeCode},	
+			 #{categoryTypeCode},		
+			 #{type},
+			 #{subType},
+			 #{serviceAreaCode},			  
+			 #{priority},
+			 #{status}, 
+			 #{channel},
+			 #{subject},
+			 #{detail}, 
+			 #{contactName},
+			 #{customerId},
+			 #{owner},
+			 #{ownerDept},
+			 #{ownerDeptTeam},
+			 #{updatedBy},
+			 #{srSlaId},
+			 #{workNote} ,
+        	 #{informName} 
+			 );
+		
+	</update>
+	
+	
 	<insert id="createSr">
 		INSERT INTO TB_SR (
 		SR_NUMBER,
@@ -213,8 +241,8 @@
 		#{status},
 		#{channel},
 		#{subject},
-		,#{workNote} 
-        ,#{informName} 
+		#{workNote}, 
+        #{informName},
 		#{detail},
 		#{contactName},
 		#{customerId},
@@ -230,29 +258,7 @@
 	</insert>
 	
 	
-	<update id="updateSrProc">
-		CALL UPDATE_SR_PROC(
-			 #{srNumber},
-			 #{divisionTypeCode},	
-			 #{categoryTypeCode},		
-			 #{type},
-			 #{subType},
-			 #{serviceAreaCode},			  
-			 #{priority},
-			 #{status}, 
-			 #{channel},
-			 #{subject},
-			 #{detail}, 
-			 #{contactName},
-			 #{customerId},
-			 #{owner},
-			 #{updatedBy},
-			 #{srSlaId},
-			 #{workNote} ,
-        	 #{informName} 
-			 );
-		
-	</update>
+	
 	
 	<update id="updateSr">
 		UPDATE TB_SR
@@ -268,6 +274,8 @@
 		WORK_NOTE =#{workNote} ,
         INFORM_NAME =#{informName}, 
 		OWNER = #{owner},
+		 OWNER_DEPT = SR_OWNER_DEPT,
+        OWNER_DEPT_TEAM = SR_OWNER_DEPT_TEAM,
 		CLOSED_DATE = CASE WHEN (#{status} = '04')
 		THEN NOW()
 		ELSE NULL END,
