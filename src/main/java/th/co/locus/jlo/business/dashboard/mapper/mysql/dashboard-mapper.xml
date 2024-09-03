@@ -15,9 +15,13 @@
 			<if test="ownerId != null and ownerId != ''"> 
 				and c.OWNER = #{ownerId}
 			</if>
-			<if test="orgId != null and orgId != ''"> 
-				and c.OWNER = #{orgId}
+			<if test="teamId != null and teamId != ''"> 
+				AND c.OWNER IN(select ID from tb_user where TEAM_ID =#{teamId})
 			</if>
+			<if test="divId != null and divId != ''"> 
+				AND c.OWNER IN(select ID from tb_user where DIV_ID =#{divId})
+			</if>
+			
 		</where>
 	</select>
 	
@@ -42,12 +46,18 @@
 
 		<where>
 		 	 AND LC.STATUS not in('04')
-			<if test="ownerId != null and ownerId != ''">
-				AND LC.OWNER = #{ownerId}
+			
+			<if test="ownerId != null and ownerId != ''"> 
+				and LC.OWNER = #{ownerId}
 			</if>
-			<if test="orgId != null and orgId != ''"> 
-				and c.OWNER = #{orgId}
-			</if>	
+			<if test="teamId != null and teamId != ''"> 
+				AND  LC.OWNER IN(select ID  from tb_user where TEAM_ID = #{teamId}) 
+			</if>
+			<if test="divId != null and divId != ''"> 
+				AND  LC.OWNER IN(select ID from tb_user where DIV_ID =#{divId})
+			</if>
+			
+			
 		</where>
 	 	ORDER BY LC.CREATED_DATE DESC  
 	</select>
@@ -73,12 +83,16 @@
 			<if test="ownerId != null and ownerId != ''"> 
 				and c.OWNER = #{ownerId}
 			</if>
-			<if test="orgId != null and orgId != ''"> 
-				and c.OWNER = #{orgId}
+			
+			<if test="teamId != null and teamId != ''"> 
+				AND c.OWNER IN(select ID  from tb_user where TEAM_ID = #{teamId}) 
+			</if>
+			<if test="divId != null and divId != ''"> 
+				AND c.OWNER IN(select ID from tb_user where DIV_ID =#{divId})
 			</if>
 		</where>
-		    group by cb1.code_name,c.CHANNEL
-		    order by c.CHANNEL asc;
+		    GROUP BY cb1.code_name,c.CHANNEL
+		    ORDER BY c.CHANNEL ASC
 		    
 	</select>
 	
@@ -103,12 +117,15 @@
 			<if test="ownerId != null and ownerId != ''"> 
 				and c.OWNER = #{ownerId}
 			</if>
-			<!-- if test="orgId != null and orgId != ''"> 
-				 and c.OWNER = #{orgId}
-			</if> -->
+			<if test="teamId != null and teamId != ''"> 
+				AND c.OWNER IN(select ID  from tb_user where TEAM_ID = #{teamId}) 
+			</if>
+			<if test="divId != null and divId != ''"> 
+				AND c.OWNER IN(select ID from tb_user where DIV_ID =#{divId})
+			</if>
 		</where>
-		     group by cb1.code_name,c.DIVISION_TYPE_CODE
-			order by c.DIVISION_TYPE_CODE asc
+		    GROUP BY cb1.code_name,c.DIVISION_TYPE_CODE
+			ORDER BY c.DIVISION_TYPE_CODE ASC
 		    
 	</select>
 	

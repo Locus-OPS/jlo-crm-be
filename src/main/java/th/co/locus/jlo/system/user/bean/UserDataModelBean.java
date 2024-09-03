@@ -30,4 +30,5 @@ public class UserDataModelBean extends BaseModelBean {
 	
 	private String teamId;
 	private String teamName;
+
 }

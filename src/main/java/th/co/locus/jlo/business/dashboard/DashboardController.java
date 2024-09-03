@@ -35,10 +35,17 @@ public class DashboardController extends BaseController {
 			DashboardBean dashboardBean = request.getData();
 
 			if ("01".equals(dashboardBean.getViewBy())) {
+				// My
 				dashboardBean.setOwnerId(getUserId());
-
 			} else if ("02".equals(dashboardBean.getViewBy())) {
-				dashboardBean.setOrgId(getUserId());
+				// Team
+				System.out.println("getTeamId() "+getTeamId());
+				dashboardBean.setTeamId(getTeamId());
+
+			} else if ("03".equals(dashboardBean.getViewBy())) {
+				// Department
+				System.out.println("getDivId() "+getDivId());
+				dashboardBean.setDivId(getDivId());
 			}
 
 			ServiceResult<DashboardBean> serviceResult = dashboardService.getCountCaseEachStatus(dashboardBean);
@@ -66,9 +73,10 @@ public class DashboardController extends BaseController {
 		// My
 		if ("01".equals(bean.getViewBy())) {
 			bean.setOwnerId(getUserId());
-
 		} else if ("02".equals(bean.getViewBy())) {
-			bean.setOrgId(getUserId());
+			bean.setTeamId(getTeamId());
+		} else if ("03".equals(bean.getViewBy())) {
+			bean.setDivId(getDivId());
 		}
 
 		ServiceResult<Page<CaseModelBean>> serviceResult = dashboardService.getCaseDashboardList(bean, pageRequest);
@@ -91,9 +99,10 @@ public class DashboardController extends BaseController {
 		// My
 		if ("01".equals(bean.getViewBy())) {
 			bean.setOwnerId(getUserId());
-
 		} else if ("02".equals(bean.getViewBy())) {
-			bean.setOrgId(getUserId());
+			bean.setTeamId(getTeamId());
+		} else if ("03".equals(bean.getViewBy())) {
+			bean.setDivId(getDivId());
 		}
 
 		ServiceResult<List<DashboardChartsBarBean>> serviceResult = dashboardService.getChartBarDataList(bean);
@@ -116,9 +125,10 @@ public class DashboardController extends BaseController {
 		// My
 		if ("01".equals(bean.getViewBy())) {
 			bean.setOwnerId(getUserId());
-
 		} else if ("02".equals(bean.getViewBy())) {
-			bean.setOrgId(getUserId());
+			bean.setTeamId(getTeamId());
+		} else if ("03".equals(bean.getViewBy())) {
+			bean.setDivId(getDivId());
 		}
 
 		ServiceResult<List<DashboardChartsBarBean>> serviceResult = dashboardService.getChartPieDataList(bean);
