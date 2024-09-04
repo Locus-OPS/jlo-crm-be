@@ -3,6 +3,8 @@
  */
 package th.co.locus.jlo.business.cases;
 
+import java.io.ByteArrayOutputStream;
+
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
 import th.co.locus.jlo.common.bean.Page;
@@ -19,4 +21,5 @@ public interface CaseService {
 	public ServiceResult<CaseModelBean> createCase(CaseModelBean bean);
 	public ServiceResult<CaseModelBean> updateCase(CaseModelBean bean);
 	
+	 public ServiceResult<ByteArrayOutputStream> exportCaseReport();
 }
