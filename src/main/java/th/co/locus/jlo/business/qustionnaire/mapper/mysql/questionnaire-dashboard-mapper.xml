@@ -32,4 +32,51 @@
 		join tb_questionnaire_header_master hdq on rd.QUESTIONNAIRE_HEADER_ID = hdq.ID 
 		where hdq.ID =#{headerId}
 	</select>
+	
+	<select id="getQuestionnaireSummaryTextList" resultType="QuestionnaireDashboardValueModelBean">
+		select 
+		res.RESPONSE_TEXT as name
+		,res.RESPONSE_TEXT as value
+		from tb_questionnaire_responses res
+		join tb_questionnaire_header_master hdq on res.QUESTIONNAIRE_HEADER_ID =hdq.ID 
+		join tb_questionnaire_q_master qm on res.QUESTION_ID =qm.ID 
+		left join tb_codebook tc on qm.ANSWER_TYPE =tc.CODE_ID  and tc.CODE_TYPE ='ANSWER_TYPE'
+		where tc.ETC1 in ('text','textarea')
+		and hdq.ID =#{headerId} and res.QUESTION_ID =#{questionId}
+		order by res.CREATED_DATE 
+		<if test="isShortList='Y'">
+			limit 5
+		</if>
+		
+	</select>
+	
+	<select id="getQuestionnaireSummaryDateList" resultType="QuestionnaireDashboardValueModelBean">
+		select 
+		DATE_FORMAT(STR_TO_DATE(res.RESPONSE_TEXT , '%a %b %d %Y %H:%i:%s'),'%Y-%m-%d') as name
+		,DATE_FORMAT(STR_TO_DATE(res.RESPONSE_TEXT , '%a %b %d %Y %H:%i:%s'),'%Y-%m-%d') as value
+		from tb_questionnaire_responses res
+		join tb_questionnaire_header_master hdq on res.QUESTIONNAIRE_HEADER_ID =hdq.ID 
+		join tb_questionnaire_q_master qm on res.QUESTION_ID =qm.ID 
+		left join tb_codebook tc on qm.ANSWER_TYPE =tc.CODE_ID  and tc.CODE_TYPE ='ANSWER_TYPE'
+		where tc.ETC1 in ('date')
+		and hdq.ID =#{headerId} and res.QUESTION_ID =#{questionId}
+		order by res.CREATED_DATE 
+		<if test="isShortList='Y'">
+			limit 5
+		</if>
+	</select>
+	
+	<select id="getQuestionnaireSummaryRadioSelectList" resultType="QuestionnaireDashboardValueModelBean">
+		select 
+		res.RESPONSE_TEXT as name
+		,count(res.RESPONSE_ID) as value
+		from tb_questionnaire_responses res
+		join tb_questionnaire_header_master hdq on res.QUESTIONNAIRE_HEADER_ID =hdq.ID 
+		join tb_questionnaire_q_master qm on res.QUESTION_ID =qm.ID 
+		left join tb_codebook tc on qm.ANSWER_TYPE =tc.CODE_ID  and tc.CODE_TYPE ='ANSWER_TYPE'
+		where tc.ETC1 in ('radio','select','checkbox')
+		and hdq.ID =#{headerId} and res.QUESTION_ID =#{questionId}
+		group by res.RESPONSE_TEXT
+	</select>
+	
 </mapper>

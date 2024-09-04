@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireMainDashboardModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionSummaryModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardGenderGroupModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardValueModelBean;
@@ -55,6 +57,55 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 			log.error(ex.getMessage());
 			return fail("500",ex.getMessage());
 		}
+	}
+
+	@Override
+	public ServiceResult<List<QuestionnaireDashboardValueModelBean>> getQuestionnaireSummaryText(QuestionnaireQuestionModelBean bean) {
+		try {
+			List<QuestionnaireDashboardValueModelBean> summaryTextList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryTextList", Map.of("headerId",bean.getHeaderId(),"questionId",bean.getId(),"isShortList","Y"));
+			return success(summaryTextList);
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return fail("500",ex.getMessage());
+		}
+	}
+
+	@Override
+	public ServiceResult<QuestionnaireQuestionSummaryModelBean> getQuestionResponseSummary(Long headerId) {
+		try {
+			log.info("Header :: "+headerId.toString());
+			QuestionnaireQuestionSummaryModelBean summaryList=new QuestionnaireQuestionSummaryModelBean(); 
+			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",headerId));
+				
+			for (QuestionnaireQuestionModelBean question : questionList) {
+
+				if(question.getComponentType().equals("text") || question.getComponentType().equals("textarea")) {
+					List<QuestionnaireDashboardValueModelBean> summaryTextList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryTextList", Map.of("headerId",headerId,"questionId",question.getId(),"isShortList","Y"));
+					if(summaryTextList.size()>0) {
+						question.setSummaryDetail(summaryTextList);
+					}
+				}
+				else if(question.getComponentType().equals("date")) {
+					List<QuestionnaireDashboardValueModelBean> summaryDateList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryDateList", Map.of("headerId",headerId,"questionId",question.getId(),"isShortList","Y"));
+					if(summaryDateList.size()>0) {
+						question.setSummaryDetail(summaryDateList);
+					}
+				}
+				else if(question.getComponentType().equals("radio") || question.getComponentType().equals("select") || question.getComponentType().equals("checkbox")) {
+					List<QuestionnaireDashboardValueModelBean> summaryDateList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryRadioSelectList", Map.of("headerId",headerId,"questionId",question.getId()));
+					if(summaryDateList.size()>0) {
+						question.setSummaryDetail(summaryDateList);
+					}
+				}
+				
+			}
+			summaryList.setQuestion(questionList);
+			return success(summaryList);
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return fail("500",ex.getMessage());
+		}
+		
 	}
 
 }

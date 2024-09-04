@@ -1,6 +1,7 @@
 package th.co.locus.jlo.business.qustionnaire.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Data;
 import th.co.locus.jlo.common.bean.BaseModelBean;
@@ -22,5 +23,7 @@ public class QuestionnaireQuestionModelBean extends BaseModelBean implements Ser
 	private Boolean requiredFlg;
 	private Long seqNo;
 	private String componentType;
+	
+	private List<QuestionnaireDashboardValueModelBean> summaryDetail;
 
 }

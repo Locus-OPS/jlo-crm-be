@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireMainDashboardModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionSummaryModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardValueModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
@@ -54,6 +57,34 @@ public class QuestionnaireDashboardController extends BaseController {
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
 			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getquestionresponsesummary",produces = "application/json")
+	public ApiResponse<QuestionnaireQuestionSummaryModelBean> getQuestionResponseSummary(@RequestBody ApiRequest<QuestionnaireHeaderModelBean> request) {
+		try {
+			ServiceResult<QuestionnaireQuestionSummaryModelBean> resultService=this.qtnDashboardService.getQuestionResponseSummary(request.getData().getId());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getsummaryTextList",produces = "application/json")
+	public ApiResponse<List<QuestionnaireDashboardValueModelBean>> getSummaryTextList(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
+		try {
+			ServiceResult<List<QuestionnaireDashboardValueModelBean>> resultService=this.qtnDashboardService.getQuestionnaireSummaryText(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
 }
