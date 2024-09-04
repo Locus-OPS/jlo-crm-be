@@ -17,8 +17,9 @@ public class DashboardBean extends BaseModelBean {
 	
 	private String viewBy;
 	private Long ownerId;
-	private Long orgId;
-	
+	private Integer teamId;
+	private Integer divId;
+
 	
 
 }
