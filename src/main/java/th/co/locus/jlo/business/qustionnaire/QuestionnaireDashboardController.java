@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class QuestionnaireDashboardController extends BaseController {
 	public ApiPageResponse<List<QuestionnaireRepondentsModelBean>> getRespondentList(@RequestBody ApiPageRequest<QuestionnaireRepondentsModelBean> request) {
 		try {
 			PageRequest pageRequest = getPageRequest(request);
-			ServiceResult<Page<QuestionnaireRepondentsModelBean>> resultService=this.qtnDashboardService.getRespondent(request.getData().getQuestionnaireHeaderId(), pageRequest);
+			ServiceResult<Page<QuestionnaireRepondentsModelBean>> resultService=this.qtnDashboardService.getRespondent(request.getData(), pageRequest);
 			if(resultService.isSuccess()) {
 				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
 			}
@@ -99,6 +100,25 @@ public class QuestionnaireDashboardController extends BaseController {
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
 			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/exportQuestionnaireResponseSummary",produces = "application/json")
+	public void exportQuestionnaireResponseSummary(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
+		try {
+			this.qtnDashboardService.exportQuestionnaireSummary(request.getData());
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/exportquestionnaireresponselist",produces = "application/json")
+	public void exportQuestionnaireResponseList(@RequestBody ApiRequest<QuestionnaireHeaderModelBean> request) {
+		try {
+			this.qtnDashboardService.exportQuestionnaireSummaryList(request.getData());
+			
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
 		}
 	}
 }
