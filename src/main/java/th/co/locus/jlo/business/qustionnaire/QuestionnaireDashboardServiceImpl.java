@@ -11,6 +11,8 @@ import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionSummaryMo
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardGenderGroupModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardValueModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
+import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireResponsesModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
@@ -49,9 +51,9 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 	}
 
 	@Override
-	public ServiceResult<Page<QuestionnaireRepondentsModelBean>> getRespondent(Long headerId,PageRequest page) {
+	public ServiceResult<Page<QuestionnaireRepondentsModelBean>> getRespondent(QuestionnaireRepondentsModelBean bean,PageRequest page) {
 		try {
-			Page<QuestionnaireRepondentsModelBean> respondentList=commonDao.selectPage("questionnaire-dashboard.getQuestionnaireRespondentList", headerId, page);
+			Page<QuestionnaireRepondentsModelBean> respondentList=commonDao.selectPage("questionnaire-dashboard.getQuestionnaireRespondentList", bean, page);
 			return success(respondentList);
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
@@ -152,12 +154,38 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 	}
 
 	@Override
-	public void exportQuestionnaireSummaryList(QuestionnaireQuestionModelBean bean) {
+	public void exportQuestionnaireSummaryList(QuestionnaireHeaderModelBean bean) {
 		try {
 			//ดึงคำถาม
-			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",bean.getHeaderId()));
+			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",bean.getId()));
+			
+			//สร้าง Header Excel => ชื่อ + คำถาม
+			for (QuestionnaireQuestionModelBean questionHeader : questionList) {
+				
+			}
+			
 			//ดึงผู้ตอบคำถาม
-			List<QuestionnaireRepondentsModelBean> respondentList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireRespondentList", Map.of("headerId",bean.getHeaderId()));
+			List<QuestionnaireRepondentsModelBean> respondentList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireRespondentList", Map.of("questionnaireHeaderId",bean.getId()));
+			
+			//สร้าง Data => ชื่อ + คำตอบ
+			for (QuestionnaireRepondentsModelBean respondent : respondentList) {
+				//เพิ่มชื่อ
+				
+				//ดึงคำตอบ
+				List<QuestionnaireResponsesModelBean> responseList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireResponseByRespondent",Map.of("respondentId",respondent.getRespondentId()));
+				
+				//เพิ่มคำตอบ
+				for (QuestionnaireQuestionModelBean question : questionList) {
+					QuestionnaireResponsesModelBean response=responseList.stream().filter(q->q.getQuestionId()==question.getId()).findFirst().orElse(null);
+					
+					if(response==null) {
+						//Action
+					}else {
+						//Action
+					}
+				}
+			}
+			
 			
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
