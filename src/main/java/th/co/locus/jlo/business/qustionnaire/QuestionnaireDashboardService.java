@@ -16,5 +16,9 @@ public interface QuestionnaireDashboardService {
 	ServiceResult<Page<QuestionnaireRepondentsModelBean>> getRespondent(Long headerId,PageRequest page);
 	
 	ServiceResult<QuestionnaireQuestionSummaryModelBean> getQuestionResponseSummary(Long headerId);
+	ServiceResult<QuestionnaireQuestionSummaryModelBean> getQuestionResponseDetail(Long headerId,Long respondentId);
 	ServiceResult<List<QuestionnaireDashboardValueModelBean>> getQuestionnaireSummaryText(QuestionnaireQuestionModelBean bean);
+	
+	void exportQuestionnaireSummary(QuestionnaireQuestionModelBean bean);
+	void exportQuestionnaireSummaryList(QuestionnaireQuestionModelBean bean);
 }

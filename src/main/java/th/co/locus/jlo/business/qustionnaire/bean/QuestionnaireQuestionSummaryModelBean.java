@@ -7,5 +7,4 @@ import lombok.Data;
 @Data
 public class QuestionnaireQuestionSummaryModelBean {
 	private List<QuestionnaireQuestionModelBean> question;
-//	private List<QuestionnaireDashboardValueModelBean> summaryDetail;
 }

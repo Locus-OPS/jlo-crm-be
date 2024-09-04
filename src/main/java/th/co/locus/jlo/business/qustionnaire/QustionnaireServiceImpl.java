@@ -18,6 +18,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -148,12 +149,31 @@ public class QustionnaireServiceImpl extends BaseService implements Qustionnaire
 		try {
 			log.info("Data: "+bean.toString());
 			int resultRespodent=commonDao.insert("questionnaire.createQuesuionnaireRespondent",bean.getRespodent());
+			//ดึงข้อมูล Question ทั้งหมด
+			List<QuestionnaireQuestionModelBean> questionnaireList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",bean.getRespodent().getQuestionnaireHeaderId()));
+			
 			if(resultRespodent>0) {
 				for (QuestionnaireResponsesModelBean response : bean.getResponses()) {
 					response.setRespondentId(bean.getRespodent().getRespondentId());
 					response.setQuestionnaireHeaderId(bean.getRespodent().getQuestionnaireHeaderId());
-					log.info("Data response: "+response.toString());
-					commonDao.insert("questionnaire.createQuestionnaireResponse", response);
+					//log.info("Data response: "+response.toString());
+					QuestionnaireQuestionModelBean result = questionnaireList.stream()
+						    .filter(q -> "checkbox".equals(q.getComponentType()) && q.getId()== response.getQuestionId())
+						    .findFirst().orElse(null);
+					if(result!=null) {
+						//ถ้าเป็น Type Checkbox จะต้อง Split ข้อมูลแยกเก็บเป็น Items
+						String[] responseTxtList = response.getResponseText().split(",");
+						for (String responseTxt : responseTxtList) {
+							if(!responseTxt.trim().equals("")) {
+								response.setResponseText(responseTxt.trim());
+								commonDao.insert("questionnaire.createQuestionnaireResponse", response);
+							}
+						}
+						
+					}else {
+						commonDao.insert("questionnaire.createQuestionnaireResponse", response);
+					}
+					
 				}
 				return this.getQuestionnaireResponse(bean);
 			}

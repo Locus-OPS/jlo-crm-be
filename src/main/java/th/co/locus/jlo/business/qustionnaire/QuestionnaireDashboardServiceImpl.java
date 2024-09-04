@@ -76,7 +76,7 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 			log.info("Header :: "+headerId.toString());
 			QuestionnaireQuestionSummaryModelBean summaryList=new QuestionnaireQuestionSummaryModelBean(); 
 			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",headerId));
-				
+
 			for (QuestionnaireQuestionModelBean question : questionList) {
 
 				if(question.getComponentType().equals("text") || question.getComponentType().equals("textarea")) {
@@ -107,5 +107,64 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 		}
 		
 	}
+
+	@Override
+	public ServiceResult<QuestionnaireQuestionSummaryModelBean> getQuestionResponseDetail(Long headerId,Long respondentId) {
+		try {
+			QuestionnaireQuestionSummaryModelBean summaryList=new QuestionnaireQuestionSummaryModelBean(); 
+			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",headerId));
+			for (QuestionnaireQuestionModelBean question : questionList) {
+
+				if(question.getComponentType().equals("date")) {
+					List<QuestionnaireDashboardValueModelBean> responseDateDetail=commonDao.selectList("questionnaire-dashboard.getQuestionnaireResponseDate", Map.of("headerId",headerId,"questionId",question.getId(),"respondentId",respondentId));
+					question.setResponseDetail(responseDateDetail);
+				}else {
+					List<QuestionnaireDashboardValueModelBean> responseTextDetail=commonDao.selectList("questionnaire-dashboard.getQuestionnaireResponseText", Map.of("headerId",headerId,"questionId",question.getId(),"respondentId",respondentId));
+					question.setResponseDetail(responseTextDetail);
+				}
+				
+			}
+			summaryList.setQuestion(questionList);
+			return success(summaryList);
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return fail("500",ex.getMessage());
+		}
+	}
+
+	@Override
+	public void exportQuestionnaireSummary(QuestionnaireQuestionModelBean bean) {
+		try {
+			List<QuestionnaireDashboardValueModelBean> summaryList = new ArrayList<QuestionnaireDashboardValueModelBean>();
+			if(bean.getComponentType().equals("text") || bean.getComponentType().equals("textarea")) {
+				summaryList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryTextList", Map.of("headerId",bean.getHeaderId(),"questionId",bean.getQuestion(),"isShortList","N"));
+			}else if(bean.getComponentType().equals("date")) {
+				summaryList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireSummaryDateList", Map.of("headerId",bean.getHeaderId(),"questionId",bean.getQuestion(),"isShortList","N"));
+			}
+			
+			for (QuestionnaireDashboardValueModelBean response : summaryList) {
+				
+			}
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+		}
+		
+	}
+
+	@Override
+	public void exportQuestionnaireSummaryList(QuestionnaireQuestionModelBean bean) {
+		try {
+			//ดึงคำถาม
+			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",bean.getHeaderId()));
+			//ดึงผู้ตอบคำถาม
+			List<QuestionnaireRepondentsModelBean> respondentList=commonDao.selectList("questionnaire-dashboard.getQuestionnaireRespondentList", Map.of("headerId",bean.getHeaderId()));
+			
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+		}
+		
+	}
+	
+	
 
 }

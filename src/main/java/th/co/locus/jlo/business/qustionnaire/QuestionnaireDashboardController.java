@@ -87,4 +87,18 @@ public class QuestionnaireDashboardController extends BaseController {
 			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
+	
+	@PostMapping(value="/getresponsedetail",produces = "application/json")
+	public ApiResponse<QuestionnaireQuestionSummaryModelBean> getResponseDetail(@RequestBody ApiRequest<QuestionnaireRepondentsModelBean> request) {
+		try {
+			ServiceResult<QuestionnaireQuestionSummaryModelBean> resultService=this.qtnDashboardService.getQuestionResponseDetail(request.getData().getQuestionnaireHeaderId(), request.getData().getRespondentId());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
 }

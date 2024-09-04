@@ -24,6 +24,9 @@ public class QuestionnaireQuestionModelBean extends BaseModelBean implements Ser
 	private Long seqNo;
 	private String componentType;
 	
+	//เอาไว้สร้าง Dashboard เช่น กราฟต่างๆ
 	private List<QuestionnaireDashboardValueModelBean> summaryDetail;
+	//เอาไว้แสดงคำตอบ
+	private List<QuestionnaireDashboardValueModelBean> responseDetail;
 
 }
