@@ -117,8 +117,10 @@
 		select 
 		tqr.RESPONDENT_ID  as respondentId
 		,tqr.QUESTION_ID as questionId
-		,GROUP_CONCAT(tqr.RESPONSE_TEXT ORDER BY tqr.QUESTION_ID ASC SEPARATOR ', ') as responseText
+		,GROUP_CONCAT(case when tc.ETC1='date' then DATE_FORMAT(STR_TO_DATE(tqr.RESPONSE_TEXT , '%a %b %d %Y %H:%i:%s'),'%Y-%m-%d') else tqr.RESPONSE_TEXT end  ORDER BY tqr.QUESTION_ID ASC SEPARATOR ', ') as responseText
 		from tb_questionnaire_responses tqr 
+		join tb_questionnaire_q_master tqqm on tqr.QUESTION_ID =tqqm.ID 
+		left join tb_codebook tc on tqqm.ANSWER_TYPE =tc.CODE_ID and tc.CODE_TYPE ='ANSWER_TYPE'
 		where tqr.RESPONDENT_ID =#{respondentId}
 		group by tqr.RESPONDENT_ID,tqr.QUESTION_ID
 	</select>
