@@ -1,5 +1,6 @@
 package th.co.locus.jlo.business.qustionnaire;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireDashboardValueModelBean;
@@ -20,6 +21,6 @@ public interface QuestionnaireDashboardService {
 	ServiceResult<QuestionnaireQuestionSummaryModelBean> getQuestionResponseDetail(Long headerId,Long respondentId);
 	ServiceResult<List<QuestionnaireDashboardValueModelBean>> getQuestionnaireSummaryText(QuestionnaireQuestionModelBean bean);
 	
-	void exportQuestionnaireSummary(QuestionnaireQuestionModelBean bean);
-	void exportQuestionnaireSummaryList(QuestionnaireHeaderModelBean bean);
+	ServiceResult<ByteArrayOutputStream> exportQuestionnaireSummary(QuestionnaireQuestionModelBean bean);
+	ServiceResult<ByteArrayOutputStream> exportQuestionnaireSummaryList(QuestionnaireHeaderModelBean bean);
 }

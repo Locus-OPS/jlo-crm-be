@@ -1,8 +1,14 @@
 package th.co.locus.jlo.business.qustionnaire;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -104,21 +110,38 @@ public class QuestionnaireDashboardController extends BaseController {
 	}
 	
 	@PostMapping(value="/exportQuestionnaireResponseSummary",produces = "application/json")
-	public void exportQuestionnaireResponseSummary(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
+	public ResponseEntity<ByteArrayResource>  exportQuestionnaireResponseSummary(@RequestBody ApiRequest<QuestionnaireQuestionModelBean> request) {
 		try {
-			this.qtnDashboardService.exportQuestionnaireSummary(request.getData());
+			ServiceResult<ByteArrayOutputStream> resultService=this.qtnDashboardService.exportQuestionnaireSummary(request.getData());
+			if(resultService.isSuccess()) {
+	            HttpHeaders header = new HttpHeaders();
+	            header.setContentType(new MediaType("application", "force-download"));
+	            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=QuestionnaireReport.xlsx");
+	            return new ResponseEntity<>(new ByteArrayResource(resultService.getResult().toByteArray()),
+	                    header, HttpStatus.CREATED);
+	        }
+	        return ResponseEntity.noContent().build();
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
+			  return ResponseEntity.noContent().build();
 		}
 	}
 	
 	@PostMapping(value="/exportquestionnaireresponselist",produces = "application/json")
-	public void exportQuestionnaireResponseList(@RequestBody ApiRequest<QuestionnaireHeaderModelBean> request) {
+	public ResponseEntity<ByteArrayResource> exportQuestionnaireResponseList(@RequestBody ApiRequest<QuestionnaireHeaderModelBean> request) {
 		try {
-			this.qtnDashboardService.exportQuestionnaireSummaryList(request.getData());
-			
+			ServiceResult<ByteArrayOutputStream> resultService=this.qtnDashboardService.exportQuestionnaireSummaryList(request.getData());
+			if(resultService.isSuccess()) {
+	            HttpHeaders header = new HttpHeaders();
+	            header.setContentType(new MediaType("application", "force-download"));
+	            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=QuestionnaireListReport.xlsx");
+	            return new ResponseEntity<>(new ByteArrayResource(resultService.getResult().toByteArray()),
+	                    header, HttpStatus.CREATED);
+	        }
+	        return ResponseEntity.noContent().build();
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
+			return ResponseEntity.noContent().build();
 		}
 	}
 }
