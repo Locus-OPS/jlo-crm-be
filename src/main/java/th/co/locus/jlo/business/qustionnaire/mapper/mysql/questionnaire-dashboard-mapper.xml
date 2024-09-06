@@ -30,7 +30,12 @@
 		,rd.CREATED_DATE 
 		from tb_questionnaire_respondents rd
 		join tb_questionnaire_header_master hdq on rd.QUESTIONNAIRE_HEADER_ID = hdq.ID 
-		where hdq.ID =#{headerId}
+		where hdq.ID =#{questionnaireHeaderId}
+		<if test="name!=null and name!=''">
+			<bind name="bName" value="'%' + name + '%'" />
+			and rd.NAME  like #{bName}
+		</if>
+		order by rd.CREATED_DATE desc
 	</select>
 	
 	<select id="getQuestionnaireSummaryTextList" resultType="QuestionnaireDashboardValueModelBean">
@@ -106,6 +111,18 @@
 		where tc.ETC1 in ('radio','select','checkbox')
 		and hdq.ID =#{headerId} and res.QUESTION_ID =#{questionId}
 		group by res.RESPONSE_TEXT
+	</select>
+	
+	<select id="getQuestionnaireResponseByRespondent" resultType="QuestionnaireResponsesModelBean">
+		select 
+		tqr.RESPONDENT_ID  as respondentId
+		,tqr.QUESTION_ID as questionId
+		,GROUP_CONCAT(case when tc.ETC1='date' then DATE_FORMAT(STR_TO_DATE(tqr.RESPONSE_TEXT , '%a %b %d %Y %H:%i:%s'),'%Y-%m-%d') else tqr.RESPONSE_TEXT end  ORDER BY tqr.QUESTION_ID ASC SEPARATOR ', ') as responseText
+		from tb_questionnaire_responses tqr 
+		join tb_questionnaire_q_master tqqm on tqr.QUESTION_ID =tqqm.ID 
+		left join tb_codebook tc on tqqm.ANSWER_TYPE =tc.CODE_ID and tc.CODE_TYPE ='ANSWER_TYPE'
+		where tqr.RESPONDENT_ID =#{respondentId}
+		group by tqr.RESPONDENT_ID,tqr.QUESTION_ID
 	</select>
 	
 </mapper>

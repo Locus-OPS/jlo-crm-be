@@ -3,9 +3,15 @@
  */
 package th.co.locus.jlo.business.cases;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +25,7 @@ import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
+import th.co.locus.jlo.common.bean.ApiRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
@@ -121,6 +128,22 @@ public class CaseController extends BaseController {
 			return ApiResponse.fail();
 		}
 	}
+	
+	
+	
+    @PostMapping(value = "/exportCaseReport", produces = "application/json")
+    public ResponseEntity<ByteArrayResource> exportCaseReport(@RequestBody ApiRequest<String> request) {
+        
+        ServiceResult<ByteArrayOutputStream> serviceResult = caseService.exportCaseReport();
+        if(serviceResult.isSuccess()) {
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(new MediaType("application", "force-download"));
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=CaseReport.xlsx");
+            return new ResponseEntity<>(new ByteArrayResource(serviceResult.getResult().toByteArray()),
+                    header, HttpStatus.CREATED);
+        }
+        return ResponseEntity.noContent().build();
+    }
 	
 	
 	
