@@ -7,6 +7,7 @@ public class CaseKBModelBean extends BaseModelBean {
 	private Long id;
 	private String caseNumber;
 	private Long kbId;
+	private String kbTitle;
 	private String remark;
 	private String url;
 	private String description;

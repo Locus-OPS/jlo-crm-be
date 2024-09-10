@@ -43,6 +43,8 @@ public class CaseKBController extends BaseController {
 	@PostMapping(value="/createRefKB",produces = "application/json")
 	public ApiResponse<CaseKBModelBean> createRefKB(@RequestBody ApiRequest<CaseKBModelBean> request) {
 		try {
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
 			ServiceResult<CaseKBModelBean> serviceResult=this.caseKBService.createRefKB(request.getData());
 			if(serviceResult.isSuccess()) {
 				return ApiResponse.success(serviceResult.getResult());
