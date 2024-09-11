@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="caseKB">
+	<select id="getRefKBList" resultType="CaseKBModelBean">
+		select 
+		refkb.ID
+		, refkb.CASE_NUMBER
+		, refkb.KB_ID
+		, refkb.REMARK
+		, refkb.CREATED_BY
+		, concat(cu.FIRST_NAME,' ',cu.LAST_NAME) as  createdName
+		, refkb.CREATED_DATE
+		, refkb.UPDATED_BY
+		, concat(uu.FIRST_NAME,' ',uu.LAST_NAME) as  updatedName
+		, refkb.UPDATED_DATE
+		, cont.TITLE as kbTitle
+		, cont.URL 
+		, cont.DESCRIPTION 
+		from tb_rel_kb refkb
+		left join tb_content cont on refkb.KB_ID=cont.CONTENT_ID 
+		left join tb_user cu on refkb.CREATED_BY=cu.ID 
+		left join tb_user uu on refkb.UPDATED_BY=uu.ID 
+		where refkb.CASE_NUMBER=#{caseNumber}
+		order by refkb.KB_ID
+	</select>
+	<select id="getRefKBDetail" resultType="CaseKBModelBean">
+		select 
+		refkb.ID
+		, refkb.CASE_NUMBER
+		, refkb.KB_ID
+		, refkb.REMARK
+		, refkb.CREATED_BY
+		, concat(cu.FIRST_NAME,' ',cu.LAST_NAME) as  createdName
+		, refkb.CREATED_DATE
+		, refkb.UPDATED_BY
+		, concat(uu.FIRST_NAME,' ',uu.LAST_NAME) as  updatedName
+		, refkb.UPDATED_DATE
+		, cont.TITLE as kbTitle
+		, cont.URL 
+		, cont.DESCRIPTION 
+		from tb_rel_kb refkb
+		left join tb_content cont on refkb.KB_ID=cont.CONTENT_ID 
+		left join tb_user cu on refkb.CREATED_BY=cu.ID 
+		left join tb_user uu on refkb.UPDATED_BY=uu.ID 
+		where refkb.CASE_NUMBER=#{caseNumber} and refkb.KB_ID=#{kbId}
+		limit 1
+	</select>
+	<insert id="createRefKB" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_rel_kb
+		( CASE_NUMBER
+		, KB_ID
+		, REMARK
+		, CREATED_BY
+		, CREATED_DATE
+		, UPDATED_BY
+		, UPDATED_DATE
+		)
+		VALUES(
+		 #{caseNumber}
+		, #{kbId}
+		, #{remark}
+		, #{createdBy}
+		, now()
+		, #{updatedBy}
+		, now()
+		)
+	</insert>
+	<delete id="deleteRefKB">
+		DELETE FROM tb_rel_kb
+		WHERE ID=#{id}
+	</delete>
+	
+</mapper>
