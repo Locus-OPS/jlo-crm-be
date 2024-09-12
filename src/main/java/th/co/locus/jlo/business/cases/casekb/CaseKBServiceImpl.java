@@ -40,6 +40,10 @@ public class CaseKBServiceImpl extends BaseService implements CaseKBService {
 	@Override
 	public ServiceResult<CaseKBModelBean> createRefKB(CaseKBModelBean bean) {
 		try {
+			CaseKBModelBean dupResult=commonDao.selectOne("caseKB.getRefKBDetail",bean);
+			if(dupResult!=null) {
+				return fail("500","Already have this knowledge.");
+			}
 			int result=commonDao.insert("caseKB.createRefKB", bean);
 			if(result>0) {
 				return success(bean);
