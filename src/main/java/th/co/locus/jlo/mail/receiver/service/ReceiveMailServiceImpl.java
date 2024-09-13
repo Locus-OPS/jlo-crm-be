@@ -9,17 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import javax.mail.FetchProfile;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
-
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.mail.util.MimeMessageParser;
+import org.apache.commons.mail2.jakarta.util.MimeMessageParser;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
@@ -90,7 +84,7 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		log.debug("extractMail {}", message);
 		try {
 			final MimeMessage messageToExtract = (MimeMessage) message;
-			final MimeMessageParser mimeMessageParser = new MimeMessageParser(messageToExtract).parse();
+			final org.apache.commons.mail2.jakarta.util.MimeMessageParser mimeMessageParser = new MimeMessageParser(messageToExtract).parse();
 
 			showMailContent(mimeMessageParser);
 
