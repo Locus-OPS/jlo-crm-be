@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG_FOLDER" value="${catalina.home}/logs" />
+	<property name="LOG_NAME" value="application.log" />
+	<property name="LOG_ARCHIVE" value="${LOG_FOLDER}/archive" />
+	<logger name="org.springframework.web" level="ERROR" />
+	<logger name="org.springframework.boot" level="ERROR" />
+	<logger name="org.quartz" level="ERROR" />
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%-5level]%logger{35} - %msg %n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FOLDER}/${LOG_NAME}</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_ARCHIVE}/application_backofficeweb-%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<!-- each file should be at most 50MB, keep 60 days worth of history, 
+				but at most 2GB -->
+			<maxFileSize>50MB</maxFileSize>
+			<maxHistory>60</maxHistory>
+			<totalSizeCap>2GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%-5level]%logger{35} - %msg %n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- DriverSpy -->
+	<logger name="jdbc" level="OFF" />
+
+	<logger name="jdbc.sqlonly" level="OFF" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="jdbc.sqltiming" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="jdbc.resultsettable" level="INFO"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<root level="INFO">
+		<!-- <appender-ref ref="FILE" /> -->
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+	</root>
+	<springProfile name="dev">
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="FILE" />
+		</root>
+		<root level="DEBUG">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+	<springProfile name="sit">
+		<root level="INFO">
+			<appender-ref ref="FILE" />
+			<appender-ref ref="STDOUT" />
+		</root>
+	</springProfile>
+	<springProfile name="uat">
+		<root level="INFO">
+			<appender-ref ref="STDOUT" />
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+
+	<springProfile name="prod">
+		<root level="INFO">
+			<!-- ถ้าจะให้แสดง log ใน eclipse ให้ใช้ proddr แทน -->
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+</configuration>
