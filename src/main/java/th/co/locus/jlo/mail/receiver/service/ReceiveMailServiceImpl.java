@@ -9,19 +9,30 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail2.jakarta.util.MimeMessageParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.FetchProfile;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.mail.inbound.InboundReceiveMailService;
+import th.co.locus.jlo.mail.inbound.bean.InboundReceiveMailBean;
 
 @Slf4j
 @Service
 public class ReceiveMailServiceImpl implements ReceiveMailService {
+
+	@Autowired
+	private InboundReceiveMailService inboundReceiveMailService;
 
 	private static final String DOWNLOAD_FOLDER = "data";
 
@@ -84,7 +95,8 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		log.debug("extractMail {}", message);
 		try {
 			final MimeMessage messageToExtract = (MimeMessage) message;
-			final org.apache.commons.mail2.jakarta.util.MimeMessageParser mimeMessageParser = new MimeMessageParser(messageToExtract).parse();
+			final org.apache.commons.mail2.jakarta.util.MimeMessageParser mimeMessageParser = new MimeMessageParser(
+					messageToExtract).parse();
 
 			showMailContent(mimeMessageParser);
 
@@ -102,6 +114,23 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		log.debug("From: {} to: {} | Subject: {}", mimeMessageParser.getFrom(), mimeMessageParser.getTo(),
 				mimeMessageParser.getSubject());
 		log.debug("Mail content: {}", mimeMessageParser.getPlainContent());
+		
+
+		InboundReceiveMailBean emailInbound = new InboundReceiveMailBean();
+		emailInbound.setFormEmail(mimeMessageParser.getFrom());
+		emailInbound.setToEmail(mimeMessageParser.getTo().toString());
+		emailInbound.setToCcEmail(mimeMessageParser.getCc().size() > 0 ? mimeMessageParser.getCc().toString() : null);
+		emailInbound.setToBccEmail(mimeMessageParser.getBcc().size() > 0 ? mimeMessageParser.getBcc().toString() : null);
+		emailInbound.setReplyToEmail(mimeMessageParser.getReplyTo());
+		emailInbound.setSubjectEmail(mimeMessageParser.getSubject());
+		emailInbound.setPlainContent(mimeMessageParser.getPlainContent());
+		emailInbound.setHtmlContent(mimeMessageParser.getHtmlContent());
+		emailInbound.setStatusCd("01");
+		emailInbound.setCreatedBy((long) 41);
+		emailInbound.setUpdatedBy((long) 41);
+		emailInbound.setBuId(1);
+		inboundReceiveMailService.insertEmailInbound(emailInbound);
+
 	}
 
 	private void downloadAttachmentFiles(MimeMessageParser mimeMessageParser) {
