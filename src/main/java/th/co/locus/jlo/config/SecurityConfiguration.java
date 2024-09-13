@@ -22,7 +22,7 @@ public class SecurityConfiguration {
     		 "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-resources"
     };
     private static final String[] JLO_WHITELIST = {
-            "/websocket/**", "/api/landing/**","/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
+            "/message-channel/**", "/api/landing/**","/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
     };
 
     @Bean

@@ -19,10 +19,10 @@
 	</properties>
 
 	<repositories>
-		<repository>
-			<id>locus-repo-private</id>
-			<url>http://192.168.10.179:8081/nexus/repository/maven-public/</url>
-		</repository>
+<!--		<repository>-->
+<!--			<id>locus-repo-private</id>-->
+<!--			<url>http://192.168.10.179:8081/nexus/repository/maven-public/</url>-->
+<!--		</repository>-->
 		<repository>
 			<id>locus-repo-public</id>
 			<url>http://jlo.locus.co.th/nexus/repository/maven-public/</url>

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
 import java.util.Map;
@@ -15,14 +14,11 @@ import java.util.Map;
 public class WebSocketController {
 
     @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
+    private WebSocketService webSocketService;
 
     @MessageMapping("/message")
     public void message(@Payload Map<String, Object> payload, SimpMessageHeaderAccessor headerAccessor) {
-        payload.put("sessionId", headerAccessor.getSessionId());
-        log.info("Sending message to /topic/public: {}", payload);
-        messagingTemplate.convertAndSend("/topic/public", payload);
-        log.info("Sending message to /topic/public: {}", payload);
+        webSocketService.sendMessage("/user/queue/admin", payload);
     }
 
 }
