@@ -1,6 +1,9 @@
 package th.co.locus.jlo.mail.inbound;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.common.bean.Page;
@@ -9,6 +12,7 @@ import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.mail.inbound.bean.InboundReceiveMailBean;
 import th.co.locus.jlo.mail.inbound.bean.SearchInboundReceiveMailBean;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
 @Slf4j
 @Service
@@ -34,6 +38,13 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 	@Override
 	public ServiceResult<InboundReceiveMailBean> getEmailInboundData(InboundReceiveMailBean bean) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceResult<InboundReceiveMailBean> createIbEmailAttachment(InboundReceiveMailBean bean,
+			FileModelBean fileBean, MultipartFile file) throws IOException {
+		 
 		return null;
 	}
 

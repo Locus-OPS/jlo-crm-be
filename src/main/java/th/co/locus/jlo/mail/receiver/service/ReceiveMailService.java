@@ -5,4 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 
 public interface ReceiveMailService {
 	void handleReceivedMail(MimeMessage message);
+	
+	
+ 
 }

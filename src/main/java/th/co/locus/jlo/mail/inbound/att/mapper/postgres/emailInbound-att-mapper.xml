@@ -1,0 +1,48 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="emailAttInbound">
+	<select id="getAttachmentEmailInboundList" resultType="InboundAttachmentReceiveMailBean">
+			SELECT 
+				att.* 
+			FROM tb_email_inbound_attachment att
+		
+		<where>
+			<if test="attachmentId != null and attachmentId != ''">
+				AND att.ATTACHMENT_ID = #{attachmentId}
+			</if>
+		</where>
+		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC
+	</select>
+ 
+	<select id="findEmailInboundAttById" resultType="InboundAttachmentReceiveMailBean">
+			SELECT EI.* FROM tb_email_inbound_attachment EI WHERE EI.ID = #{id}
+	</select>
+
+	<insert id="createEmailInboundAtt" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		
+			INSERT INTO `tb_email_inbound_attachment`
+			(	 
+			`ATTACHMENT_ID`,
+			`EMAIL_INBOUND_ID`,
+			`BU_ID`,
+			`CREATED_DATE`,
+			`CREATED_BY`,
+			`UPDATED_DATE`,
+			`UPDATED_BY`
+			) VALUES( 
+			#{attachmentId},
+			#{emailInboundId},
+			#{buId},
+			NOW(),
+			#{createdBy},
+			NOW(),
+			#{updatedBy}
+			)
+		
+	</insert>
+	
+	 
+
+ 
+
+</mapper>
