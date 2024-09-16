@@ -40,4 +40,6 @@ public interface KbService {
 	public ServiceResult<Boolean> updateKbFileSequence(UpdateKbFileSequenceModelBean bean);
 	public ServiceResult<Integer> findMaxSequenceContent(Long catId);
 	public ServiceResult<Integer> findMaxSequenceContentFolder(Long parentId);
+	
+	public ServiceResult<List<KbTreeModelBean>> getFavKbTreeList(Long userId);
 }

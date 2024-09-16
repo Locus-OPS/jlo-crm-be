@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kbfavorite">
+	<select id="getKBFavorite" resultType="KBFavoriteModelBean">
+		SELECT 
+		fav.ID, 
+		fav.USER_ID,
+		fav.CONTENT_ID,
+		fav.CREATED_BY,
+		fav.CREATED_DATE,
+		fav.UPDATED_BY,
+		fav.UPDATED_DATE
+		FROM tb_content_favorite fav
+		where fav.USER_ID=#{userId} and fav.CONTENT_ID=#{contentId}
+		limit 1
+	</select>
+	<insert id="createKBFavorite" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_content_favorite
+		(
+		USER_ID
+		, CONTENT_ID
+		, CREATED_BY
+		, CREATED_DATE
+		, UPDATED_BY
+		, UPDATED_DATE
+		)
+		VALUES(
+		#{userId}
+		, #{contentId}
+		, #{createdBy}
+		, now()
+		, #{updatedBy}
+		, now()
+		)
+	</insert>
+	<delete id="deleteKBFavorite">
+		DELETE FROM tb_content_favorite
+		WHERE USER_ID=#{userId} and CONTENT_ID=#{contentId}
+	</delete>
+</mapper>

@@ -326,4 +326,30 @@
 		from TB_CONTENT_CAT
 		where PARENT_CAT_ID = #{parentId}
 	</select>
+	<select id="getFavKBTreeList" resultType="kbTreeModelBean">
+		select 
+			TMP.*
+		from 
+		(
+			select
+			0 as ID,
+			null PARENT_ID,
+			'My Favorite' as TITLE,
+			1 as IS_FOLDER,
+			null as SEQ,
+			'' as ICON
+			union
+			select 
+			fav.CONTENT_ID as ID,
+			0 as PARENT_ID,
+			cont.TITLE,
+			0 as IS_FLODER,
+			ROW_NUMBER() OVER (ORDER BY cont.TITLE) as SEQ,
+			ifnull(icon.ETC1, '') as ICON
+			from tb_content_favorite fav 
+			left join tb_content cont on fav.CONTENT_ID =cont.CONTENT_ID 
+			left join tb_codebook icon on icon.CODE_TYPE = 'CONTENT_ICON' and cont.DISPLAY = icon.CODE_ID and icon.ACTIVE_FLAG = 'Y'
+			where fav.USER_ID =#{userId}
+		) TMP
+	</select>
 </mapper>

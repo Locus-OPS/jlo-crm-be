@@ -60,6 +60,16 @@ public class KbController extends BaseController {
 		}
 	}
 	
+	@PostMapping(value = "/getFavKbTreeList", produces = "application/json")
+	public ApiResponse<List<KbTreeModelBean>> getFavTreeList(@RequestBody ApiRequest<String> request) {
+		ServiceResult<List<KbTreeModelBean>> serviceResult = kbService.getFavKbTreeList(getUserId());
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		} else {
+			return ApiResponse.fail();
+		}
+	}
+	
 	@PostMapping(value = "/getKbTreeFolderList", produces = "application/json")
 	public ApiResponse<List<KbTreeModelBean>> getKbTreeFolderList(@RequestBody ApiRequest<String> request) {
 		ServiceResult<List<KbTreeModelBean>> serviceResult = kbService.getKbTreeList(request.getData(), getBuId(), 1);
