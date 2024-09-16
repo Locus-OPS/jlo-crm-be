@@ -31,8 +31,8 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 	@Override
 	public ServiceResult<Page<InboundReceiveMailBean>> getEmailInboundList(SearchInboundReceiveMailBean bean,
 			PageRequest pageRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return success(commonDao.selectPage("emailInbound.getEmailInboundList", bean, pageRequest));
 	}
 
 	@Override

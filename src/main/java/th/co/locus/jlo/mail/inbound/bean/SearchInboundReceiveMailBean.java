@@ -13,9 +13,11 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 public class SearchInboundReceiveMailBean extends BaseModelBean implements Serializable {
 	
 	private static final long serialVersionUID = 5439212822221212607L;
-	private String from;
-	private String to;
-	private String subject;
+	private String formEmail;
+	private String toEmail;
+	private String subjectEmail;
+	private String startDate;
+	private String endDate;	
 	private String plainContent;
 
 }
