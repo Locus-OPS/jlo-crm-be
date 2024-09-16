@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kbrating">
+	<insert id="createKBRating" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_content_rating
+		(
+			USER_ID
+			, CONTENT_ID
+			, RATING
+			, CREATED_BY
+			, CREATED_DATE
+			, UPDATED_BY
+			, UPDATED_DATE
+		)
+		VALUES(
+			#{userId}
+			, #{contentId}
+			, #{rating}
+			, #{createdBy}
+			, now()
+			, #{updatedBy}
+			, now()
+		)
+	</insert>
+	<update id="updateKBRating">
+		UPDATE tb_content_rating
+		SET RATING= #{rating}, UPDATED_BY=#{updatedBy}, UPDATED_DATE=now()
+		WHERE CONTENT_ID=#{contentId} and USER_ID =#{userId}
+	</update>
+	<select id="getKBRating" resultType="KBRatingModelBean">
+		SELECT distinct 
+		    #{userId} as USER_ID,
+		    rt.CONTENT_ID,
+		    (select IFNULL(subrt.RATING,0) from tb_content_rating subrt where subrt.USER_ID=#{userId} and subrt.CONTENT_ID = rt.CONTENT_ID limit 1) as RATING,
+		    CASE 
+		        WHEN (SELECT COUNT(*) FROM tb_content_rating subrt WHERE subrt.CONTENT_ID = rt.CONTENT_ID) = 0 THEN 0
+		        ELSE cast((SELECT SUM(subrt.RATING) FROM tb_content_rating subrt WHERE subrt.CONTENT_ID = rt.CONTENT_ID) / 
+		             (SELECT COUNT(*) FROM tb_content_rating subrt WHERE subrt.CONTENT_ID = rt.CONTENT_ID) as decimal(18,2))
+		    END AS avgRating,
+		   (SELECT COUNT(*) FROM tb_content_rating subrt WHERE subrt.CONTENT_ID = rt.CONTENT_ID) as totalReviewer
+		FROM tb_content_rating rt
+		WHERE rt.CONTENT_ID = #{contentId} 
+	</select>
+	<select id="getKBRatingByUser" resultType="KBRatingModelBean">
+		SELECT 
+		  ID
+		, USER_ID
+		, CONTENT_ID
+		, RATING
+		FROM tb_content_rating
+		where USER_ID=#{userId} and CONTENT_ID=#{contentId}
+	</select>
+</mapper>

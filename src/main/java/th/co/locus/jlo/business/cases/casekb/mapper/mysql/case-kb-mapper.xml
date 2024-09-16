@@ -21,6 +21,7 @@
 		left join tb_user cu on refkb.CREATED_BY=cu.ID 
 		left join tb_user uu on refkb.UPDATED_BY=uu.ID 
 		where refkb.CASE_NUMBER=#{caseNumber}
+		and cont.CONTENT_STATUS ='02'
 		order by refkb.KB_ID
 	</select>
 	<select id="getRefKBDetail" resultType="CaseKBModelBean">

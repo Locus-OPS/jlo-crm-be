@@ -201,4 +201,14 @@ public class KbServiceImpl extends BaseService implements KbService {
 	public ServiceResult<Integer> findMaxSequenceContentFolder(Long parentId) {
 		return success(commonDao.selectOne("kb.findMaxSequenceContentFolder", Map.of("parentId", parentId)));
 	}
+
+	@Override
+	public ServiceResult<List<KbTreeModelBean>> getFavKbTreeList(Long userId) {
+		try {
+			return success(commonDao.selectList("kb.getFavKBTreeList", Map.of("userId",userId)));
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+		
+	}
 }
