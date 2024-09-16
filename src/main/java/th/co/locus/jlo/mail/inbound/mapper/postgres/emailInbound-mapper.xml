@@ -1,0 +1,125 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="emailInbound">
+	<select id="getEmailInboundList" resultType="InboundReceiveMailBean">
+			SELECT 
+				`EI`.`ID`,
+			    `EI`.`FORM_EMAIL`,
+			    `EI`.`TO_EMAIL`,
+			    `EI`.`SUBJECT_EMAIL`,
+			    `EI`.`BODY_EMAIL`,
+			    `EI`.`DELIVER_DESC`,
+			    `EI`.`STATUS_CD`,
+			    `EI`.`ATTACHMENT_ID`,
+			    `EI`.`CREATED_BY`,
+			    `EI`.`CREATED_DATE`,
+			    `EI`.`UPDATED_BY`,
+			    `EI`.`UPDATED_DATE`
+			FROM `tb_email_inbound` EI
+
+		
+		<where>
+			 
+			<if test="buId != null">
+				AND EI.BU_ID = #{buId}
+			</if>
+			<if test="status != null and status != ''">
+				AND EI.STATUS_CD = #{status}
+			</if>
+			 
+			<if test="openedDateStart != null">
+				<![CDATA[ AND DATE(EI.CREATED_DATE) >= #{openedDateStart, jdbcType=DATE}]]>
+			</if>
+			<if test="openedDateEnd != null">
+				<![CDATA[ AND DATE(EI.CREATED_DATE) <= #{openedDateEnd, jdbcType=DATE} ]]>
+			</if>
+		 
+			 
+		</where>
+		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC
+	</select>
+
+	<select id="getEmailInboundData" resultType="InboundReceiveMailBean">
+			SELECT 
+				`EI`.`ID`,
+			    `EI`.`FORM_EMAIL`,
+			    `EI`.`TO_EMAIL`,
+			    `EI`.`SUBJECT_EMAIL`,
+			    `EI`.`BODY_EMAIL`,
+			    `EI`.`DELIVER_DESC`,
+			    `EI`.`ATTACHMENT_ID`,
+			    `EI`.`CREATED_BY`,
+			    `EI`.`CREATED_DATE`,
+			    `EI`.`UPDATED_BY`,
+			    `EI`.`UPDATED_DATE`
+			FROM `tb_email_inbound` EI
+			
+		LIMIT 1
+	</select>
+ 
+	<select id="findEmailInboundById" resultType="InboundReceiveMailBean">
+			SELECT EI.* FROM tb_email_inbound EI WHERE EI.ID = #{id}
+	</select>
+
+	<insert id="insertEmailInbound" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		
+			INSERT INTO `tb_email_inbound`
+				(`FORM_EMAIL`,
+				`TO_EMAIL`,
+				`CC_EMAIL`,
+				`BCC_EMAIL`,
+				`REPLY_TO_EMAIL`,
+				`SUBJECT_EMAIL`,
+				`PLAIN_CONTENT`,
+				`HTML_CONTENT`,
+				`STATUS_CD`,
+				`DESCRIPTION`,
+				`ATTACHMENT_ID`,
+				`BU_ID`,
+				`CREATED_BY`,
+				`CREATED_DATE`,
+				`UPDATED_BY`,
+				`UPDATED_DATE`
+				)
+			VALUES
+				(
+				#{formEmail},
+				#{toEmail},
+				#{toCcEmail},
+				#{toBccEmail},
+				#{replyToEmail},
+				#{subjectEmail},
+				#{plainContent},
+				#{htmlContent},
+				#{statusCd},
+				#{description},
+				#{attachmentId},
+				#{buId},
+				#{createdBy},
+				NOW(),
+				#{updatedBy},
+				NOW()
+			)
+		
+	</insert>
+	
+	<update id="updateEmailInbound">
+		UPDATE tb_email_inbound
+		SET		 
+		STATUS_CD = #{statusCd},		 
+		UPDATED_DATE = NOW(),
+		UPDATED_BY = #{updatedBy}
+		WHERE
+		(ID = #{id})
+		
+	</update>
+
+	<select id="generateInboundEmailNumber" resultType="String"
+		statementType="CALLABLE">
+		call GEN_NEW_SEQUENCE(
+		'EMAIL_SEQUENCE',
+		#{buId, jdbcType = INTEGER, mode = IN}
+		)
+	</select>
+
+</mapper>

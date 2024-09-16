@@ -1,0 +1,9 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="integration-chat-line">
+    <select id="getLineChannelConfig" resultType="ChatChannelConfig">
+        select * from tb_chat_channel_config where channel_key = #{channelKey} and channel_type = 'LINE'
+    </select>
+</mapper>

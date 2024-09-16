@@ -1,35 +1,55 @@
 package th.co.locus.jlo.mail.receiver.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
-
-import javax.mail.FetchProfile;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
+import java.util.Calendar;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.mail.util.MimeMessageParser;
-import org.springframework.core.io.FileSystemResource;
+import org.apache.commons.mail2.jakarta.util.MimeMessageParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.activation.DataSource;
+import jakarta.mail.FetchProfile;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.common.bean.ServiceResult;
+import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.common.util.CommonUtil;
+import th.co.locus.jlo.mail.inbound.InboundReceiveMailService;
+import th.co.locus.jlo.mail.inbound.att.InboundAttachmentReceiveMailService;
+import th.co.locus.jlo.mail.inbound.att.bean.InboundAttachmentReceiveMailBean;
+import th.co.locus.jlo.mail.inbound.bean.InboundReceiveMailBean;
+import th.co.locus.jlo.system.file.FileService;
+import th.co.locus.jlo.system.file.modelbean.FileModelBean;
 
 @Slf4j
 @Service
-public class ReceiveMailServiceImpl implements ReceiveMailService {
+public class ReceiveMailServiceImpl extends BaseService implements ReceiveMailService {
 
-	private static final String DOWNLOAD_FOLDER = "data";
+	@Autowired
+	private InboundReceiveMailService inboundReceiveMailService;
+
+	@Autowired
+	private FileService fileService;
+
+	@Autowired
+	private InboundAttachmentReceiveMailService attReceiveMailService;
+
+	@Value("${attachment.path.email.inbound.att}")
+	private String emailFilePath;
 
 	private static final String DOWNLOADED_MAIL_FOLDER = "DOWNLOADED";
 
@@ -90,11 +110,12 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		log.debug("extractMail {}", message);
 		try {
 			final MimeMessage messageToExtract = (MimeMessage) message;
-			final MimeMessageParser mimeMessageParser = new MimeMessageParser(messageToExtract).parse();
+			final org.apache.commons.mail2.jakarta.util.MimeMessageParser mimeMessageParser = new MimeMessageParser(
+					messageToExtract).parse();
 
 			showMailContent(mimeMessageParser);
 
-			downloadAttachmentFiles(mimeMessageParser);
+			// downloadAttachmentFiles(mimeMessageParser);
 
 			// To delete downloaded email
 			messageToExtract.setFlag(Flags.Flag.DELETED, true);
@@ -108,35 +129,91 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		log.debug("From: {} to: {} | Subject: {}", mimeMessageParser.getFrom(), mimeMessageParser.getTo(),
 				mimeMessageParser.getSubject());
 		log.debug("Mail content: {}", mimeMessageParser.getPlainContent());
+
+		InboundReceiveMailBean emailInbound = new InboundReceiveMailBean();
+		emailInbound.setFormEmail(mimeMessageParser.getFrom());
+		emailInbound.setToEmail(mimeMessageParser.getTo().toString());
+		emailInbound.setToCcEmail(mimeMessageParser.getCc().size() > 0 ? mimeMessageParser.getCc().toString() : null);
+		emailInbound
+				.setToBccEmail(mimeMessageParser.getBcc().size() > 0 ? mimeMessageParser.getBcc().toString() : null);
+		emailInbound.setReplyToEmail(mimeMessageParser.getReplyTo());
+		emailInbound.setSubjectEmail(mimeMessageParser.getSubject());
+		emailInbound.setPlainContent(mimeMessageParser.getPlainContent());
+		emailInbound.setHtmlContent(mimeMessageParser.getHtmlContent());
+		emailInbound.setStatusCd("01");
+		emailInbound.setCreatedBy((long) 41);
+		emailInbound.setUpdatedBy((long) 41);
+		emailInbound.setBuId(1);
+
+		ServiceResult<InboundReceiveMailBean> serviceResult = inboundReceiveMailService
+				.insertEmailInbound(emailInbound);
+		if (serviceResult.isSuccess()) {
+			InboundReceiveMailBean ibReceiveMailBean = serviceResult.getResult();
+			downloadAttachmentFiles(mimeMessageParser, ibReceiveMailBean);
+
+		}
+
 	}
 
-	private void downloadAttachmentFiles(MimeMessageParser mimeMessageParser) {
+	private void downloadAttachmentFiles(MimeMessageParser mimeMessageParser,
+			InboundReceiveMailBean ibReceiveMailBean) {
 		log.debug("Email has {} attachment files", mimeMessageParser.getAttachmentList().size());
+
 		mimeMessageParser.getAttachmentList().forEach(dataSource -> {
 			if (StringUtils.isNotBlank(dataSource.getName())) {
-				String rootDirectoryPath = new FileSystemResource("").getFile().getAbsolutePath();
-				String dataFolderPath = rootDirectoryPath + File.separator + DOWNLOAD_FOLDER;
-				createDirectoryIfNotExists(dataFolderPath);
 
-				String downloadedAttachmentFilePath = rootDirectoryPath + File.separator + DOWNLOAD_FOLDER
-						+ File.separator + dataSource.getName();
-				log.debug("downloadedAttachmentFilePath : {}", downloadedAttachmentFilePath);
+				saveFileAttachment(dataSource, ibReceiveMailBean);
 
-				File downloadedAttachmentFile = new File(downloadedAttachmentFilePath);
-
-				log.info("Save attachment file to: {}", downloadedAttachmentFilePath);
-
-				try (OutputStream out = new FileOutputStream(downloadedAttachmentFile)
-				// InputStream in = dataSource.getInputStream()
-				) {
-					InputStream in = dataSource.getInputStream();
-					IOUtils.copy(in, out);
-				} catch (IOException e) {
-					log.error("Failed to save file.", e);
-				}
 			}
+
 		});
 	}
+
+	private void saveFileAttachment(DataSource dataSource, InboundReceiveMailBean ibReceiveMailBean) {
+		try {
+
+			String mailId = "inbound";
+			byte[] inByte = IOUtils.toByteArray(dataSource.getInputStream());
+			MultipartFile result = new MockMultipartFile(dataSource.getName(), dataSource.getName(),
+					dataSource.getContentType(), inByte);
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+			String newFileName = mailId + "_" + timeStamp + CommonUtil.getFileExtension(result);
+
+			FileModelBean fileBean = new FileModelBean();
+			fileBean.setFilePath(emailFilePath);
+			fileBean.setFileExtension(CommonUtil.getFileExtension(result));
+			fileBean.setFileName(newFileName);
+			fileBean.setFileSize(result.getSize());
+			fileBean.setCreatedBy((long) 41);
+			fileBean.setUpdatedBy((long) 41);
+			
+			log.info("***fileService :{}",fileService);
+			log.info("***fileBean :{}",fileBean);
+			
+			fileBean = fileService.createAttachment(fileBean).getResult();
+			log.debug("Create Attachment : {} ", fileBean);
+			fileService.saveFile(result, emailFilePath, fileBean.getFileName());
+			log.debug("saveFile Success ");
+
+//			 insert relation tb_email_inbound_attachment
+			InboundAttachmentReceiveMailBean beanAtt = new InboundAttachmentReceiveMailBean();
+			beanAtt.setEmailInboundId(ibReceiveMailBean.getId());
+			beanAtt.setAttachmentId(fileBean.getAttId());
+			beanAtt.setBuId(1);
+			beanAtt.setCreatedBy((long) 41);
+			beanAtt.setUpdatedBy((long) 41);
+			attReceiveMailService.createEmailInboundAtt(beanAtt);
+			
+		
+			
+		} catch (Exception e) {
+			log.error("Save File Attachment : {} ", e.getMessage());
+			e.printStackTrace();
+		}
+
+	}
+	
+ 
 
 	private void createDirectoryIfNotExists(String directoryPath) {
 		if (!Files.exists(Paths.get(directoryPath))) {
@@ -147,4 +224,6 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 			}
 		}
 	}
+
+	
 }

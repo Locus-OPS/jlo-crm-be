@@ -17,28 +17,28 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableAsync
 public class AsyncConfiguration implements AsyncConfigurer {
-	
+
 	private final TaskExecutionProperties taskExecutionProperties;
 
 	public AsyncConfiguration(TaskExecutionProperties taskExecutionProperties) {
 		this.taskExecutionProperties = taskExecutionProperties;
 	}
-	
-	 @Override
-	    @Bean(name = "asyncTaskExecutor")
-	    public Executor getAsyncExecutor() {
-	        log.debug("Creating Async Task Executor");
-	        
-	        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-	        executor.setCorePoolSize(taskExecutionProperties.getPool().getCoreSize());
-	        executor.setMaxPoolSize(taskExecutionProperties.getPool().getMaxSize());
-	        executor.setQueueCapacity(taskExecutionProperties.getPool().getQueueCapacity());
-	        executor.setThreadNamePrefix(taskExecutionProperties.getThreadNamePrefix());
-	        return executor;
-	    }
 
-	    @Override
-	    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-	        return new SimpleAsyncUncaughtExceptionHandler();
-	    }
+	@Override
+	@Bean(name = "asyncTaskExecutor")
+	public Executor getAsyncExecutor() {
+		log.debug("Creating Async Task Executor");
+
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(taskExecutionProperties.getPool().getCoreSize());
+		executor.setMaxPoolSize(taskExecutionProperties.getPool().getMaxSize());
+		executor.setQueueCapacity(taskExecutionProperties.getPool().getQueueCapacity());
+		executor.setThreadNamePrefix(taskExecutionProperties.getThreadNamePrefix());
+		return executor;
+	}
+
+	@Override
+	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+		return new SimpleAsyncUncaughtExceptionHandler();
+	}
 }

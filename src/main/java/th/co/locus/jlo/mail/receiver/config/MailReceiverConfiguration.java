@@ -1,6 +1,8 @@
 package th.co.locus.jlo.mail.receiver.config;
 
 import java.util.Properties;
+
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +15,6 @@ import org.springframework.integration.mail.ImapMailReceiver;
 import org.springframework.integration.mail.MailReceiver;
 import org.springframework.integration.mail.MailReceivingMessageSource;
 import org.springframework.messaging.Message;
-import javax.mail.internet.MimeMessage;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.mail.receiver.service.ReceiveMailService;
@@ -40,7 +41,8 @@ public class MailReceiverConfiguration {
 
 	@Value("${mail.imap.mailbox}")
 	private String mailbox;
-
+	
+	
 	private final ReceiveMailService receiveMailService;
 
 	public MailReceiverConfiguration(ReceiveMailService receiveMailService) {
@@ -60,7 +62,7 @@ public class MailReceiverConfiguration {
 	}
 
 	@Bean()
-	@InboundChannelAdapter(channel = "receiveEmailChannel", poller = @Poller(fixedDelay = "10000", taskExecutor = "asyncTaskExecutor"))
+	@InboundChannelAdapter(channel = "receiveEmailChannel", poller = @Poller(fixedDelay = "${mail.imap.poller.fixedDelay}", taskExecutor = "asyncTaskExecutor"),autoStartup ="${mail.imap.receive.autoStartup}")
 	public MailReceivingMessageSource mailMessageSource(MailReceiver mailReceiver) {
 		MailReceivingMessageSource mailReceivingMessageSource = new MailReceivingMessageSource(mailReceiver);
 		return mailReceivingMessageSource;
