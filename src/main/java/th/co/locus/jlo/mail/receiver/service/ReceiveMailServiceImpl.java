@@ -140,7 +140,7 @@ public class ReceiveMailServiceImpl implements ReceiveMailService {
 		emailInbound.setUpdatedBy((long) 41);
 		emailInbound.setBuId(1);
 		inboundReceiveMailService.insertEmailInbound(emailInbound);
-
+//		tb_email_inbound_attachment
 	}
 
 	private void downloadAttachmentFiles(MimeMessageParser mimeMessageParser) {
