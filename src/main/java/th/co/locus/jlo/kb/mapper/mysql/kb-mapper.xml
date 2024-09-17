@@ -352,4 +352,10 @@
 			where fav.USER_ID =#{userId}
 		) TMP
 	</select>
+	<update id="setExpiredKB">
+		update tb_content 
+		set 
+		CONTENT_STATUS ='04'
+		where CONTENT_STATUS ='02' and <![CDATA[END_DATE <= now()]]>
+	</update>
 </mapper>
