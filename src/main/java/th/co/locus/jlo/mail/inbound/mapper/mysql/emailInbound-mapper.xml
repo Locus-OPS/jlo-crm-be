@@ -11,6 +11,7 @@
 			    ei.REPLY_TO_EMAIL,
 			    ei.SUBJECT_EMAIL,
 			    ei.STATUS_CD,
+			    cb.code_name as statusName,
 			    ei.PLAIN_CONTENT,
 			    ei.HTML_CONTENT,
 			    ei.DESCRIPTION,
@@ -21,6 +22,7 @@
 			    ei.UPDATED_BY,
 			    ei.UPDATED_DATE
 			FROM tb_email_inbound ei 
+			LEFT OUTER JOIN tb_codebook cb ON ei.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE = 'MAIL_IB_STATUS'
 		 
 		<where>
 			 
@@ -55,20 +57,28 @@
 
 	<select id="getEmailInboundData" resultType="InboundReceiveMailBean">
 			SELECT 
-				`EI`.`ID`,
-			    `EI`.`FORM_EMAIL`,
-			    `EI`.`TO_EMAIL`,
-			    `EI`.`SUBJECT_EMAIL`,
-			    `EI`.`BODY_EMAIL`,
-			    `EI`.`DELIVER_DESC`,
-			    `EI`.`ATTACHMENT_ID`,
-			    `EI`.`CREATED_BY`,
-			    `EI`.`CREATED_DATE`,
-			    `EI`.`UPDATED_BY`,
-			    `EI`.`UPDATED_DATE`
-			FROM `tb_email_inbound` EI
-			
-		LIMIT 1
+				ei.ID,
+			    ei.FORM_EMAIL,
+			    ei.TO_EMAIL,
+			    ei.CC_EMAIL,
+			    ei.BCC_EMAIL,
+			    ei.REPLY_TO_EMAIL,
+			    ei.SUBJECT_EMAIL,
+			    ei.STATUS_CD,
+			    cb.code_name as statusName,
+			    ei.PLAIN_CONTENT,
+			    ei.HTML_CONTENT,
+			    ei.DESCRIPTION,
+			    ei.ATTACHMENT_ID,
+			    ei.BU_ID,
+			    ei.CREATED_BY,
+			    ei.CREATED_DATE,
+			    ei.UPDATED_BY,
+			    ei.UPDATED_DATE
+			FROM tb_email_inbound ei 
+			LEFT OUTER JOIN tb_codebook cb ON ei.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE = 'MAIL_IB_STATUS'
+		 	WHERE ei.ID = #{id}	
+			LIMIT 1
 	</select>
  
 	<select id="findEmailInboundById" resultType="InboundReceiveMailBean">

@@ -23,7 +23,7 @@ public class InboundReceiveMailBean extends BaseModelBean implements Serializabl
 	private String plainContent;
 	private String htmlContent;
 	private String statusCd;
+	private String statusName;
 	private String description;
-	private String attachmentId;
 
 }

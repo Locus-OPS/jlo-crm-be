@@ -41,6 +41,30 @@
 		
 	</insert>
 	
+	
+	 <select id="getEmailInboundAttListByParent" resultType="InboundAttachmentReceiveMailBean">
+		SELECT
+			att.ID as id,
+			attach.ATT_ID as attachmentId,
+			att.EMAIL_INBOUND_ID as emailInboundId,
+			attach.FILE_NAME as fileName, 
+			attach.FILE_PATH as filePath,
+			CONCAT(attach.FILE_PATH,'\\', attach.FILE_NAME) as fullPath,
+			att.BU_ID as buId,
+			attach.FILE_EXTENSION as fileExtension,
+			attach.FILE_SIZE as fileSize,
+			att.CREATED_DATE as createdDate,
+			att.CREATED_BY as createdBy ,
+			att.UPDATED_DATE as updatedDate,
+			att.UPDATED_BY as updatedBy
+		FROM tb_email_inbound_attachment att
+		left outer join tb_att attach on att.ATTACHMENT_ID = attach.ATT_ID
+		WHERE att.EMAIL_INBOUND_ID = #{id}
+		AND att.BU_ID = #{buId}
+		ORDER BY att.CREATED_DATE DESC 
+		 
+	</select>
+	
 	 
 
  
