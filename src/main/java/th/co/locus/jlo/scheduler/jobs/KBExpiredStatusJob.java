@@ -20,6 +20,7 @@ public class KBExpiredStatusJob extends BaseQuartzJob implements InterruptableJo
 	private KbService kbService;
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) {
+		log.info("Set App KB Expired Status Job");
 		kbService = applicationContext.getBean(KbService.class);
 	}
 	
