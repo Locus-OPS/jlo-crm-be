@@ -13,9 +13,9 @@
 		    S.RUNON_CONTEXT_ROOT,
             S.PRIORITY,
             S.SEQ,
-            CONCAT(U1.FIRST_NAME,' ',U1.LAST_NAME) AS createdBy,
+            CONCAT(U1.FIRST_NAME,' ',U1.LAST_NAME) AS createdByName,
             S.CREATED_DATE,
-            CONCAT(U2.FIRST_NAME,' ',U2.LAST_NAME) AS updatedBy,
+            CONCAT(U2.FIRST_NAME,' ',U2.LAST_NAME) AS updatedByName,
             S.UPDATED_DATE
 	  	FROM TB_SCHEDULER S
 	  	LEFT JOIN TB_USER U1 ON U1.ID = S.CREATED_BY

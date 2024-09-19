@@ -224,4 +224,14 @@ public class KbServiceImpl extends BaseService implements KbService {
 		}
 		
 	}
+
+	@Override
+	public void setExpiredKB() {
+		try {
+			commonDao.update("kb.setExpiredKB");
+		}catch(Exception ex) {
+			
+		}
+		
+	}
 }

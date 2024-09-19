@@ -46,4 +46,5 @@ public interface KbService {
 	
 	public ServiceResult<List<KbTreeModelBean>> getFavKbTreeList(Long userId);
 	public ServiceResult<Page<KbKeywordSearchModelBean>> getKbByKeywordList(KbKeywordSearchModelBean bean,PageRequest page);
+	public void setExpiredKB();
 }
