@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.kb.modelbean.KbKeywordModelBean;
+import th.co.locus.jlo.kb.modelbean.KbKeywordSearchModelBean;
 import th.co.locus.jlo.kb.modelbean.KbModelBean;
 import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
@@ -206,6 +209,16 @@ public class KbServiceImpl extends BaseService implements KbService {
 	public ServiceResult<List<KbTreeModelBean>> getFavKbTreeList(Long userId) {
 		try {
 			return success(commonDao.selectList("kb.getFavKBTreeList", Map.of("userId",userId)));
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+		
+	}
+
+	@Override
+	public ServiceResult<Page<KbKeywordSearchModelBean>> getKbByKeywordList(KbKeywordSearchModelBean bean,PageRequest page) {
+		try {
+			return success(commonDao.selectPage("kb.getKbByKeywordList", bean, page));
 		}catch(Exception ex) {
 			return fail("500",ex.getMessage());
 		}

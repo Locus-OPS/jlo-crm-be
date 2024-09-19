@@ -20,15 +20,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.log4j.Log4j2;
+import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.kb.modelbean.KbKeywordModelBean;
+import th.co.locus.jlo.kb.modelbean.KbKeywordSearchModelBean;
 import th.co.locus.jlo.kb.modelbean.KbModelBean;
 import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
@@ -36,7 +41,7 @@ import th.co.locus.jlo.kb.modelbean.UpdateKbFolderSequenceModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKeywordModelBean;
 import th.co.locus.jlo.system.file.FileService;
 import th.co.locus.jlo.system.file.modelbean.FileModelBean;
-
+@Log4j2
 @RestController
 @RequestMapping("api/kb")
 public class KbController extends BaseController {
@@ -177,6 +182,16 @@ public class KbController extends BaseController {
 			return ApiResponse.fail();
 		}
 	}
+	
+	@PostMapping(value = "/getKbDocumentList2", produces = "application/json")
+	public ApiResponse<List<KbDocumentModelBean>> getKbDocumentList2(@RequestBody ApiRequest<KbDocumentModelBean> request) {
+		ServiceResult<List<KbDocumentModelBean>> serviceResult = kbService.findKbDocumentByContentId(request.getData().getContentId());
+		if (serviceResult.isSuccess()) {
+			return ApiResponse.success(serviceResult.getResult());
+		} else {
+			return ApiResponse.fail();
+		}
+	}
 
 	@PostMapping(value = "/getKbMainDocument", produces = "application/json")
 	public ApiResponse<KbDocumentModelBean> getKbMainDocument(@RequestBody ApiRequest<Long> request) {
@@ -307,6 +322,20 @@ public class KbController extends BaseController {
 			return ApiResponse.success(serviceResult.getResult());
 		} else {
 			return ApiResponse.fail();
+		}
+	}
+	
+	@PostMapping(value="/getKbbyKeywordList",produces = "application/json")
+	public ApiPageResponse<List<KbKeywordSearchModelBean>> getKBbyKeywordList(@RequestBody ApiPageRequest<KbKeywordSearchModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<KbKeywordSearchModelBean>> resultService=this.kbService.getKbByKeywordList(request.getData(), pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
 		}
 	}
 }

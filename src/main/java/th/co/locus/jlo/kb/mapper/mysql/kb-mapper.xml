@@ -190,8 +190,12 @@
 			, B.FILE_NAME
 			, B.FILE_EXTENSION
 			, B.FILE_SIZE
+			, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName 
 		FROM TB_CONTENT_ATT A
 		INNER JOIN TB_ATT B ON A.ATT_ID = B.ATT_ID
+		left join tb_user cr on A.CREATED_BY =cr.ID 
+		left join tb_user upd on A.CREATED_BY =upd.ID 
 		<where>
 		  	<if test="contentId != null">
 		    	AND A.CONTENT_ID = #{contentId}
@@ -358,4 +362,21 @@
 		CONTENT_STATUS ='04'
 		where CONTENT_STATUS ='02' and <![CDATA[END_DATE <= now()]]>
 	</update>
+	<select id="getKbByKeywordList" resultType="KbKeywordSearchModelBean">
+		select 
+		kw.CONTENT_ID,
+		cont.TITLE ,
+		cont.DESCRIPTION ,
+		cont.URL ,
+		GROUP_CONCAT(kw.KEYWORD  SEPARATOR ', ') as KEYWORD
+		from tb_content_keyword kw
+		join tb_content cont on kw.CONTENT_ID=cont.CONTENT_ID 
+		where cont.END_DATE >=now() 
+		<if test="keyword!=null and keyword!=''">
+			<bind name="bKeyword" value="'%' + keyword + '%'" />
+			and kw.KEYWORD  like #{bKeyword}
+		</if>
+		group  by kw.CONTENT_ID
+		order by cont.TITLE 
+	</select>
 </mapper>

@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.kb.modelbean.KbDetailInfoModelBean;
 import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.kb.modelbean.KbKeywordModelBean;
+import th.co.locus.jlo.kb.modelbean.KbKeywordSearchModelBean;
 import th.co.locus.jlo.kb.modelbean.KbModelBean;
 import th.co.locus.jlo.kb.modelbean.KbTreeModelBean;
 import th.co.locus.jlo.kb.modelbean.UpdateKbFileSequenceModelBean;
@@ -42,4 +45,5 @@ public interface KbService {
 	public ServiceResult<Integer> findMaxSequenceContentFolder(Long parentId);
 	
 	public ServiceResult<List<KbTreeModelBean>> getFavKbTreeList(Long userId);
+	public ServiceResult<Page<KbKeywordSearchModelBean>> getKbByKeywordList(KbKeywordSearchModelBean bean,PageRequest page);
 }
