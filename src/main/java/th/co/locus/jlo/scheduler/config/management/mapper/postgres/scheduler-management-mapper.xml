@@ -1,0 +1,159 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="scheduler.management">
+	<select id="FIND_ALL_SCHEDULER" resultType="SchedulerBean">
+		SELECT 
+			S.ID, 
+		    S.SCHEDULER_NAME, 
+		    S.SCHEDULER_TYPE, 
+		    S.EXPRESSION, 
+		    S.USE_YN,
+		    S.CLASSPATH, 
+		    S.RUNON_INSTANCE,
+		    S.RUNON_CONTEXT_ROOT,
+            S.PRIORITY,
+            S.SEQ,
+            CONCAT(U1.FIRST_NAME,' ',U1.LAST_NAME) AS createdBy,
+            S.CREATED_DATE,
+            CONCAT(U2.FIRST_NAME,' ',U2.LAST_NAME) AS updatedBy,
+            S.UPDATED_DATE
+	  	FROM TB_SCHEDULER S
+	  	LEFT JOIN TB_USER U1 ON U1.ID = S.CREATED_BY
+	  	LEFT JOIN TB_USER U2 ON U2.ID = S.UPDATED_BY
+	  	<if test="schedulerName != null and schedulerName != ''">
+			<bind name="schedulerName" value="schedulerName + '%'" />
+	    	AND S.SCHEDULER_NAME like #{schedulerName}
+	  	</if>
+	  	<if test="useYn != null and useYn != ''">
+	    	AND S.USE_YN = #{useYn}
+	  	</if>
+	  	<choose>
+		  	<when test="sortColumn != null and sortColumn != ''">
+		  		<if test="sortColumn == 'schedulerName'">
+		  			order by SCHEDULER_NAME ${sortDirection}	  	
+		  		</if>
+		  	</when>
+		  	<otherwise>
+		  		order by SEQ ASC, S.ID ASC	  	
+		  	</otherwise>
+	  	</choose>
+	</select>
+	
+	<select id="FIND_SCHEDULER_BY_ID" resultType="SchedulerBean">		
+		SELECT 
+			S.ID, 
+		    S.SCHEDULER_NAME, 
+		    S.SCHEDULER_TYPE, 
+		    S.EXPRESSION, 
+		    S.USE_YN,
+		    S.CLASSPATH, 
+		    S.RUNON_INSTANCE,
+		    S.RUNON_CONTEXT_ROOT,
+            S.PRIORITY,
+            S.SEQ,
+            CONCAT(U1.FIRST_NAME,' ',U1.LAST_NAME) AS createdBy,
+            S.CREATED_DATE,
+            CONCAT(U2.FIRST_NAME,' ',U2.LAST_NAME) AS updatedBy,
+            S.UPDATED_DATE
+		FROM TB_SCHEDULER S		
+	  	LEFT JOIN TB_USER U1 ON U1.ID = S.CREATED_BY
+	  	LEFT JOIN TB_USER U2 ON U2.ID = S.UPDATED_BY
+		WHERE S.ID = #{id}		
+	</select>
+	
+	<select id="FIND_ALL_SCHEDULER_HISTORY" resultType="SchedulerHistoryBean">
+		SELECT 
+			ID,
+	        SCHEDULER_ID,
+	        EXECUTED_DATE,
+	        RESULT_CODE,
+	        RESULT_MESSAGE,
+	        ERROR_MESSAGE
+	  	FROM TB_SCHEDULER_LOG
+	</select>
+	
+	<select id="FIND_SCHEDULER_HISTORY_BY_SCHEDULER_ID" resultType="SchedulerHistoryBean">
+		SELECT 
+			SL.ID,
+	        SL.SCHEDULER_ID,
+	        SL.EXECUTED_DATE,
+	        SL.RESULT_CODE,
+	        SL.RESULT_MESSAGE,
+	        SL.ERROR_MESSAGE
+		  	FROM TB_SCHEDULER_LOG SL
+		WHERE SCHEDULER_ID = #{schedulerId}
+        ORDER BY EXECUTED_DATE DESC
+	</select>
+	
+	<insert id="INSERT_SCHEDULER" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TB_SCHEDULER(
+		    SCHEDULER_NAME, 
+		    SCHEDULER_TYPE, 
+		    EXPRESSION,
+			PRIORITY,
+		    USE_YN,
+		    CLASSPATH, 
+		    RUNON_INSTANCE,
+		    RUNON_CONTEXT_ROOT,
+            CREATED_BY,
+            CREATED_DATE,
+            UPDATED_BY,
+            UPDATED_DATE
+           )
+		VALUES ( 
+            #{schedulerName},
+            #{schedulerType},
+            #{expression},
+            #{priority},
+            #{useYn},
+            #{classpath},
+            #{runonInstance},
+            #{runonContextRoot},
+		    #{createdBy}, 
+		    NOW(),
+		    #{updatedBy},
+		    NOW()
+           )
+		
+	</insert>
+	
+	 <update id="UPDATE_SCHEDULER">
+		UPDATE TB_SCHEDULER SET
+	    	SCHEDULER_NAME = #{schedulerName}, 
+		    SCHEDULER_TYPE = #{schedulerType}, 
+		    EXPRESSION = #{expression}, 
+	    	PRIORITY = #{priority},
+		    USE_YN = #{useYn},
+		    CLASSPATH = #{classpath}, 
+		    RUNON_INSTANCE = #{runonInstance},
+		    RUNON_CONTEXT_ROOT = #{runonContextRoot},
+		    SEQ = #{seq},
+            UPDATED_BY = #{updatedBy},
+            UPDATED_DATE = NOW()
+		WHERE ID = #{id}
+	</update>
+	
+	<insert id="INSERT_SCHEDULER_HISTORY" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO TB_SCHEDULER_LOG(
+		    SCHEDULER_ID,
+		    EXECUTED_DATE,
+		    RESULT_CODE,
+		    RESULT_MESSAGE,
+		    ERROR_MESSAGE
+		)
+		VALUES ( 
+            #{schedulerId},
+            NOW(),
+            #{resultCode},
+            #{resultMessage},
+            #{errorMessage}
+       )
+	
+	</insert>
+	
+	<delete id="DELETE_SCHEDULER">
+		DELETE FROM TB_SCHEDULER WHERE ID = #{id}
+	</delete>
+	
+
+</mapper>
