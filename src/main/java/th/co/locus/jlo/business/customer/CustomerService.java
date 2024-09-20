@@ -43,4 +43,7 @@ public interface CustomerService {
 	
 	//Service Request
 	public ServiceResult<Page<ServiceRequestModelBean>> getCustomerSrList(ServiceRequestModelBean data, PageRequest pageRequest);
+	
+	
+	public ServiceResult<CustomerData> getCustomerByEmail(CustomerListCriteria criteria);
 }

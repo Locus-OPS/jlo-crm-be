@@ -207,4 +207,8 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 		return success(commonDao.selectPage("customer.getCustomerSrList", data, pageRequest));
 	}
 
+	@Override
+	public ServiceResult<CustomerData> getCustomerByEmail(CustomerListCriteria criteria) {
+		return success(commonDao.selectOne("customer.findOneCustomerByEmail", criteria));
+	}
 }

@@ -123,9 +123,8 @@
 		 CASE t.CUSTOMER_TYPE
 		 	WHEN true THEN CONCAT(t.FIRST_NAME,' ', t.LAST_NAME)
 		 	ELSE t.BUSINESS_NAME
-		 	END AS FULL_NAME,
-		 	t.MEMBER_ID
-		from vw_customer_search t
+		 	END AS FULL_NAME
+		from vw_customer_search_list t
 		<where>
 			<if test="passportNo != null and passportNo != ''">
 		    	AND t.PASSPORT_NO = #{passportNo}
@@ -364,9 +363,8 @@
 		 	WHEN true THEN CONCAT(t.FIRST_NAME,' ', t.LAST_NAME)
 		 	ELSE t.BUSINESS_NAME
 		 	END AS FULL_NAME,
-		 	t.MEMBER_ID,
 		 	t.PHONE_NO
-		from vw_customer_search t
+		from vw_customer_search_list t
 		<where>
 			<if test="phoneNo != null and phoneNo != ''">
 		    	AND t.PHONE_NO = #{phoneNo}
@@ -375,6 +373,24 @@
 		</where>
 	</select>
 	
+	
+	<select id="findOneCustomerByEmail" resultType="customerData"> 
+       	select
+		 t.CUSTOMER_ID,
+		 CASE t.CUSTOMER_TYPE
+		 	WHEN true THEN CONCAT(t.FIRST_NAME,' ', t.LAST_NAME)
+		 	ELSE t.BUSINESS_NAME
+		 	END AS FULL_NAME,
+		 	t.PHONE_NO
+		from vw_customer_search_list t
+		<where>
+			<if test="email != null and email != ''">
+		    	AND t.EMAIL = #{email}
+		  	</if>
+		  	 
+		</where>
+		limit 1
+	</select>
 	<update id="updateCustomerProfileImage">
 		UPDATE tb_customer SET
 			  PICTURE_URL = #{pictureUrl}
@@ -422,6 +438,7 @@
 		</where>
 		ORDER BY LC.CASE_NUMBER DESC 
 	</select>
+	
 	
 	<select id="getCustomerSrList" resultType="ServiceRequestModelBean">
 		SELECT
@@ -484,4 +501,5 @@
 		ORDER BY LC.SR_NUMBER DESC 
 	</select>
 	
+	 
 </mapper>

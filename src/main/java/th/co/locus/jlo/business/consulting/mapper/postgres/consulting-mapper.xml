@@ -23,6 +23,7 @@
 							`CONSULTING_TYPE_CD`,
 							`CONTACT_ID`,
 							`CUST_ID`,
+							`TITLE`,
 							`CREATED_DATE`,
 							`CREATED_BY`
 							)
@@ -38,6 +39,7 @@
 						    #{consultingTypeCd},
 						    #{contactId},
 						    #{customerId},
+						    #{title},
 							NOW() ,
 							#{createdBy}
 							);
@@ -290,5 +292,46 @@
 				`UPDATED_BY` = #{updatedBy}
 			WHERE (`CONSULTING_NUMBER` = #{consultingNumber})
 	</update>
+	
+	
+	<insert id="createConsultingEmailInbound" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO  `tb_consulting`
+							( 
+							`CONSULTING_NUMBER`,
+							`CHANNEL_CD`,
+							`STATUS_CD`,
+							`START_DATE`,
+							`CALLING_NUMBER`,
+							`CALL_OBJECT_ID`,
+							`OWNER_ID`,
+							`CONSULTING_TYPE_CD`,
+							`CONTACT_ID`,
+							`CUST_ID`,
+							`TITLE`,
+							`CREATED_DATE`,
+							`CREATED_BY`,
+							`UPDATED_DATE`,
+							`UPDATED_BY`
+							)
+							VALUES
+							(
+							#{consultingNumber},
+						    #{channelCd},
+						    #{statusCd},
+						    NOW(),
+						    #{callingNumber},
+						    #{callObjectId},
+						    #{consOwnerId},
+						    #{consultingTypeCd},
+						    #{contactId},
+						    #{customerId},
+						    #{title},
+							NOW() ,
+							#{createdBy},
+							NOW(),
+							#{updatedBy}
+							);
+
+	</insert>
 	
 </mapper>

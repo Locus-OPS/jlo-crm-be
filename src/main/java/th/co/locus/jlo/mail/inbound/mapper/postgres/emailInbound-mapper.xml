@@ -3,58 +3,80 @@
 <mapper namespace="emailInbound">
 	<select id="getEmailInboundList" resultType="InboundReceiveMailBean">
 			SELECT 
-				`EI`.`ID`,
-			    `EI`.`FORM_EMAIL`,
-			    `EI`.`TO_EMAIL`,
-			    `EI`.`SUBJECT_EMAIL`,
-			    `EI`.`BODY_EMAIL`,
-			    `EI`.`DELIVER_DESC`,
-			    `EI`.`STATUS_CD`,
-			    `EI`.`ATTACHMENT_ID`,
-			    `EI`.`CREATED_BY`,
-			    `EI`.`CREATED_DATE`,
-			    `EI`.`UPDATED_BY`,
-			    `EI`.`UPDATED_DATE`
-			FROM `tb_email_inbound` EI
-
-		
+				ei.ID,
+			    ei.FORM_EMAIL,
+			    ei.TO_EMAIL,
+			    ei.CC_EMAIL,
+			    ei.BCC_EMAIL,
+			    ei.REPLY_TO_EMAIL,
+			    ei.SUBJECT_EMAIL,
+			    ei.STATUS_CD,
+			    cb.code_name as statusName,
+			    ei.PLAIN_CONTENT,
+			    ei.HTML_CONTENT,
+			    ei.DESCRIPTION, 
+			    ei.BU_ID,
+			    ei.CREATED_BY,
+			    ei.CREATED_DATE,
+			    ei.UPDATED_BY,
+			    ei.UPDATED_DATE
+			FROM tb_email_inbound ei 
+			LEFT OUTER JOIN tb_codebook cb ON ei.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE = 'MAIL_IB_STATUS'
+		 
 		<where>
 			 
 			<if test="buId != null">
-				AND EI.BU_ID = #{buId}
+				AND ei.BU_ID = #{buId}
 			</if>
-			<if test="status != null and status != ''">
-				AND EI.STATUS_CD = #{status}
+			<if test="formEmail != null and formEmail != ''">
+				<bind name="keyFormEmail" value="'%' + formEmail + '%'" />
+				AND ei.FORM_EMAIL like #{keyFormEmail}
+			</if>
+			<if test="subjectEmail != null and subjectEmail != ''">
+				<bind name="keySubjectEmail" value="'%' + subjectEmail + '%'" />
+				 AND ei.SUBJECT_EMAIL like #{keySubjectEmail}
 			</if>
 			 
-			<if test="openedDateStart != null">
-				<![CDATA[ AND DATE(EI.CREATED_DATE) >= #{openedDateStart, jdbcType=DATE}]]>
+			<if test="startDate != null and startDate !=''">
+				<![CDATA[ AND DATE(ei.CREATED_DATE) >= #{startDate, jdbcType=DATE}]]>
 			</if>
-			<if test="openedDateEnd != null">
-				<![CDATA[ AND DATE(EI.CREATED_DATE) <= #{openedDateEnd, jdbcType=DATE} ]]>
+			<if test="endDate != null and endDate !=''">
+				<![CDATA[ AND DATE(ei.CREATED_DATE) <= #{endDate, jdbcType=DATE} ]]>
 			</if>
+			
+			<if test="plainContent != null and plainContent != ''">
+				<bind name="keyPlainContent" value="'%' + plainContent + '%'" />
+		    		AND ei.PLAIN_CONTENT like #{keyPlainContent}
+		  	</if>
 		 
 			 
 		</where>
-		ORDER BY LC.CREATED_DATE DESC,LC.CASE_NUMBER DESC
+		ORDER BY ei.CREATED_DATE DESC
 	</select>
 
 	<select id="getEmailInboundData" resultType="InboundReceiveMailBean">
 			SELECT 
-				`EI`.`ID`,
-			    `EI`.`FORM_EMAIL`,
-			    `EI`.`TO_EMAIL`,
-			    `EI`.`SUBJECT_EMAIL`,
-			    `EI`.`BODY_EMAIL`,
-			    `EI`.`DELIVER_DESC`,
-			    `EI`.`ATTACHMENT_ID`,
-			    `EI`.`CREATED_BY`,
-			    `EI`.`CREATED_DATE`,
-			    `EI`.`UPDATED_BY`,
-			    `EI`.`UPDATED_DATE`
-			FROM `tb_email_inbound` EI
-			
-		LIMIT 1
+				ei.ID,
+			    ei.FORM_EMAIL,
+			    ei.TO_EMAIL,
+			    ei.CC_EMAIL,
+			    ei.BCC_EMAIL,
+			    ei.REPLY_TO_EMAIL,
+			    ei.SUBJECT_EMAIL,
+			    ei.STATUS_CD,
+			    cb.code_name as statusName,
+			    ei.PLAIN_CONTENT,
+			    ei.HTML_CONTENT,
+			    ei.DESCRIPTION, 
+			    ei.BU_ID,
+			    ei.CREATED_BY,
+			    ei.CREATED_DATE,
+			    ei.UPDATED_BY,
+			    ei.UPDATED_DATE
+			FROM tb_email_inbound ei 
+			LEFT OUTER JOIN tb_codebook cb ON ei.STATUS_CD = cb.CODE_ID AND cb.CODE_TYPE = 'MAIL_IB_STATUS'
+		 	WHERE ei.ID = #{id}	
+			LIMIT 1
 	</select>
  
 	<select id="findEmailInboundById" resultType="InboundReceiveMailBean">
@@ -73,8 +95,7 @@
 				`PLAIN_CONTENT`,
 				`HTML_CONTENT`,
 				`STATUS_CD`,
-				`DESCRIPTION`,
-				`ATTACHMENT_ID`,
+				`DESCRIPTION`, 
 				`BU_ID`,
 				`CREATED_BY`,
 				`CREATED_DATE`,
@@ -92,8 +113,7 @@
 				#{plainContent},
 				#{htmlContent},
 				#{statusCd},
-				#{description},
-				#{attachmentId},
+				#{description}, 
 				#{buId},
 				#{createdBy},
 				NOW(),
@@ -102,6 +122,11 @@
 			)
 		
 	</insert>
+	
+	<select id="getEmailInboundAllList" resultType="InboundReceiveMailBean">
+			SELECT EI.* FROM tb_email_inbound EI WHERE  EI.STATUS_CD = 01 ORDER BY EI.ID ASC
+	</select>
+	
 	
 	<update id="updateEmailInbound">
 		UPDATE tb_email_inbound

@@ -123,6 +123,11 @@
 		
 	</insert>
 	
+	<select id="getEmailInboundAllList" resultType="InboundReceiveMailBean">
+			SELECT EI.* FROM tb_email_inbound EI WHERE  EI.STATUS_CD = 01 ORDER BY EI.ID ASC
+	</select>
+	
+	
 	<update id="updateEmailInbound">
 		UPDATE tb_email_inbound
 		SET		 

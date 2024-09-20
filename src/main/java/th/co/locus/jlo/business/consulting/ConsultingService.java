@@ -12,7 +12,9 @@ import th.co.locus.jlo.common.bean.ServiceResult;
 public interface ConsultingService {
 
 	public ServiceResult<ConsultingModelBean> insertConsultingInital(ConsultingModelBean inital);
-
+	
+	public ServiceResult<ConsultingModelBean> insertConsultingEmailInbound(ConsultingModelBean inital);
+	
 	public ServiceResult<ConsultingModelBean> getConsultingData(ConsultingModelBean bean);
 
 	public ServiceResult<ConsultingModelBean> updateConsulting(ConsultingModelBean bean);

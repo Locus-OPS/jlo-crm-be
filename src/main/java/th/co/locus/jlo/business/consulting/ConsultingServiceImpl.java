@@ -15,6 +15,7 @@ import th.co.locus.jlo.common.service.BaseService;
 @Slf4j
 @Service
 public class ConsultingServiceImpl extends BaseService implements ConsultingService {
+	
 	@Override
 	public ServiceResult<ConsultingModelBean> insertConsultingInital(ConsultingModelBean inital) {
 
@@ -31,7 +32,22 @@ public class ConsultingServiceImpl extends BaseService implements ConsultingServ
 
 	}
 
-	
+	@Override
+	public ServiceResult<ConsultingModelBean> insertConsultingEmailInbound(ConsultingModelBean inital) {
+
+		String consultingNumber = commonDao.selectOne("consulting.generateConsultingNumber", inital);
+		if (consultingNumber != null && consultingNumber != "") {
+			inital.setConsultingNumber(consultingNumber);
+			int resultInsert = commonDao.insert("consulting.createConsultingEmailInbound", inital);
+			if (resultInsert > 0) {
+				return success(commonDao.selectOne("consulting.findConsultingData", inital));
+			}
+		}
+
+		return fail();
+
+	}
+
 
 	@Override
 	public ServiceResult<ConsultingModelBean> getConsultingData(ConsultingModelBean bean) {
