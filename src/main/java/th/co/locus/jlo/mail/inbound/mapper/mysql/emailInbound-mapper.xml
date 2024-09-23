@@ -48,6 +48,10 @@
 				<bind name="keyPlainContent" value="'%' + plainContent + '%'" />
 		    		AND ei.PLAIN_CONTENT like #{keyPlainContent}
 		  	</if>
+		  	
+		  	<if test="statusCd != null and statusCd != ''">
+				AND ei.STATUS_CD = #{statusCd}
+			</if>
 		 
 			 
 		</where>

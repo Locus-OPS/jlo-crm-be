@@ -19,5 +19,6 @@ public class SearchInboundReceiveMailBean extends BaseModelBean implements Seria
 	private String startDate;
 	private String endDate;	
 	private String plainContent;
+	private String statusCd;
 
 }
