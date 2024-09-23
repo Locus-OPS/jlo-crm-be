@@ -37,10 +37,11 @@
 				 AND ei.SUBJECT_EMAIL like #{keySubjectEmail}
 			</if>
 			 
-			<if test="startDate != null and startDate !=''">
+			<if test="startDate != null">
 				<![CDATA[ AND DATE(ei.CREATED_DATE) >= #{startDate, jdbcType=DATE}]]>
 			</if>
-			<if test="endDate != null and endDate !=''">
+			
+			<if test="endDate != null">
 				<![CDATA[ AND DATE(ei.CREATED_DATE) <= #{endDate, jdbcType=DATE} ]]>
 			</if>
 			
@@ -48,9 +49,11 @@
 				<bind name="keyPlainContent" value="'%' + plainContent + '%'" />
 		    		AND ei.PLAIN_CONTENT like #{keyPlainContent}
 		  	</if>
-		  <if test="statusCd != null and statusCd != ''">
+		  	
+		  	<if test="statusCd != null and statusCd != ''">
 				AND ei.STATUS_CD = #{statusCd}
 			</if>
+		 
 			 
 		</where>
 		ORDER BY ei.CREATED_DATE DESC

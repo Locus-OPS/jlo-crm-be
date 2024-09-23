@@ -1,23 +1,28 @@
 package th.co.locus.jlo.mail.inbound.bean;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import th.co.locus.jlo.common.bean.BaseModelBean;
+import th.co.locus.jlo.common.bean.SortingModelBean;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
-@ToString
-public class SearchInboundReceiveMailBean extends BaseModelBean implements Serializable {
-	
-	private static final long serialVersionUID = 5439212822221212607L;
+@EqualsAndHashCode(callSuper = true)
+public class SearchInboundReceiveMailBean extends SortingModelBean {
+
 	private String formEmail;
 	private String toEmail;
 	private String subjectEmail;
-	private String startDate;
-	private String endDate;	
+
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private Date startDate;
+
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private Date endDate;
+
 	private String plainContent;
 	private String statusCd;
 
