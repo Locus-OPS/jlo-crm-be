@@ -133,8 +133,8 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 						CaseModelBean caseBean = new CaseModelBean();
 						caseBean.setCustomerId(custData.getCustomerId());
 						caseBean.setConsultingNumber(consult.getConsultingNumber());
-						caseBean.setCaseSlaId("1");
 						caseBean.setSubject(email.getSubjectEmail() != null ? email.getSubjectEmail() : "Email No subject" );
+						caseBean.setCaseSlaId("1");
 						caseBean.setStatus("01"); // NEW
 						caseBean.setDivisionTypeCode("02"); // CASE_DIVISION > Service Request
 						caseBean.setType("25"); // CASE_TYPE
