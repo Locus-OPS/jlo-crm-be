@@ -436,7 +436,7 @@
 				AND LC.BU_ID = #{buId}
 			</if>
 		</where>
-		ORDER BY LC.CASE_NUMBER DESC 
+		ORDER BY LC.CREATED_DATE DESC 
 	</select>
 	
 	
@@ -498,7 +498,7 @@
 				AND LC.BU_ID = #{buId}
 			</if>
 		</where>
-		ORDER BY LC.SR_NUMBER DESC 
+		ORDER BY LC.CREATED_DATE DESC 
 	</select>
 	
 	 
