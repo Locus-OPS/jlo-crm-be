@@ -17,6 +17,7 @@
 		    LC.PRIORITY,
 		    LC.STATUS,
 		    LC.CHANNEL,
+	      	CB5.code_name as channelName,
 		    LC.OWNER,
 		    LC.OWNER_DEPT,
 		    LC.SUBJECT,
@@ -50,6 +51,7 @@
 		LEFT OUTER JOIN  TB_CODEBOOK CB2 ON LC.SUBTYPE = CB2.CODE_ID AND CB2.CODE_TYPE = 'CASE_SUBTYPE'
 		LEFT OUTER JOIN  TB_CODEBOOK CB3 ON LC.PRIORITY = CB3.CODE_ID AND CB3.CODE_TYPE = 'CASE_PRIORITY'      
         LEFT OUTER JOIN  TB_CODEBOOK CB4 ON LC.DIVISION_TYPE_CODE = CB4.CODE_ID AND CB4.CODE_TYPE = 'CASE_DIVISION'
+        LEFT OUTER JOIN  TB_CODEBOOK CB5 ON LC.DIVISION_TYPE_CODE = CB5.CODE_ID AND CB5.CODE_TYPE = 'CASE_CHANNEL'
         INNER JOIN  TB_CUSTOMER TCM ON LC.CUSTOMER_ID = TCM.CUSTOMER_ID
         LEFT JOIN TB_USER u1 ON LC.CREATED_BY = u1.ID
         LEFT JOIN TB_USER u2 ON LC.UPDATED_BY = u2.ID
@@ -69,6 +71,9 @@
 			</if>
 			<if test="status != null and status != ''">
 				AND LC.STATUS = #{status}
+			</if>
+			<if test="channel != null and channel != ''">
+				AND LC.CHANNEL = #{channel}
 			</if>
 			<if test="customerId != null and customerId != ''">
 				AND LC.CUSTOMER_ID = #{customerId}

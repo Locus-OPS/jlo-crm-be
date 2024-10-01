@@ -26,6 +26,7 @@ public class SearchCaseModelBean extends SortingModelBean {
 	private String subType;
     private Integer buId;
 	private String status;
+	private String channel;
     private Long customerId;
 	private String ownerId;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
