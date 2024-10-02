@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="caseNotiLog">
+
+	<insert id="createCaseNotiLog" keyColumn="ID" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO tb_case_notification
+		(
+			USER_ID
+			, CASE_NUMBER
+			, CREATED_DATE
+			, CREATED_BY
+			, IS_READ
+			, READ_AT
+			, DESCRIPTION
+			, ACTIVITY_NUMBER
+		)
+		VALUES(
+			#{userId}
+			, #{caseNumber}
+			, now()
+			, #{createdBy}
+			, 0
+			, NULL
+			, #{description}
+			, #{activityNumber}
+		)
+	</insert>
+	
+	<update id="updateReadStatus">
+		UPDATE tb_case_notification
+		SET 
+		IS_READ=1
+		, READ_AT=now()
+		WHERE ID=#{id}
+	</update>
+	
+	<select id="getCaseNotiList" resultType="CaseNotificationLogModelbean">
+		select 
+			nt.ID 
+			,nt.USER_ID
+			,nt.CASE_NUMBER
+			,nt.ACTIVITY_NUMBER 
+			,nt.IS_READ 
+			,nt.READ_AT 
+			,concat(nt.DESCRIPTION,' จาก ', cr.FIRST_NAME,' ',cr.LAST_NAME ) as DESCRIPTION
+			,nt.CREATED_DATE 
+			,nt.CREATED_BY 
+		from tb_case_notification nt
+		left join tb_user cr on nt.CREATED_BY =cr.ID 
+		where nt.USER_ID = #{userId} and nt.ACTIVITY_NUMBER is null
+	</select>
+	
+	<select id="getActivityNotiList" resultType="CaseNotificationLogModelbean">
+		select 
+			nt.ID 
+			,nt.USER_ID
+			,nt.CASE_NUMBER
+			,nt.ACTIVITY_NUMBER 
+			,nt.IS_READ 
+			,nt.READ_AT 
+			,concat(nt.DESCRIPTION,' จาก ', cr.FIRST_NAME,' ',cr.LAST_NAME ) as DESCRIPTION
+			,nt.CREATED_DATE 
+			,nt.CREATED_BY 
+		from tb_case_notification nt
+		left join tb_user cr on nt.CREATED_BY =cr.ID 
+		where nt.USER_ID = #{userId} and nt.ACTIVITY_NUMBER is not null
+	</select>
+	
+	
+</mapper>

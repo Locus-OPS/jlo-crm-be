@@ -3,6 +3,7 @@ package th.co.locus.jlo.business.cases;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,16 @@ import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.common.util.ExcelTemplateBuilder;
 import th.co.locus.jlo.util.JloExcelTemplate;
+import th.co.locus.jlo.business.casenotilog.CaseNotiLogService;
+import th.co.locus.jlo.business.casenotilog.bean.CaseNotificationLogModelbean;
 
 @Slf4j
 @Service
 public class CaseServiceImpl extends BaseService implements CaseService {
 
+	@Autowired
+	private CaseNotiLogService caseNotiLogService;
+	
 	@Override
 	public ServiceResult<Page<CaseModelBean>> getCaseList(SearchCaseModelBean bean, PageRequest pageRequest) {
 		return success(commonDao.selectPage("case.getCaseList", bean, pageRequest));
@@ -40,6 +46,15 @@ public class CaseServiceImpl extends BaseService implements CaseService {
 			String result = commonDao.selectOne("case.createCaseProcedure", bean);
 			log.info("result > " + result);
 			if (result != null) {
+				
+				//สร้าง Notification ให้ Owner
+				CaseNotificationLogModelbean caseNoti=new CaseNotificationLogModelbean();
+				caseNoti.setCaseNumber(caseNumber);
+				caseNoti.setCreatedBy(bean.getCreatedBy());
+				caseNoti.setUserId(bean.getOwner());
+				caseNoti.setDescription("คุณได้รับมอบหมาย Case Number : "+caseNumber);
+				this.caseNotiLogService.createCaseNotiLog(caseNoti);
+				
 				return success(commonDao.selectOne("case.getCaseByCaseNumber", caseNumber));
 			}
 		}
