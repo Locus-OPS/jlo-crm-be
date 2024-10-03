@@ -48,6 +48,7 @@
 		from tb_case_notification nt
 		left join tb_user cr on nt.CREATED_BY =cr.ID 
 		where nt.USER_ID = #{userId} and nt.ACTIVITY_NUMBER is null
+		limit 50
 	</select>
 	
 	<select id="getActivityNotiList" resultType="CaseNotificationLogModelbean">
@@ -64,6 +65,7 @@
 		from tb_case_notification nt
 		left join tb_user cr on nt.CREATED_BY =cr.ID 
 		where nt.USER_ID = #{userId} and nt.ACTIVITY_NUMBER is not null
+		limit 50
 	</select>
 	
 	
