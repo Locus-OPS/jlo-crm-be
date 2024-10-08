@@ -2,7 +2,7 @@
 
 <mapper namespace="caseAct">
     <select id="getCaseActivityListByCaseNumber" resultType="caseActivityModelBean">
-		SELECT
+		 SELECT
 			act.ACTIVITY_NUMBER as activityNumber,
 		    act.CASE_NUMBER as caseNumber,
 		    act.TYPE as type, 
@@ -18,11 +18,15 @@
 		    act.CREATED_DATE as createdDate,
 		    act.CREATED_BY as createdBy ,
 		    act.UPDATED_DATE as updatedDate,
-    		act.UPDATED_BY as updatedBy
+    		act.UPDATED_BY as updatedBy,
+             CONCAT(COALESCE(u1.FIRST_NAME, ''),' ', COALESCE(u1.LAST_NAME, '')) AS createdByName,
+		    CONCAT(COALESCE(u2.FIRST_NAME, ''),' ',COALESCE(u2.LAST_NAME, '')) AS updatedByName 
 		FROM TB_CASE_ACTIVITY act    
-		 LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
+		LEFT OUTER JOIN TB_USER u on act.OWNER_CODE =  u.ID 
 		LEFT OUTER JOIN tb_codebook cb1  on act.TYPE = cb1.CODE_ID  and cb1.CODE_TYPE ='ACT_TYPE'
 		LEFT OUTER JOIN tb_codebook cb2  on act.STATUS = cb2.CODE_ID  and cb2.CODE_TYPE ='ACT_STATUS'
+		LEFT JOIN TB_USER u1 ON act.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON act.UPDATED_BY = u2.ID
 		WHERE act.CASE_NUMBER = #{caseNumber}	 
 		AND act.BU_ID = #{buId}
 		ORDER BY act.CREATED_DATE DESC 

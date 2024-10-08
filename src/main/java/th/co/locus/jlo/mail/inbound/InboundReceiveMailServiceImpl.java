@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.CaseService;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
+import th.co.locus.jlo.business.cases.casesact.CaseActivityService;
+import th.co.locus.jlo.business.cases.casesact.bean.CaseActivityModelBean;
 import th.co.locus.jlo.business.consulting.ConsultingService;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
 import th.co.locus.jlo.business.customer.CustomerService;
@@ -33,6 +35,9 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 	
 	@Autowired
 	private CustomerService custService;
+	
+	@Autowired
+	private CaseActivityService caseAct;
 	
 	
 	@Override
@@ -130,6 +135,7 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 
 					if (serviceResult.isSuccess()) {
 						ConsultingModelBean consult = serviceResult.getResult();
+						
 						CaseModelBean caseBean = new CaseModelBean();
 						caseBean.setCustomerId(custData.getCustomerId());
 						caseBean.setConsultingNumber(consult.getConsultingNumber());
@@ -151,23 +157,80 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 						caseBean.setBuId(1);
 						caseBean.setCreatedBy((long) 20);
 						caseBean.setUpdatedBy((long) 20);
-						ServiceResult<CaseModelBean> caseResultInsert = caseService.createCase(caseBean);
-						if (caseResultInsert.isSuccess()) {
-							InboundReceiveMailBean emailUpdate = new InboundReceiveMailBean();
-							emailUpdate.setId(email.getId());
-							emailUpdate.setStatusCd("02"); // MAIL_IB_STATUS 02 Assign
-							emailUpdate.setCreatedBy((long) 41);
-							emailUpdate.setUpdatedBy((long) 41);
-							emailUpdate.setBuId(1);
-
-							int result = commonDao.update("emailInbound.updateEmailInbound", emailUpdate);
-							if (result > 0) {
-								log.info("update status email inbound is successfully !!");
-							} else {
-								log.error("can't update status email inbound is successfully !!");
+						
+						log.info("Subject Email : {} ",email.getSubjectEmail());
+						log.info("checkCaseExisting : {} ",checkCaseExisting(email.getSubjectEmail()));
+							
+						if(checkCaseExisting(email.getSubjectEmail())) {
+							//existing case
+							String caseNumberFromSub = getCaseNumberFromSubjectMail(email.getSubjectEmail());
+							log.info("caseNumberFromSub {}",caseNumberFromSub);	
+							
+//							ServiceResult<CaseModelBean> caseResult = caseService.getCaseByCaseNumber(caseNumberFromSub);
+//							CaseModelBean  caseExistBean = caseResult.getResult();
+//							CaseModelBean caseUpdateBean = new CaseModelBean();							
+//							caseUpdateBean.setCreatedBy((long) 20);
+//							caseUpdateBean.setUpdatedBy((long) 20);
+//							caseUpdateBean.setCaseNumber(caseNumberFromSub);							
+//							caseService.updateCase(caseUpdateBean);
+							
+							CaseActivityModelBean actBean = new CaseActivityModelBean();
+							actBean.setCaseNumber(caseNumberFromSub);
+							actBean.setType("04");  	//Follow up
+ 							actBean.setStatus("01");	//Not Started
+							actBean.setSubject("Follow-up Activities");
+							actBean.setDetail("Auto Activities");
+							actBean.setOwnerCode("20");
+							actBean.setBuId(1);
+							actBean.setCreatedBy((long) 20);
+							actBean.setUpdatedBy((long) 20);
+							
+							caseAct.createCaseActivity(actBean);
+							
+							
+							
+						}else {
+							//new case
+							log.info("In case Create Case ");
+							ServiceResult<CaseModelBean> caseResultInsert = caseService.createCase(caseBean);
+							if (caseResultInsert.isSuccess()) {
+								
+							}else {
+								
 							}
+							
+//							if (caseResultInsert.isSuccess()) {
+//								InboundReceiveMailBean emailUpdate = new InboundReceiveMailBean();
+//								emailUpdate.setId(email.getId());
+//								emailUpdate.setStatusCd("02"); // MAIL_IB_STATUS 02 Assign
+//								emailUpdate.setCreatedBy((long) 41);
+//								emailUpdate.setUpdatedBy((long) 41);
+//								emailUpdate.setBuId(1);
+//
+//								int result = commonDao.update("emailInbound.updateEmailInbound", emailUpdate);
+//								if (result > 0) {
+//									log.info("update status email inbound is successfully !!");
+//								} else {
+//									log.error("can't update status email inbound is successfully !!");
+//								}
+//							}
+						}			
+						
+						
+						InboundReceiveMailBean emailUpdate = new InboundReceiveMailBean();
+						emailUpdate.setId(email.getId());
+						emailUpdate.setStatusCd("02"); // MAIL_IB_STATUS 02 Assign
+						emailUpdate.setCreatedBy((long) 41);
+						emailUpdate.setUpdatedBy((long) 41);
+						emailUpdate.setBuId(1);
 
+						int result = commonDao.update("emailInbound.updateEmailInbound", emailUpdate);
+						if (result > 0) {
+							log.info("update status email inbound is successfully !!");
+						} else {
+							log.error("can't update status email inbound is successfully !!");
 						}
+
 
 					}
 
@@ -177,6 +240,20 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 			log.error("eror {} :",e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	
+	
+	private static boolean checkCaseExisting(String emailSubject) {
+		return emailSubject.contains("#CASE");
+	}
+	
+	private static String getCaseNumberFromSubjectMail(String emailSubject) {
+		int startIndex = emailSubject.indexOf("#");
+		int endIndex = emailSubject.indexOf("]");
+		log.info("startIndex {} , endIndex {}", startIndex,endIndex);
+		String caseString = emailSubject.substring(startIndex+1, endIndex);
+		log.info("Case Number {}",caseString);
+		return caseString;
 	}
 
 }
