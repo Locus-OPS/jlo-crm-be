@@ -16,9 +16,10 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CaseModelBean extends BaseModelBean {
-	
+	private Long id;
 	private String caseNumber;
 	private String consultingNumber;
+	private String consultingNumberNewFW;
 	private String type;
 	private String subType;
 	private String priority;

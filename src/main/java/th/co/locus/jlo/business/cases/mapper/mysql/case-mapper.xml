@@ -107,6 +107,7 @@
 		TCM.PHONE_NO AS PHONE_NO,
 		 TCM.EMAIL AS EMAIL,
 		LC.CASE_NUMBER,
+		REL.CONSULTING_NUMBER,
 		LC.DETAIL,
 		LC.TYPE,
 		LC.SUBTYPE,
@@ -139,8 +140,8 @@
 		CB1.CODE_NAME AS typeName,
 		CB2.CODE_NAME AS subTypeName,
 		CB3.CODE_NAME AS priorityName
-		FROM
-		TB_CASE LC
+		FROM TB_CASE LC
+		LEFT OUTER JOIN TB_REL_CONSULT REL ON LC.CASE_NUMBER = REL.CASE_NUMBER
 		LEFT OUTER JOIN TB_USER USR ON LC.OWNER = USR.ID
         LEFT OUTER JOIN tb_department_team DT ON LC.OWNER_DEPT_TEAM = DT.ID
         LEFT OUTER JOIN tb_department D ON LC.OWNER_DEPT = D.ID
@@ -153,7 +154,7 @@
 		LEFT OUTER JOIN  TB_USER u1 ON LC.CREATED_BY = u1.ID
 		LEFT OUTER JOIN  TB_USER u2 ON LC.UPDATED_BY = u2.ID
 		WHERE
-		(CASE_NUMBER = #{caseNumber})
+		(LC.CASE_NUMBER = #{caseNumber})
 		limit 1
 	</select>
 
@@ -161,7 +162,6 @@
 		
 		CALL `INSERT_CASE_PROC`
 			(#{caseNumber}
-			,#{consultingNumber}
 			,#{divisionTypeCode}
 			,#{type}
 			,#{subType}			
@@ -181,7 +181,6 @@
 			,#{createdBy}
 			,#{updatedBy}
 			,#{caseSlaId})
-		
 
 	</select>
 	
@@ -214,7 +213,6 @@
 	<insert id="createCase">
 		INSERT INTO TB_CASE (
 		CASE_NUMBER,
-		CONSULTING_NUMBER,
 		DIVISION_TYPE_CODE,
 		TYPE,
 		SUBTYPE,		
@@ -241,7 +239,6 @@
 		VALUES
 		(
 		#{caseNumber},
-		#{consultingNumber},
 		#{divisionTypeCode},
 		#{type},
 		#{subType},		

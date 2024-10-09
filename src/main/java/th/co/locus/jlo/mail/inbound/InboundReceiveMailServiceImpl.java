@@ -165,7 +165,7 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 							//existing case
 							String caseNumberFromSub = getCaseNumberFromSubjectMail(email.getSubjectEmail());
 							log.info("caseNumberFromSub {}",caseNumberFromSub);	
-							
+							caseBean.setCaseNumber(caseNumberFromSub);
 //							ServiceResult<CaseModelBean> caseResult = caseService.getCaseByCaseNumber(caseNumberFromSub);
 //							CaseModelBean  caseExistBean = caseResult.getResult();
 //							CaseModelBean caseUpdateBean = new CaseModelBean();							
@@ -173,6 +173,14 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 //							caseUpdateBean.setUpdatedBy((long) 20);
 //							caseUpdateBean.setCaseNumber(caseNumberFromSub);							
 //							caseService.updateCase(caseUpdateBean);
+							
+							int resultInsert = commonDao.insert("consulting.createRelConsulting", caseBean);
+							if(resultInsert > 0) {
+								log.info("Case Existing Create consulting relation with case successfull");
+							}else {
+								log.error("Case Existing Create consulting relation with case successfull");
+							}
+							
 							
 							CaseActivityModelBean actBean = new CaseActivityModelBean();
 							actBean.setCaseNumber(caseNumberFromSub);
@@ -194,29 +202,21 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 							log.info("In case Create Case ");
 							ServiceResult<CaseModelBean> caseResultInsert = caseService.createCase(caseBean);
 							if (caseResultInsert.isSuccess()) {
-								
+									 
+								int resultInsert = commonDao.insert("consulting.createRelConsulting", caseBean);
+								if(resultInsert > 0) {
+									log.info("Create consulting relation with case successfull");
+								}else {
+									log.error("Create consulting relation with case successfull");
+								}
+							
 							}else {
-								
+								log.error("Can't create case successful : {} ",caseResultInsert.getResponseCode());
 							}
 							
-//							if (caseResultInsert.isSuccess()) {
-//								InboundReceiveMailBean emailUpdate = new InboundReceiveMailBean();
-//								emailUpdate.setId(email.getId());
-//								emailUpdate.setStatusCd("02"); // MAIL_IB_STATUS 02 Assign
-//								emailUpdate.setCreatedBy((long) 41);
-//								emailUpdate.setUpdatedBy((long) 41);
-//								emailUpdate.setBuId(1);
-//
-//								int result = commonDao.update("emailInbound.updateEmailInbound", emailUpdate);
-//								if (result > 0) {
-//									log.info("update status email inbound is successfully !!");
-//								} else {
-//									log.error("can't update status email inbound is successfully !!");
-//								}
-//							}
 						}			
 						
-						
+						// Update Status email In-bound
 						InboundReceiveMailBean emailUpdate = new InboundReceiveMailBean();
 						emailUpdate.setId(email.getId());
 						emailUpdate.setStatusCd("02"); // MAIL_IB_STATUS 02 Assign
@@ -226,9 +226,9 @@ public class InboundReceiveMailServiceImpl extends BaseService implements Inboun
 
 						int result = commonDao.update("emailInbound.updateEmailInbound", emailUpdate);
 						if (result > 0) {
-							log.info("update status email inbound is successfully !!");
+							log.info("Update status email inbound is successfully !!");
 						} else {
-							log.error("can't update status email inbound is successfully !!");
+							log.error("Can't update status email inbound is successfully !!");
 						}
 
 
