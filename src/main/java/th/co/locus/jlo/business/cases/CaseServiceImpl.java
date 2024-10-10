@@ -10,6 +10,8 @@ import freemarker.template.utility.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
+import th.co.locus.jlo.business.cases.casesact.CaseActivityService;
+import th.co.locus.jlo.business.cases.casesact.bean.CaseActivityModelBean;
 import th.co.locus.jlo.common.bean.ExcelModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
@@ -26,6 +28,9 @@ public class CaseServiceImpl extends BaseService implements CaseService {
 
 	@Autowired
 	private CaseNotiLogService caseNotiLogService;
+	
+	@Autowired
+	private CaseActivityService caseAct;
 	
 	@Override
 	public ServiceResult<Page<CaseModelBean>> getCaseList(SearchCaseModelBean bean, PageRequest pageRequest) {
@@ -73,6 +78,20 @@ public class CaseServiceImpl extends BaseService implements CaseService {
 				//Follow up
 				bean.setConsultingNumber(bean.getConsultingNumberNewFW());
 				commonDao.insert("consulting.createRelConsulting", bean);
+				
+				//Auto Create Activity
+				CaseActivityModelBean actBean = new CaseActivityModelBean();
+				actBean.setCaseNumber(bean.getCaseNumber());
+				actBean.setType("04");  	//Follow up
+				actBean.setStatus("01");	//Not Started
+				actBean.setSubject("Follow-up Activities");
+				actBean.setDetail("Auto Activities");
+				actBean.setOwnerCode("20");
+				actBean.setBuId(1);
+				actBean.setCreatedBy((long) 20);
+				actBean.setUpdatedBy((long) 20);
+				
+				caseAct.createCaseActivity(actBean);
 			}
 			
 			return success(commonDao.selectOne("case.getCaseByCaseNumber", bean));
