@@ -5,6 +5,7 @@ import java.util.List;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
+import th.co.locus.jlo.business.customer.bean.CustomerAuditLogBean;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
@@ -46,4 +47,6 @@ public interface CustomerService {
 	
 	
 	public ServiceResult<CustomerData> getCustomerByEmail(CustomerListCriteria criteria);
+	
+	public ServiceResult<Page<CustomerAuditLogBean>> getCustomerAuditLogList(CustomerAuditLogBean data, PageRequest pageRequest);
 }

@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
+import th.co.locus.jlo.business.customer.bean.CustomerAuditLogBean;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
@@ -325,6 +326,22 @@ public class CustomerController extends BaseController {
 		} catch (Exception e) {
 			message = "FAIL to upload " + file.getOriginalFilename() + "!";
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+		}
+	}
+	
+	@ReadPermission
+	@PostMapping(value = "/getCustomerAuditLogList", produces = "application/json")
+	public ApiPageResponse<List<CustomerAuditLogBean>> getCustomerAuditLogList(@RequestBody ApiPageRequest<CustomerAuditLogBean> request) {
+		log.info("CustomerId : "+request.getData());
+		
+		CommonUtil.nullifyObject(request.getData());
+		request.getData().setBuId(getBuId());
+		PageRequest pageRequest = getPageRequest(request);
+		ServiceResult<Page<CustomerAuditLogBean>> serviceResult = customerService.getCustomerAuditLogList(request.getData(), pageRequest);
+		if (serviceResult.isSuccess()) {
+			return ApiPageResponse.success(serviceResult.getResult().getContent(), serviceResult.getResult().getTotalElements());			
+		} else {
+			return ApiPageResponse.fail();
 		}
 	}
 }

@@ -501,5 +501,30 @@
 		ORDER BY LC.CREATED_DATE DESC 
 	</select>
 	
-	 
+ 	<select id="getCustomerAuditLogList" resultType="CustomerAuditLogBean">
+		SELECT 
+			clog.`ID`,
+		    clog.`CUSTOMER_ID`,
+		    clog.`ACTION_TYPE`,
+		    clog.`FIELD_NAME` as fieldName,
+		    clog.`OLD_VALUE`,
+		    clog.`NEW_VALUE`,
+		    CONCAT( clog.`OLD_VALUE`,'  >  ', clog.`NEW_VALUE`)as changedDetail,
+		    clog.`REMARK`,
+		    clog.`BU_ID`,
+		    clog.`CREATED_DATE`,
+		    CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+		FROM tb_customer_audit_log clog
+	 	LEFT OUTER JOIN  TB_USER u1 ON clog.CREATED_BY = u1.ID
+
+		<where>
+			<if test="customerId != null">
+				AND clog.CUSTOMER_ID = #{customerId}
+			</if>
+			<if test="buId != null">
+				AND clog.BU_ID = #{buId}
+			</if>
+		</where>
+		ORDER BY clog.`ID` DESC 
+	</select>
 </mapper>

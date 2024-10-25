@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.customer.bean.AddressData;
 import th.co.locus.jlo.business.customer.bean.ContactData;
+import th.co.locus.jlo.business.customer.bean.CustomerAuditLogBean;
 import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.business.customer.bean.CustomerListCriteria;
 import th.co.locus.jlo.business.customer.bean.CustomerVerifyData;
@@ -210,5 +211,11 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 	@Override
 	public ServiceResult<CustomerData> getCustomerByEmail(CustomerListCriteria criteria) {
 		return success(commonDao.selectOne("customer.findOneCustomerByEmail", criteria));
+	}
+
+	@Override
+	public ServiceResult<Page<CustomerAuditLogBean>> getCustomerAuditLogList(CustomerAuditLogBean data,
+			PageRequest pageRequest) {
+		return success(commonDao.selectPage("customer.getCustomerAuditLogList", data, pageRequest));
 	}
 }
