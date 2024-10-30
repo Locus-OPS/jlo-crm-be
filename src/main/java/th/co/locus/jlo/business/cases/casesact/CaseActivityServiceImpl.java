@@ -5,7 +5,6 @@ package th.co.locus.jlo.business.cases.casesact;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.casenotilog.CaseNotiLogService;
@@ -16,7 +15,7 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
-import th.co.locus.jlo.mail.inbound.InboundReceiveMailServiceImpl;
+import th.co.locus.jlo.common.util.StringUtil;
 
 /**
  * @author Mr.BoonOom
@@ -37,9 +36,9 @@ public class CaseActivityServiceImpl extends BaseService implements CaseActivity
 	@Override
 	public ServiceResult<CaseActivityModelBean> createCaseActivity(CaseActivityModelBean bean) {
 		String actNumber = commonDao.selectOne("caseAct.generateCaseActNumber", bean);
-		 log.info("actNumber {} ,not isEmpty {}",actNumber ,!StringUtils.isEmpty(actNumber));
+		 log.info("actNumber {} ,not isEmpty {}",actNumber ,!StringUtil.isNullOrEmpty(actNumber));
 		 
-		if(!StringUtils.isEmpty(actNumber)){		
+		if(!StringUtil.isNullOrEmpty(actNumber)){		
 			bean.setActivityNumber(actNumber);			
 			int result = commonDao.update("caseAct.createCaseActivity", bean);
 			if(result > 0) {
