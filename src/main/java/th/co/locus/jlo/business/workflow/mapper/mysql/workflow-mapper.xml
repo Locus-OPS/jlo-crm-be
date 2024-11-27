@@ -1,0 +1,61 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="workflow">
+	<select id="getWorkflowList" resultType="WorkflowModelBean">
+		select
+		wf.WORKFLOW_ID as workflowId
+		, wf.WORKFLOW_NAME as workflowName
+		, wf.DESCRIPTION as description
+		, wf.STATUS as status
+		, wf.PRIORITY as priority
+		, wf.BU_ID as buId
+		, wf.CREATED_DATE as createdDate
+		, wf.CREATED_BY as createdBy
+		, CONCAT(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName
+		, wf.UPDATED_DATE as updatedDate
+		, wf.UPDATED_BY as updatedBy
+		, CONCAT(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		FROM tb_workflow wf
+		left join tb_user cr on wf.CREATED_BY = cr.ID 
+		left join tb_user upd on wf.UPDATED_BY =upd.ID 
+		where wf.STATUS=#{status}
+		<if test="workflowId!=null and workflowId!=''">
+			AND wf.WORKFLOW_ID=#{workflowId}
+		</if>
+		<if test="workflowName!=null and workflowName!=''">
+			<bind name="bWorkflowName" value="'%' + workflowName + '%'" />
+			AND wf.WORKFLOW_NAME like #{bWorkflowName}
+		</if>
+		<if test="description!=null and description!=''">
+			<bind name="bDescription" value="'%' + description + '%'" />
+			AND wf.DESCRIPTION like #{bDescription}
+		</if>
+		order by wf.WORKFLOW_ID
+	</select>
+	
+	<insert id="createWorkflow" keyColumn="WORKFLOW_ID" keyProperty="workflowId" useGeneratedKeys="true">
+		insert into tb_workflow
+		(
+			 WORKFLOW_NAME
+			, DESCRIPTION
+			, STATUS
+			, PRIORITY
+			, BU_ID
+			, CREATED_DATE
+			, CREATED_BY
+			, UPDATED_DATE
+			, UPDATED_BY
+		)
+		values
+		(
+			 #{workflowName}
+			, #{description}
+			, #{status}
+			, #{priority}
+			, #{buId}
+			, Now()
+			, #{createdBy}
+			, Now()
+			, #{updatedBy}
+		)
+	</insert>
+</mapper>
