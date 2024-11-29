@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.workflow.bean.BusinessRuleModelBean;
 import th.co.locus.jlo.business.workflow.bean.WorkFlowTaskModelBean;
 import th.co.locus.jlo.business.workflow.bean.WorkflowModelBean;
+import th.co.locus.jlo.business.workflow.bean.WorkflowTaskAssignModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
@@ -32,7 +33,8 @@ public class WorkflowController extends BaseController {
 	private BusinessRuleService businessRuleService;
 	@Autowired
 	private WorkflowTaskService workflowTaskService;
-	
+	@Autowired
+	private WorkflowTaskAssignService workflowTaskAssignService;
 	
 	@PostMapping(value="/getWorkflowPageList",produces = "application/json")
 	public ApiPageResponse<List<WorkflowModelBean>> getWorkflowPageList(@RequestBody ApiPageRequest<WorkflowModelBean> request) {
@@ -192,4 +194,58 @@ public class WorkflowController extends BaseController {
 			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
+	
+	@PostMapping(value="/getWorkflowTaskAssignPageList",produces = "application/json")
+	public ApiPageResponse<List<WorkflowTaskAssignModelBean>> getWorkflowTaskAssignOageList(@RequestBody ApiPageRequest<WorkflowTaskAssignModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<WorkflowTaskAssignModelBean>> resultService=this.workflowTaskAssignService.getWorkflowTaskAssignPageList(request.getData(), pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getWorkflowTaskAssignDetail",produces = "application/json")
+	public ApiResponse<WorkflowTaskAssignModelBean> getWorkflowTaskAssignDetail(@RequestBody ApiRequest<WorkflowTaskAssignModelBean> request) {
+		try {
+			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.getWorkflowTaskAssignDetail(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/createWorkflowTaskAssign",produces = "application/json")
+	public ApiResponse<WorkflowTaskAssignModelBean> createWorkflowTaskAssign(@RequestBody ApiRequest<WorkflowTaskAssignModelBean> request) {
+		try {
+			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.createWorkflowTaskAssign(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/updateWorkflowTaskAssign" ,produces = "application/json")
+	public ApiResponse<WorkflowTaskAssignModelBean> updateWorkflowTaskAssign(@RequestBody ApiRequest<WorkflowTaskAssignModelBean> request) {
+		try {
+			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.updateWorkflowTaskAssign(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
 }

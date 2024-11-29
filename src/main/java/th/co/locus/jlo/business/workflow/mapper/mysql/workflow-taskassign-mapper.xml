@@ -53,5 +53,57 @@
 		limit 1
 	</select>
 	
+	<insert id="createWorkflowTaskAssign" keyColumn="ASSIGNMENT_ID" keyProperty="assignmentId" useGeneratedKeys="true">
+		INSERT INTO tb_wf_task_assignment
+		(
+			 TASK_ID
+			, USER_ID
+			, BACKUP_USER_ID
+			, ASSIGNED_AT
+			, STATUS
+			, PRIORITY
+			, DUE_DATE
+			, `SEQUENCE`
+			, BU_ID
+			, CREATED_DATE
+			, CREATED_BY
+			, UPDATED_DATE
+			, UPDATED_BY
+		)
+		VALUES(
+			 #{taskId}
+			, #{userId}
+			, #{backupuserId}
+			, now()
+			, #{status}
+			, #{priority}
+			, #{dueDate}
+			, #{sequence}
+			, #{buId}
+			, now()
+			, #{createdBy}
+			, now()
+			, #{updatedBy}
+		)
+	</insert>
+	
+	<update id="updateWorkflowTaskAssign">
+		UPDATE tb_wf_task_assignment
+		SET TASK_ID=#{taskId}
+		, USER_ID=#{userId}
+		, BACKUP_USER_ID=#{backupUserId}
+		, ASSIGNED_AT=#{AsignAsignedAt}
+		, STATUS=#{status}
+		, PRIORITY=#{priority}
+		, DUE_DATE=#{dueDate}
+		, `SEQUENCE`=#{sequence}
+		, BU_ID=#{buId}
+		, CREATED_DATE=now()
+		, CREATED_BY=#{createdBy}
+		, UPDATED_DATE=now()
+		, UPDATED_BY=#{updatedBy}
+		WHERE ASSIGNMENT_ID=#{assignmentId}
+	</update>
+	
 	
 </mapper>
