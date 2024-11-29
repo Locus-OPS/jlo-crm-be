@@ -1,0 +1,68 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="businessRule">
+	<select id="getBusinessRuleList" resultType="BusinessRuleModelBean">
+		select 
+			br.RULE_ID as ruleId
+			, br.WORKFLOW_ID as workflowId
+			, br.CONDITION_TYPE as conditionType
+			, br.CONDITION_VALUE_1 as conditionValue1
+			, br.CONDITION_VALUE_2 as conditionvalue2
+			, br.PRIORITY as priority
+			, br.STATUS as status
+			, br.BU_ID as buId
+			, br.CREATED_DATE as createdDate
+			, br.CREATED_BY as createdBy
+			, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+			, br.UPDATED_DATE as updatedDate
+			, br.UPDATED_BY as updatedBy
+			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName 
+		from tb_wf_business_rule br
+		left join tb_user cr on cr.ID =br.CREATED_BY 
+		left join tb_user upd on upd.ID =br.UPDATED_BY 
+		where br.WORKFLOW_ID = #{workflowId} and br.STATUS='Active'
+    </select>
+    <insert id="createBusinessRule" keyColumn="RULE_ID" keyProperty="ruleId" useGeneratedKeys="true">
+    	INSERT INTO tb_wf_business_rule
+		(
+		 WORKFLOW_ID
+		, CONDITION_TYPE
+		, CONDITION_VALUE_1
+		, CONDITION_VALUE_2
+		, PRIORITY
+		, STATUS
+		, BU_ID
+		, CREATED_DATE
+		, CREATED_BY
+		, UPDATED_DATE
+		, UPDATED_BY
+		)
+		VALUES(
+		 #{workflowId}
+		, #{conditionType}
+		, #{conditionValue1}
+		, #{conditionValue2}
+		, #{priority}
+		, #{status}
+		, #{buId}
+		, now()
+		, #{createdBy}
+		, now()
+		, #{updatedBy}
+		)
+    </insert>
+    
+    <update id="updateBusinessRule">
+    	UPDATE tb_wf_business_rule
+		SET 
+		 CONDITION_TYPE=#{conditionType}
+		, CONDITION_VALUE_1=#{conditionValue1}
+		, CONDITION_VALUE_2=#{conditionValue2}
+		, PRIORITY=#{priority}
+		, STATUS=#{status}
+		, BU_ID=#{buId}
+		, UPDATED_DATE=now()
+		, UPDATED_BY=#{updatedBy}
+		WHERE RULE_ID=#{ruleId}
+    </update>
+	
+</mapper>

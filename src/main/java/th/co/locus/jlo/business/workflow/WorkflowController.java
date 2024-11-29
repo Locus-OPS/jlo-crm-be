@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.business.workflow.bean.BusinessRuleModelBean;
+import th.co.locus.jlo.business.workflow.bean.WorkFlowTaskModelBean;
 import th.co.locus.jlo.business.workflow.bean.WorkflowModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
@@ -26,6 +28,10 @@ public class WorkflowController extends BaseController {
 	
 	@Autowired
 	private WorkflowService workflowService;
+	@Autowired
+	private BusinessRuleService businessRuleService;
+	@Autowired
+	private WorkflowTaskService workflowTaskService;
 	
 	
 	@PostMapping(value="/getWorkflowPageList",produces = "application/json")
@@ -43,6 +49,19 @@ public class WorkflowController extends BaseController {
 		}
 	}
 	
+	@PostMapping(value="/getWorkflowDetail",produces = "application/json")
+	public ApiResponse<WorkflowModelBean> getWorkflowDetail(@RequestBody ApiRequest<WorkflowModelBean> request) {
+		try {
+			ServiceResult<WorkflowModelBean> resultService=this.workflowService.getWorkflowDetail(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
 	@PostMapping(value="/createWorkflow",produces = "application/json")
 	public ApiResponse<WorkflowModelBean> createWorkflow(@RequestBody ApiRequest<WorkflowModelBean> request) {
 		try {
@@ -56,6 +75,121 @@ public class WorkflowController extends BaseController {
 			return ApiResponse.fail("500","Unable to create workflow");
 		}catch(Exception ex) {
 			return ApiResponse.fail("500","Unable to create workflow");
+		}
+	}
+	
+	@PostMapping(value="/updateWorkflow",produces = "application/json")
+	public ApiResponse<WorkflowModelBean> updateWorkflow(@RequestBody ApiRequest<WorkflowModelBean> request) {
+		try {
+			request.getData().setBuId(getBuId());
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
+			ServiceResult<WorkflowModelBean> serviceResult=this.workflowService.updateWorkflow(request.getData());
+			if(serviceResult.isSuccess()) {
+				return ApiResponse.success(serviceResult.getResult());
+			}
+			return ApiResponse.fail("500","Unable to edit workflow");
+		}catch(Exception ex) {
+			return ApiResponse.fail("500","Unable to edit workflow");
+		}
+	}
+	
+	@PostMapping(value="/getBusinessRulePageList",produces = "application/json")
+	public ApiPageResponse<List<BusinessRuleModelBean>> getBusinessRulePageList(@RequestBody ApiPageRequest<BusinessRuleModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<BusinessRuleModelBean>> resultService=this.businessRuleService.getBusinessRulePagelist(request.getData(), pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/createBusinessRule",produces = "application/json")
+	public ApiResponse<BusinessRuleModelBean> createBusinessRule(@RequestBody ApiRequest<BusinessRuleModelBean> request) {
+		try {
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
+			
+			ServiceResult<BusinessRuleModelBean> resultService=this.businessRuleService.createBusinessRule(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/updateBusinessRule",produces = "application/json")
+	public ApiResponse<BusinessRuleModelBean> updateBusinessRule(@RequestBody ApiRequest<BusinessRuleModelBean> request) {
+		try {
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
+			ServiceResult<BusinessRuleModelBean> resultService=this.businessRuleService.updateBusinessRule(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getWorkflowTaskPageList" ,produces = "application/json")
+	public ApiPageResponse<List<WorkFlowTaskModelBean>> getWorkflowTaskPageList(@RequestBody ApiPageRequest<WorkFlowTaskModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<WorkFlowTaskModelBean>> resultService=this.workflowTaskService.getWorkflowTaskPageList(request.getData(), pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getWorkflowTaskDetail",produces = "application/json")
+	public ApiResponse<WorkFlowTaskModelBean> getWorkflowTaskDetail(@RequestBody ApiRequest<WorkFlowTaskModelBean> request) {
+		try {
+			ServiceResult<WorkFlowTaskModelBean> resultService=this.workflowTaskService.getWorkflowTaskDetail(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/createWorkflowTask",produces = "application/json")
+	public ApiResponse<WorkFlowTaskModelBean> createWorkflowTask(@RequestBody ApiRequest<WorkFlowTaskModelBean> request) {
+		try {
+			ServiceResult<WorkFlowTaskModelBean> resultService=this.workflowTaskService.createWorkflowTask(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/updateWorkflowTask",produces = "application/json")
+	public ApiResponse<WorkFlowTaskModelBean> updateWorkflowTask(@RequestBody ApiRequest<WorkFlowTaskModelBean> request) {
+		try {
+			ServiceResult<WorkFlowTaskModelBean> resultService=this.workflowTaskService.updateWorkflowTask(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
 		}
 	}
 }

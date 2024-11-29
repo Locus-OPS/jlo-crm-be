@@ -32,6 +32,27 @@
 		order by wf.WORKFLOW_ID
 	</select>
 	
+	<select id="getWorkflowDetail" resultType="WorkflowModelBean">
+		select
+		wf.WORKFLOW_ID as workflowId
+		, wf.WORKFLOW_NAME as workflowName
+		, wf.DESCRIPTION as description
+		, wf.STATUS as status
+		, wf.PRIORITY as priority
+		, wf.BU_ID as buId
+		, wf.CREATED_DATE as createdDate
+		, wf.CREATED_BY as createdBy
+		, CONCAT(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName
+		, wf.UPDATED_DATE as updatedDate
+		, wf.UPDATED_BY as updatedBy
+		, CONCAT(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		FROM tb_workflow wf
+		left join tb_user cr on wf.CREATED_BY = cr.ID 
+		left join tb_user upd on wf.UPDATED_BY =upd.ID 
+		where wf.WORKFLOW_ID=#{workflowId}
+		limit 1
+	</select>
+	
 	<insert id="createWorkflow" keyColumn="WORKFLOW_ID" keyProperty="workflowId" useGeneratedKeys="true">
 		insert into tb_workflow
 		(
@@ -58,4 +79,15 @@
 			, #{updatedBy}
 		)
 	</insert>
+	<update id="updateWorkflow">
+		UPDATE tb_workflow
+		SET WORKFLOW_NAME=#{workflowName}
+		, DESCRIPTION=#{description}
+		, STATUS=#{status}
+		, PRIORITY=#{priority}
+		, BU_ID=#{buId}
+		, UPDATED_DATE=now()
+		, UPDATED_BY=#{updatedBy}
+		WHERE WORKFLOW_ID=#{workflowId}
+	</update>
 </mapper>

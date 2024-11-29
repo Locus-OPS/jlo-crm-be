@@ -26,11 +26,12 @@ public class WorkflowServiceImpl extends BaseService implements WorkflowService 
 	@Override
 	public ServiceResult<WorkflowModelBean> getWorkflowDetail(WorkflowModelBean bean) {
 		try {
-			
+			return success(commonDao.selectOne("workflow.getWorkflowDetail", bean));
 		}catch(Exception ex) {
-			
+			log.error(ex.getMessage());
+			return fail("500",ex.getMessage());
 		}
-		return null;
+		
 	}
 
 	@Override
@@ -49,11 +50,14 @@ public class WorkflowServiceImpl extends BaseService implements WorkflowService 
 	@Override
 	public ServiceResult<WorkflowModelBean> updateWorkflow(WorkflowModelBean bean) {
 		try {
-			
+			int result=commonDao.update("workflow.updateWorkflow", bean);
+			if(result>0) {
+				return success(bean);
+			}
+			return fail("500","Unable to edit data.");
 		}catch(Exception ex) {
-			
+			return fail("500","Unable to edit data.");
 		}
-		return null;
 	}
 
 }

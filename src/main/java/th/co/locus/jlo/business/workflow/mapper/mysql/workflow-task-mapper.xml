@@ -1,0 +1,94 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="workflowtask">
+	<select id="getWorkflowTaskList" resultType="WorkFlowTaskModelBean">
+		select 
+		task.TASK_ID as taskId
+		, task.TASK_NAME as taskName
+		, task.WORKFLOW_ID as workflowId
+		, task.DESCRIPTION as description
+		, task.STATUS as status
+		, task.PRIORITY as priority
+		, task.START_DATE as startDate
+		, task.END_DATE as endDate
+		, task.BU_ID as buId
+		, task.CREATED_DATE as createdDate
+		, task.CREATED_BY as createdBy
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+		, task.UPDATED_DATE as updatedDate
+		, task.UPDATED_BY as updatedBy
+		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		from tb_wf_task task
+		left join tb_user cr on cr.ID =task.CREATED_BY 
+		left join tb_user upd on upd.ID =task.UPDATED_BY 
+		where  task.WORKFLOW_ID=#{workflowId}
+	</select>
+	
+	<select id="getWorkflowTaskDetail" resultType="WorkFlowTaskModelBean">
+		select 
+		task.TASK_ID as taskId
+		, task.TASK_NAME as taskName
+		, task.WORKFLOW_ID as workflowId
+		, task.DESCRIPTION as description
+		, task.STATUS as status
+		, task.PRIORITY as priority
+		, task.START_DATE as startDate
+		, task.END_DATE as endDate
+		, task.BU_ID as buId
+		, task.CREATED_DATE as createdDate
+		, task.CREATED_BY as createdBy
+		, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
+		, task.UPDATED_DATE as updatedDate
+		, task.UPDATED_BY as updatedBy
+		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		from tb_wf_task task
+		left join tb_user cr on cr.ID =task.CREATED_BY 
+		left join tb_user upd on upd.ID =task.UPDATED_BY 
+		where  task.TASK_ID=#{taskId}
+		limit 1
+	</select>
+	<insert id="createWorkflowtask" keyColumn="TASK_ID" keyProperty="taskId" useGeneratedKeys="true">
+		INSERT INTO tb_wf_task
+		(
+		 TASK_NAME
+		, WORKFLOW_ID
+		, DESCRIPTION
+		, STATUS
+		, PRIORITY
+		, START_DATE
+		, END_DATE
+		, BU_ID
+		, CREATED_DATE
+		, CREATED_BY
+		, UPDATED_DATE
+		, UPDATED_BY
+		)
+		VALUES(
+		 #{taskName}
+		, #{workflowId}
+		, #{description}
+		, #{status}
+		, #{priority}
+		, #{startDate}
+		, #{endDate}
+		, #{buId}
+		, #{createdDate}
+		, #{createdBy}
+		, #{updatedDate}
+		, #{updatedBy}
+		)
+	</insert>
+	<update id="updateWorkflowTask">
+		UPDATE tb_wf_task
+		SET 
+			TASK_NAME=#{taskName}
+			, DESCRIPTION=#{description}
+			, STATUS=#{status}
+			, PRIORITY=#{priority}
+			, START_DATE=#{startDate}
+			, END_DATE=#{EndDate}
+			, BU_ID=#{buId}
+			, UPDATED_DATE=#{updatedDate}
+			, UPDATED_BY=#{updatedBy}
+		WHERE TASK_ID=#{taskId}
+	</update>
+</mapper>

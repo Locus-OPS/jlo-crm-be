@@ -1,8 +1,6 @@
 package th.co.locus.jlo.business.workflow.bean;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.math.BigDecimal;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,10 +8,12 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class WorkflowModelBean extends BaseModelBean {
+public class BusinessRuleModelBean extends BaseModelBean {
+	private Long ruleId;
 	private Long workflowId;
-	private String workflowName;
-	private String description;
-	private String status;
+	private String conditionType;
+	private BigDecimal conditionValue1;
+	private BigDecimal conditionValue2;
 	private Long priority;
+	private String status;
 }
