@@ -17,11 +17,11 @@ public class WorkflowTaskAssignModelBean extends BaseModelBean{
 	private String userName;
 	private Long backupUserId;
 	private String backupUserName;
-	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
 	private Date assignedAt;
 	private String status;
 	private Long priority;
-	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
 	private Date dueDate;
 	private Long sequence;
 }

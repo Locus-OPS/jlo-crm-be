@@ -20,7 +20,8 @@
 		from tb_wf_task task
 		left join tb_user cr on cr.ID =task.CREATED_BY 
 		left join tb_user upd on upd.ID =task.UPDATED_BY 
-		where  task.WORKFLOW_ID=#{workflowId}
+		where  task.WORKFLOW_ID=#{workflowId} and task.STATUS not in ('Cancelled')
+		order by task.TASK_ID 
 	</select>
 	
 	<select id="getWorkflowTaskDetail" resultType="WorkFlowTaskModelBean">
@@ -71,9 +72,9 @@
 		, #{startDate}
 		, #{endDate}
 		, #{buId}
-		, #{createdDate}
+		, now()
 		, #{createdBy}
-		, #{updatedDate}
+		, now()
 		, #{updatedBy}
 		)
 	</insert>
@@ -85,9 +86,9 @@
 			, STATUS=#{status}
 			, PRIORITY=#{priority}
 			, START_DATE=#{startDate}
-			, END_DATE=#{EndDate}
+			, END_DATE=#{endDate}
 			, BU_ID=#{buId}
-			, UPDATED_DATE=#{updatedDate}
+			, UPDATED_DATE=now()
 			, UPDATED_BY=#{updatedBy}
 		WHERE TASK_ID=#{taskId}
 	</update>

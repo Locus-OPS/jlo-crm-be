@@ -172,6 +172,10 @@ public class WorkflowController extends BaseController {
 	@PostMapping(value="/createWorkflowTask",produces = "application/json")
 	public ApiResponse<WorkFlowTaskModelBean> createWorkflowTask(@RequestBody ApiRequest<WorkFlowTaskModelBean> request) {
 		try {
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
+
 			ServiceResult<WorkFlowTaskModelBean> resultService=this.workflowTaskService.createWorkflowTask(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
@@ -185,6 +189,8 @@ public class WorkflowController extends BaseController {
 	@PostMapping(value="/updateWorkflowTask",produces = "application/json")
 	public ApiResponse<WorkFlowTaskModelBean> updateWorkflowTask(@RequestBody ApiRequest<WorkFlowTaskModelBean> request) {
 		try {
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
 			ServiceResult<WorkFlowTaskModelBean> resultService=this.workflowTaskService.updateWorkflowTask(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
@@ -225,6 +231,9 @@ public class WorkflowController extends BaseController {
 	@PostMapping(value="/createWorkflowTaskAssign",produces = "application/json")
 	public ApiResponse<WorkflowTaskAssignModelBean> createWorkflowTaskAssign(@RequestBody ApiRequest<WorkflowTaskAssignModelBean> request) {
 		try {
+			request.getData().setCreatedBy(getUserId());
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
 			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.createWorkflowTaskAssign(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
@@ -238,6 +247,8 @@ public class WorkflowController extends BaseController {
 	@PostMapping(value="/updateWorkflowTaskAssign" ,produces = "application/json")
 	public ApiResponse<WorkflowTaskAssignModelBean> updateWorkflowTaskAssign(@RequestBody ApiRequest<WorkflowTaskAssignModelBean> request) {
 		try {
+			request.getData().setUpdatedBy(getUserId());
+			request.getData().setBuId(getBuId());
 			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.updateWorkflowTaskAssign(request.getData());
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
