@@ -1,0 +1,64 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="wftracking">
+	<select id="getWfTrackingByWorkflowId" resultType="WorkflowTrackingBean"> 
+       SELECT 
+		    t.TASK_ID AS id,
+		    t.EVENT_TYPE,
+		    t.STATUS,
+		    JSON_ARRAYAGG(
+		        JSON_OBJECT(
+		            'source', t.TASK_ID,
+		            'target', t.ASSIGNMENT_ID,
+		            'label', CONCAT('Transaction ID: ', t.TRANSACTION_ID)
+		        )
+		    ) AS links
+		FROM 
+		    tb_workflow_tracking t
+		JOIN 
+		    tb_wf_task ts ON t.TASK_ID = ts.TASK_ID
+		WHERE 
+		    t.WORKFLOW_ID = 1
+		GROUP BY 
+		    t.TASK_ID, t.EVENT_TYPE, t.STATUS;
+
+	</select>
+	
+	<select id="getWfTrackingListAll" resultType="WorkflowTrackingBean"> 
+      	
+      	SELECT 
+		    wt.TRACKING_ID,
+		    wt.TRANSACTION_ID,
+		    wt.WORKFLOW_ID,
+		    wt.TASK_ID,
+		    wt.ASSIGNMENT_ID,
+		    wt.SYSTEM_ID,
+		    wt.EVENT_TYPE,
+		    wt.STATUS,
+		    wt.TIMESTAMP,
+		    wt.NOTES,
+		    w.WORKFLOW_NAME AS workflow_name,
+		    t.TASK_NAME AS task_name,
+		    a.user_id AS assigned_user,
+		    s.system_name
+		FROM 
+		    tb_workflow_tracking wt
+		JOIN 
+		    tb_workflow w ON wt.WORKFLOW_ID = w.WORKFLOW_ID
+		JOIN 
+		    tb_wf_task t ON wt.TASK_ID = t.TASK_ID
+		JOIN 
+		    tb_wf_task_assignment a ON wt.ASSIGNMENT_ID = a.ASSIGNMENT_ID
+		JOIN 
+		    tb_workflow_system s ON wt.SYSTEM_ID = s.SYSTEM_ID
+		WHERE 1=1 
+		  --   wt.TRANSACTION_ID = ?   -- ตัวแปร Transaction ID
+		ORDER BY 
+		    wt.TIMESTAMP;
+
+
+	</select>
+	
+</mapper>
