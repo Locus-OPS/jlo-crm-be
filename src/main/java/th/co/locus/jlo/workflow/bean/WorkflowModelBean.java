@@ -1,4 +1,4 @@
-package th.co.locus.jlo.business.workflow.bean;
+package th.co.locus.jlo.workflow.bean;
 
 import java.util.Date;
 

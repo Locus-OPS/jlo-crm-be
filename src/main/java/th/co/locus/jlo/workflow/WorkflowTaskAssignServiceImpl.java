@@ -1,13 +1,13 @@
-package th.co.locus.jlo.business.workflow;
+package th.co.locus.jlo.workflow;
 
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import th.co.locus.jlo.business.workflow.bean.WorkflowTaskAssignModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.workflow.bean.WorkflowTaskAssignModelBean;
 @Slf4j
 @Service
 public class WorkflowTaskAssignServiceImpl extends BaseService implements WorkflowTaskAssignService {

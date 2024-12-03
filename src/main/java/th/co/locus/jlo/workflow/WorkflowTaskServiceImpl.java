@@ -1,12 +1,12 @@
-package th.co.locus.jlo.business.workflow;
+package th.co.locus.jlo.workflow;
 
 import org.springframework.stereotype.Service;
 
-import th.co.locus.jlo.business.workflow.bean.WorkFlowTaskModelBean;
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.workflow.bean.WorkFlowTaskModelBean;
 
 @Service
 public class WorkflowTaskServiceImpl extends BaseService implements WorkflowTaskService  {

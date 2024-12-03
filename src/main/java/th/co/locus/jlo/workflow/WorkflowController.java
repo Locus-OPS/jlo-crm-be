@@ -1,4 +1,4 @@
-package th.co.locus.jlo.business.workflow;
+package th.co.locus.jlo.workflow;
 
 import java.util.List;
 
@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
-import th.co.locus.jlo.business.workflow.bean.BusinessRuleModelBean;
-import th.co.locus.jlo.business.workflow.bean.WorkFlowTaskModelBean;
-import th.co.locus.jlo.business.workflow.bean.WorkflowModelBean;
-import th.co.locus.jlo.business.workflow.bean.WorkflowTaskAssignModelBean;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiPageResponse;
 import th.co.locus.jlo.common.bean.ApiRequest;
@@ -21,6 +17,10 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
+import th.co.locus.jlo.workflow.bean.BusinessRuleModelBean;
+import th.co.locus.jlo.workflow.bean.WorkFlowTaskModelBean;
+import th.co.locus.jlo.workflow.bean.WorkflowModelBean;
+import th.co.locus.jlo.workflow.bean.WorkflowTaskAssignModelBean;
 
 @Slf4j
 @RestController
