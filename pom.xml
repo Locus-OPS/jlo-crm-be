@@ -31,13 +31,13 @@
 	<parent>
 		<groupId>th.co.locus.jlo</groupId>
 		<artifactId>jlo-starter-parent</artifactId>
-		<version>1.2.3</version>
+		<version>1.2.4</version>
 	</parent>
 	<dependencies>
 		<dependency>
 			<groupId>th.co.locus.jlo</groupId>
 			<artifactId>jlo-common-lib</artifactId>
-			<version>1.2.5</version>
+			<version>1.2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
