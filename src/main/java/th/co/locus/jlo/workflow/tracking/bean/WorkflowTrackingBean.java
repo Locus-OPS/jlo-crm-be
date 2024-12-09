@@ -3,11 +3,12 @@ package th.co.locus.jlo.workflow.tracking.bean;
 import java.time.LocalDateTime;
 
 import lombok.Data;
-import th.co.locus.jlo.workflow.tracking.constant.EventType;
-import th.co.locus.jlo.workflow.tracking.constant.Status;
+import lombok.EqualsAndHashCode;
+import th.co.locus.jlo.common.bean.BaseModelBean;
 
 @Data
-public class WorkflowTrackingBean {
+@EqualsAndHashCode(callSuper = false)
+public class WorkflowTrackingBean extends BaseModelBean  {
 
 	private int trackingId;
 
@@ -20,21 +21,35 @@ public class WorkflowTrackingBean {
 	private Long assignmentId;
 
 	private Integer systemId;
-
+	
+	private String eventTypeStr;
+	
 	private EventType eventType;
 
+	private String statusStr;
+	
 	private Status status;
 
-	private LocalDateTime timestamp;
+	private LocalDateTime timestamps;
 
 	private String notes;
 	
+	private String workflowName;
+	
+	private String taskName;
+	
+	private String systemName;
+	
+	private Long assignedUser;
+	
+	private String links;
 	// Enum สำหรับ EventType
     public enum EventType {
         START,
         COMPLETE,
         CANCEL,
-        PENDING
+        PENDING,
+        IN_PROGRESS
     }
 
     // Enum สำหรับ Status
@@ -44,5 +59,7 @@ public class WorkflowTrackingBean {
         COMPLETED,
         CANCELLED
     }
+    
+    
 
 }

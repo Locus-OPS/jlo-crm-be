@@ -3,11 +3,11 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="wftracking">
-	<select id="getWfTrackingByWorkflowId" resultType="WorkflowTrackingBean"> 
+	<select id="getWfTrackingById" resultType="WorkflowTrackingBean"> 
        SELECT 
-		    t.TASK_ID AS id,
-		    t.EVENT_TYPE,
-		    t.STATUS,
+		    t.TASK_ID AS taskId,
+		    CAST(t.EVENT_TYPE AS CHAR) AS eventTypeStr,
+		    CAST(t.STATUS AS CHAR) as statusStr,
 		    JSON_ARRAYAGG(
 		        JSON_OBJECT(
 		            'source', t.TASK_ID,
@@ -20,29 +20,49 @@
 		JOIN 
 		    tb_wf_task ts ON t.TASK_ID = ts.TASK_ID
 		WHERE 
-		    t.WORKFLOW_ID = 1
+		    t.TRACKING_ID = #{trackingId} 
 		GROUP BY 
 		    t.TASK_ID, t.EVENT_TYPE, t.STATUS;
-
+	</select>
+	
+	<select id="getWftrackingDetail" resultType="WorkflowTrackingBean"> 
+       SELECT 
+		    t.TASK_ID AS taskId,
+		    CAST(t.EVENT_TYPE AS CHAR) AS eventTypeStr,
+		    CAST(t.STATUS AS CHAR) as statusStr,
+		    JSON_ARRAYAGG(
+		        JSON_OBJECT(
+		            'source', t.TASK_ID,
+		            'target', t.ASSIGNMENT_ID,
+		            'label', CONCAT('Transaction ID: ', t.TRANSACTION_ID)
+		        )
+		    ) AS links
+		FROM 
+		    tb_workflow_tracking t
+		JOIN 
+		    tb_wf_task ts ON t.TASK_ID = ts.TASK_ID
+		WHERE 
+		    t.TRACKING_ID = #{trackingId} 
+		GROUP BY 
+		    t.TASK_ID, t.EVENT_TYPE, t.STATUS;
 	</select>
 	
 	<select id="getWfTrackingListAll" resultType="WorkflowTrackingBean"> 
-      	
-      	SELECT 
-		    wt.TRACKING_ID,
-		    wt.TRANSACTION_ID,
-		    wt.WORKFLOW_ID,
-		    wt.TASK_ID,
-		    wt.ASSIGNMENT_ID,
-		    wt.SYSTEM_ID,
-		    wt.EVENT_TYPE,
-		    wt.STATUS,
-		    wt.TIMESTAMP,
-		    wt.NOTES,
-		    w.WORKFLOW_NAME AS workflow_name,
-		    t.TASK_NAME AS task_name,
-		    a.user_id AS assigned_user,
-		    s.system_name
+		SELECT 
+		    wt.TRACKING_ID as trackingId,
+		    wt.TRANSACTION_ID as transactionId,
+		    wt.WORKFLOW_ID as workflowId,
+		    wt.TASK_ID as taskId,
+		    wt.ASSIGNMENT_ID as assignmentId,
+		    wt.SYSTEM_ID as systemId,
+		    CAST(wt.EVENT_TYPE AS CHAR) as eventTypeStr,
+		    CAST(wt.STATUS AS CHAR)  as statusStr,
+		    wt.TIMESTAMP as timestamps,
+		    wt.NOTES as notes,
+		    w.WORKFLOW_NAME AS workflowName,
+		    t.TASK_NAME AS taskName,
+		    a.user_id AS assignedUser,
+		    s.system_name as systemName
 		FROM 
 		    tb_workflow_tracking wt
 		JOIN 
@@ -53,12 +73,65 @@
 		    tb_wf_task_assignment a ON wt.ASSIGNMENT_ID = a.ASSIGNMENT_ID
 		JOIN 
 		    tb_workflow_system s ON wt.SYSTEM_ID = s.SYSTEM_ID
-		WHERE 1=1 
-		  --   wt.TRANSACTION_ID = ?   -- ตัวแปร Transaction ID
 		ORDER BY 
-		    wt.TIMESTAMP;
-
-
+		    wt.TIMESTAMP; 
 	</select>
+	
+	<select id="getWftrackingByWorkflowId" resultType="WorkflowTrackingBean">
+		select
+		wt.TRACKING_ID as trackingId
+		,wt.TRANSACTION_ID as transactionId 
+		,wt.WORKFLOW_ID as workflowId
+		,wt.SYSTEM_ID as systemId
+		,sys.SYSTEM_NAME as systemName
+		,(select subwt.EVENT_TYPE from tb_workflow_tracking subwt where subwt.TRACKING_ID=MAX(wt.TRACKING_ID)) as eventTypeStr
+		,(select subwt.STATUS from tb_workflow_tracking subwt where subwt.TRACKING_ID=MAX(wt.TRACKING_ID)) as statusStr
+		,MAX(wt.`TIMESTAMP`) as updatedDate
+		from tb_workflow_tracking wt
+		left join tb_workflow_system sys on wt.SYSTEM_ID=sys.SYSTEM_ID
+		where wt.WORKFLOW_ID=#{workflowId}
+		<if test="transactionId!='' and transactionId!=null">
+			<bind name="bTransactionId" value="'%' + transactionId + '%'" />
+			AND wt.TRANSACTION_ID like #{bTransactionId}
+		</if>
+		<if test="systemName!='' and systemName!=null">
+			<bind name="bSystemName" value="'%' + systemName + '%'" />
+			AND sys.SYSTEM_NAME like #{bSystemName}
+		</if>
+		group by wt.TRANSACTION_ID,wt.WORKFLOW_ID,wt.SYSTEM_ID,sys.SYSTEM_NAME
+		order by wt.TRANSACTION_ID
+	</select>
+	
+	<insert id="createWfTracking" keyColumn="TRACKING_ID" keyProperty="trackingId" useGeneratedKeys="true">
+		INSERT INTO tb_workflow_tracking
+		(
+		TRANSACTION_ID
+		, WORKFLOW_ID
+		, TASK_ID
+		, ASSIGNMENT_ID
+		, SYSTEM_ID
+		, EVENT_TYPE
+		, STATUS
+		, `TIMESTAMP`
+		, NOTES
+		)
+		VALUES(
+		#{transactionId}
+		, #{workflowId}
+		, #{taskId}
+		, #{assignmentId}
+		, #{systemId}
+		, #{eventType}
+		, #{status}
+		, now()
+		, #{notes}
+		)
+	</insert>
+	
+	<delete id="deleteWfTracking">
+		DELETE FROM jlo_crm.tb_workflow_tracking WHERE TRACKING_ID=#{trackingId}
+	</delete>
+	
+	
 	
 </mapper>

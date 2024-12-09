@@ -1,21 +1,16 @@
 package th.co.locus.jlo.workflow.tracking;
 
 import java.util.List;
-import java.util.Optional;
 
+import th.co.locus.jlo.common.bean.Page;
+import th.co.locus.jlo.common.bean.PageRequest;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingBean;
 
 public interface WorkflowTrackingService {
-
-	// Create or Update a Workflow Tracking
-	public WorkflowTrackingBean saveTracking(WorkflowTrackingBean tracking);
-
-	// Get all Workflow Trackings
-	public List<WorkflowTrackingBean> getAllTracking();
-
-	// Get a specific Workflow Tracking by ID
-	public Optional<WorkflowTrackingBean> getTrackingById(Integer id);
-
-	// Delete a Workflow Tracking by ID
-	public void deleteTracking(Integer id);
+	public ServiceResult<WorkflowTrackingBean> createWfTracking(WorkflowTrackingBean bean);
+	public ServiceResult<List<WorkflowTrackingBean>> getAllWfTracking();
+	public ServiceResult<List<WorkflowTrackingBean>> getWfTrackingById(WorkflowTrackingBean bean);
+	public ServiceResult<Page<WorkflowTrackingBean>> getWfTrackingByWorkflowId(WorkflowTrackingBean bean,PageRequest pageRequest);
+	public ServiceResult<WorkflowTrackingBean> deleteWftrackingById(WorkflowTrackingBean bean);
 }
