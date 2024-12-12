@@ -17,9 +17,12 @@
 		, task.UPDATED_DATE as updatedDate
 		, task.UPDATED_BY as updatedBy
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, task.SYSTEM_ID  as systemId
+		, wfs.SYSTEM_NAME as systemName
 		from tb_wf_task task
 		left join tb_user cr on cr.ID =task.CREATED_BY 
 		left join tb_user upd on upd.ID =task.UPDATED_BY 
+		left join tb_workflow_system wfs on task.SYSTEM_ID=wfs.SYSTEM_ID 
 		where  task.WORKFLOW_ID=#{workflowId} and task.STATUS not in ('Cancelled')
 		order by task.TASK_ID 
 	</select>
@@ -41,9 +44,12 @@
 		, task.UPDATED_DATE as updatedDate
 		, task.UPDATED_BY as updatedBy
 		, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, task.SYSTEM_ID  as systemId
+		, wfs.SYSTEM_NAME as systemName
 		from tb_wf_task task
 		left join tb_user cr on cr.ID =task.CREATED_BY 
 		left join tb_user upd on upd.ID =task.UPDATED_BY 
+		left join tb_workflow_system wfs on task.SYSTEM_ID=wfs.SYSTEM_ID 
 		where  task.TASK_ID=#{taskId}
 		limit 1
 	</select>
@@ -62,6 +68,7 @@
 		, CREATED_BY
 		, UPDATED_DATE
 		, UPDATED_BY
+		, SYSTEM_ID
 		)
 		VALUES(
 		 #{taskName}
@@ -76,6 +83,7 @@
 		, #{createdBy}
 		, now()
 		, #{updatedBy}
+		, #{systemId}
 		)
 	</insert>
 	<update id="updateWorkflowTask">
@@ -90,6 +98,7 @@
 			, BU_ID=#{buId}
 			, UPDATED_DATE=now()
 			, UPDATED_BY=#{updatedBy}
+			, SYSTEM_ID=#{systemId}
 		WHERE TASK_ID=#{taskId}
 	</update>
 </mapper>

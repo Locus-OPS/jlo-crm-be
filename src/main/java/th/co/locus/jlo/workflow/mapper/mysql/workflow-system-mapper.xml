@@ -1,0 +1,12 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="workflowsystem">
+	<select id="getWorkflowSystemList" resultType="WorkflowSystemModelBean">
+		select 
+		SYSTEM_ID as systemId
+		, SYSTEM_NAME as systemName
+		, DESCRIPTION as description
+		from tb_workflow_system
+		where IS_ACTIVE='Active'
+		order by SYSTEM_ID 
+	</select>
+</mapper>

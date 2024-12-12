@@ -18,6 +18,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingBean;
+import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingGraphBean;
 
 @RestController
 @RequestMapping("/api/workflow-tracking")
@@ -93,6 +94,22 @@ public class WorkflowTrackingController extends BaseController {
 	    		return ApiResponse.fail("500",ex.getMessage());
 	    	}
 	    }
+	    
+	    @PostMapping(value="/getWftrackingGraph",produces = "application/json")
+	    public ApiResponse<WorkflowTrackingGraphBean> getWftrackingGraph(@RequestBody ApiRequest<WorkflowTrackingBean> request) {
+	    	try {
+	    		ServiceResult<WorkflowTrackingGraphBean> serviceResult=this.service.getWftrackingGraph(request.getData());
+	    		if(serviceResult.isSuccess()) {
+	    			return ApiResponse.success(serviceResult.getResult());
+	    		}
+	    		return ApiResponse.fail(serviceResult.getResponseCode(), serviceResult.getResponseDescription());
+	    	}catch(Exception ex) {
+	    		return ApiResponse.fail("500",ex.getMessage());
+	    	}
+
+	    }
+	    
+	   
 	    
 
 }

@@ -3,6 +3,7 @@ package th.co.locus.jlo.workflow;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.workflow.bean.BusinessRuleModelBean;
 import th.co.locus.jlo.workflow.bean.WorkFlowTaskModelBean;
 import th.co.locus.jlo.workflow.bean.WorkflowModelBean;
+import th.co.locus.jlo.workflow.bean.WorkflowSystemModelBean;
 import th.co.locus.jlo.workflow.bean.WorkflowTaskAssignModelBean;
 
 @Slf4j
@@ -35,6 +37,8 @@ public class WorkflowController extends BaseController {
 	private WorkflowTaskService workflowTaskService;
 	@Autowired
 	private WorkflowTaskAssignService workflowTaskAssignService;
+	@Autowired
+	private WorkflowSystemService workflowSystemService;
 	
 	@PostMapping(value="/getWorkflowPageList",produces = "application/json")
 	public ApiPageResponse<List<WorkflowModelBean>> getWorkflowPageList(@RequestBody ApiPageRequest<WorkflowModelBean> request) {
@@ -250,6 +254,19 @@ public class WorkflowController extends BaseController {
 			request.getData().setUpdatedBy(getUserId());
 			request.getData().setBuId(getBuId());
 			ServiceResult<WorkflowTaskAssignModelBean> resultService=this.workflowTaskAssignService.updateWorkflowTaskAssign(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@GetMapping(value="/getWorkflowSystemList",produces = "application/json")
+	public ApiResponse<List<WorkflowSystemModelBean>> getWfSystemList() {
+		try {
+			ServiceResult<List<WorkflowSystemModelBean>> resultService=this.workflowSystemService.getWfSytemList();
 			if(resultService.isSuccess()) {
 				return ApiResponse.success(resultService.getResult());
 			}

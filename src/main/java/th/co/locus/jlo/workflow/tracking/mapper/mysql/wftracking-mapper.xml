@@ -25,6 +25,85 @@
 		    t.TASK_ID, t.EVENT_TYPE, t.STATUS;
 	</select>
 	
+	<select id="getWftrackingNodeList" resultType="WorkflowTrackingNodeBean">
+		select 
+		twf.TASK_ID AS id
+		,twf.TASK_NAME as taskName
+		,CONCAT(user1.FIRST_NAME,' ',user1.LAST_NAME,', ',user2.FIRST_NAME,' ',user2.LAST_NAME ) AS label
+		,ifnull((
+		 	select 
+		 	wt.STATUS
+		 	from tb_workflow_tracking wt
+		 	join (
+		 		select 
+		 		subwt.WORKFLOW_ID,subwt.TRANSACTION_ID,subwt.TASK_ID,MAX(subwt.TIMESTAMP) as TIMESTAMP
+		 		from tb_workflow_tracking subwt
+		 		group by subwt.WORKFLOW_ID,subwt.TASK_ID,subwt.TRANSACTION_ID
+		 	) subwt on subwt.WORKFLOW_ID=wt.WORKFLOW_ID and subwt.TASK_ID=wt.TASK_ID and subwt.TIMESTAMP=wt.TIMESTAMP and subwt.TRANSACTION_ID=wt.TRANSACTION_ID
+		 	where wt.TRANSACTION_ID=#{transactionId} and wf.WORKFLOW_ID=subwt.WORKFLOW_ID and wt.TASK_ID=twf.TASK_ID
+		 	limit 1
+		),'Pending') as status
+		,ifnull((
+		 	select 
+		 	wt.TIMESTAMP  
+		 	from tb_workflow_tracking wt
+		 	join (
+		 		select 
+		 		subwt.WORKFLOW_ID,subwt.TRANSACTION_ID,subwt.TASK_ID,subwt.SYSTEM_ID,MAX(subwt.TIMESTAMP) as TIMESTAMP
+		 		from tb_workflow_tracking subwt
+		 		group by subwt.WORKFLOW_ID,subwt.TASK_ID,subwt.TRANSACTION_ID,subwt.SYSTEM_ID
+		 	) subwt on subwt.WORKFLOW_ID=wt.WORKFLOW_ID and subwt.TASK_ID=wt.TASK_ID and subwt.TIMESTAMP=wt.TIMESTAMP 
+		 	and subwt.TRANSACTION_ID=wt.TRANSACTION_ID and subwt.SYSTEM_ID=wt.SYSTEM_ID
+		 	where wt.TRANSACTION_ID=#{transactionId} and wf.WORKFLOW_ID=subwt.WORKFLOW_ID and wt.TASK_ID=twf.TASK_ID and wt.SYSTEM_ID=twf.SYSTEM_ID
+		 	limit 1
+		),null) as updatedDate
+		,'assets/img/profile_image_not_found.png' as avatarUrl
+		from tb_workflow wf
+		left join tb_wf_task twf on wf.WORKFLOW_ID = twf.WORKFLOW_ID 
+		left join tb_wf_task_assignment wfa on twf.TASK_ID = wfa.TASK_ID 
+		left join tb_user user1 on wfa.USER_ID =user1.ID 
+		left join tb_user user2 on wfa.BACKUP_USER_ID =user2.ID 
+		where wf.WORKFLOW_ID =#{workflowId} and twf.SYSTEM_ID=#{systemId}
+		and twf.STATUS !='Cancelled' and wfa.STATUS !='Cancelled'
+		group  by twf.TASK_ID
+		order by twf.PRIORITY 
+	</select>
+	
+	<select id="getWftrackingLinkList" resultType="WorkflowTrackingLinkBean">
+			select wf.* from (
+			select 
+			twf.TASK_ID as source
+			,ifnull((
+				select 
+				subtwf.TASK_ID
+				from tb_workflow subwf
+				join tb_wf_task subtwf on subwf.WORKFLOW_ID=subtwf.WORKFLOW_ID
+				where subwf.WORKFLOW_ID=wf.WORKFLOW_ID and subtwf.STATUS not in('Cancelled') and subtwf.PRIORITY>twf.PRIORITY
+				order by subtwf.PRIORITY 
+				limit 1
+			),null) as target
+			, ifnull((
+				select 
+				subwt.STATUS
+				from tb_workflow_tracking subwt
+				join (
+					select 
+					subwt1.WORKFLOW_ID,subwt1.TRANSACTION_ID,subwt1.TASK_ID,MAX(subwt1.TIMESTAMP)as TIMESTAMP,subwt1.SYSTEM_ID
+					from tb_workflow_tracking  subwt1
+					where subwt1.WORKFLOW_ID=wf.WORKFLOW_ID and subwt1.TRANSACTION_ID =#{transactionId}
+					group by subwt1.WORKFLOW_ID,subwt1.TRANSACTION_ID,subwt1.TASK_ID,subwt1.SYSTEM_ID
+				) subwt1 on subwt.WORKFLOW_ID =subwt1.WORKFLOW_ID and subwt.TRANSACTION_ID=subwt1.TRANSACTION_ID 
+				and subwt.`TIMESTAMP`=subwt1.`TIMESTAMP` and subwt.TASK_ID=subwt1.TASK_ID and subwt.SYSTEM_ID=subwt1.SYSTEM_ID
+				where subwt.WORKFLOW_ID=wf.WORKFLOW_ID and subwt.TASK_ID=twf.TASK_ID and subwt.SYSTEM_ID=twf.SYSTEM_ID
+				limit 1
+			),'Pending') as label
+			from tb_workflow wf
+			join tb_wf_task twf on wf.WORKFLOW_ID =twf.WORKFLOW_ID 
+			where wf.WORKFLOW_ID =#{workflowId} and twf.SYSTEM_ID=#{systemId} and twf.STATUS not in('Cancelled') 
+			order by twf.PRIORITY
+		) wf where wf.target is not null
+	</select>
+	
 	<select id="getWftrackingDetail" resultType="WorkflowTrackingBean"> 
        SELECT 
 		    t.TASK_ID AS taskId,

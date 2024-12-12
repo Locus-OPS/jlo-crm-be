@@ -25,7 +25,7 @@
 		left join tb_user cr on cr.ID=ass.CREATED_BY 
 		left join tb_user upd on upd.ID=ass.UPDATED_BY
 		left join tb_user bk on bk.ID = ass.BACKUP_USER_ID 
-		where ass.TASK_ID=#{taskId}
+		where ass.TASK_ID=#{taskId} and ass.STATUS not in ('Cancelled')
 		ORDER BY ass.ASSIGNMENT_ID
 	</select>
 	
