@@ -1,11 +1,11 @@
-package th.co.locus.jlo.external.api;
+package th.co.locus.jlo.external.api.req.bean;
 
 import java.math.BigDecimal;
 
 import lombok.Data;
 
 @Data
-public class ApiQueryWorkflowRequest { 
+public class ApiWorkflowRequestBean { 
 	private String systemId; 
 	private BigDecimal amount;
 	
