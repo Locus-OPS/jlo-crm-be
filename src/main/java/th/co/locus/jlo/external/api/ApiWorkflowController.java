@@ -79,42 +79,6 @@ public class ApiWorkflowController extends BaseController {
 
 	        workflows.add(workflow1);
 
-	        // Workflow 2: Approve Payment
-	        WorkflowRespBean workflow2 = new WorkflowRespBean();
-	        workflow2.setWorkflowId(2);
-	        workflow2.setWorkflowName("Approve Payment");
-
-	        RuleRespBean rule2 = new RuleRespBean();
-	        rule2.setRuleType("between");
-	        rule2.setRuleValue1(500);
-	        rule2.setRuleValue2(2000);
-	        workflow2.setRule(rule2);
-
-	        TaskRespBean task2 = new TaskRespBean();
-	        task2.setTaskId(11);
-	        task2.setTaskName("Approve Task");
-	        task2.setDescription("Approve the payment request.");
-	        task2.setStatus("In Progress");
-
-	        AssignmentRespBean assignment2 = new AssignmentRespBean();
-	        assignment2.setAssignmentId(21);
-
-	        AssignedUserRespBean assignedUser2 = new AssignedUserRespBean();
-	        assignedUser2.setUserId(102);
-	        assignedUser2.setUserName("Jane Smith");
-	        assignment2.setAssignedUser(assignedUser2);
-	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T12:00:00Z"));
-
-	        List<AssignmentRespBean> assignments2 = new ArrayList<>();
-	        assignments2.add(assignment2);
-	        task2.setAssignments(assignments2);
-
-	        List<TaskRespBean> tasks2 = new ArrayList<>();
-	        tasks2.add(task2);
-	        workflow2.setTasks(tasks2);
-
-	        workflows.add(workflow2);
-
 	        // Set workflows to response
 	        response.setWorkflows(workflows);
 
