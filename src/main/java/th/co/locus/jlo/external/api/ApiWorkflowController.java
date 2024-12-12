@@ -42,7 +42,7 @@ public class ApiWorkflowController extends BaseController {
 	        response.setSystem(systemInfo);
 
 	        // Mockup data for workflows
-	        List<WorkflowRespBean> workflows = new ArrayList<>();
+	        List<WorkflowRespBean> workflowsList = new ArrayList<>();
 
 	        // Workflow 1: Review Request
 	        WorkflowRespBean workflow1 = new WorkflowRespBean();
@@ -59,28 +59,41 @@ public class ApiWorkflowController extends BaseController {
 	        task1.setTaskName("Review Task");
 	        task1.setDescription("Review the submitted allowance.");
 	        task1.setStatus("Pending");
-
+	        
+	        List<AssignmentRespBean> assignmentsList = new ArrayList<>();
+	        
 	        AssignmentRespBean assignment1 = new AssignmentRespBean();
 	        assignment1.setAssignmentId(20);
+	        assignment1.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
 
 	        AssignedUserRespBean assignedUser1 = new AssignedUserRespBean();
 	        assignedUser1.setUserId(101);
 	        assignedUser1.setUserName("John Doe");
-	        assignment1.setAssignedUser(assignedUser1);
-	        assignment1.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+	        assignment1.setAssignedUser(assignedUser1); 
+	        
+	        assignmentsList.add(assignment1);
+	        
+	        AssignmentRespBean assignment2 = new AssignmentRespBean();
+	        assignment2.setAssignmentId(21);
+	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+	        
+	        AssignedUserRespBean assignedUser2 = new AssignedUserRespBean();
+	        assignedUser2.setUserId(20);
+	        assignedUser2.setUserName("Apichat Hemmachad");
+	        assignment2.setAssignedUser(assignedUser2);
+	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+	      
+	        assignmentsList.add(assignment2);
+	        
+	        task1.setAssignments(assignmentsList);
 
-	        List<AssignmentRespBean> assignments1 = new ArrayList<>();
-	        assignments1.add(assignment1);
-	        task1.setAssignments(assignments1);
-
-	        List<TaskRespBean> tasks1 = new ArrayList<>();
-	        tasks1.add(task1);
-	        workflow1.setTasks(tasks1);
-
-	        workflows.add(workflow1);
+	        List<TaskRespBean> tasksList = new ArrayList<>();
+	        tasksList.add(task1);
+	        workflow1.setTasks(tasksList);
+	        workflowsList.add(workflow1);
 
 	        // Set workflows to response
-	        response.setWorkflows(workflows);
+	        response.setWorkflows(workflowsList);
 
 	        return ApiServiceResponse.success(response);
 		
