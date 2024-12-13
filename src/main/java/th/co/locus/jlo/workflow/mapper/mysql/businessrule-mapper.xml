@@ -15,11 +15,15 @@
 			, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName 
 			, br.UPDATED_DATE as updatedDate
 			, br.UPDATED_BY as updatedBy
-			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName 
+			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+			, br.SYSTEM_ID as systemId
+			, tws.SYSTEM_NAME as systemName 
 		from tb_wf_business_rule br
 		left join tb_user cr on cr.ID =br.CREATED_BY 
 		left join tb_user upd on upd.ID =br.UPDATED_BY 
+		left join tb_workflow_system tws on br.SYSTEM_ID=tws.SYSTEM_ID 
 		where br.WORKFLOW_ID = #{workflowId} and br.STATUS='Active'
+		order by br.SYSTEM_ID,br.PRIORITY
     </select>
     <insert id="createBusinessRule" keyColumn="RULE_ID" keyProperty="ruleId" useGeneratedKeys="true">
     	INSERT INTO tb_wf_business_rule
@@ -35,6 +39,7 @@
 		, CREATED_BY
 		, UPDATED_DATE
 		, UPDATED_BY
+		, SYSTEM_ID
 		)
 		VALUES(
 		 #{workflowId}
@@ -48,6 +53,7 @@
 		, #{createdBy}
 		, now()
 		, #{updatedBy}
+		, #{systemId}
 		)
     </insert>
     
@@ -62,6 +68,7 @@
 		, BU_ID=#{buId}
 		, UPDATED_DATE=now()
 		, UPDATED_BY=#{updatedBy}
+		, SYSTEM_ID=#{systemId}
 		WHERE RULE_ID=#{ruleId}
     </update>
 	

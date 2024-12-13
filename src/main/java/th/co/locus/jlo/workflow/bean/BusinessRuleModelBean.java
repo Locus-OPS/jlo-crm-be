@@ -16,4 +16,6 @@ public class BusinessRuleModelBean extends BaseModelBean {
 	private BigDecimal conditionValue2;
 	private Long priority;
 	private String status;
+	private String systemId;
+	private String systemName;
 }
