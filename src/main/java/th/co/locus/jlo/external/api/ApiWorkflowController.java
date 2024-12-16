@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import th.co.locus.jlo.common.bean.ApiRequest;
+import th.co.locus.jlo.common.bean.ApiResponse;
+import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.external.api.bean.ApiServiceResponse;
+import th.co.locus.jlo.external.api.req.bean.ApiWfTrackingRequestBean;
 import th.co.locus.jlo.external.api.req.bean.ApiWorkflowRequestBean;
+import th.co.locus.jlo.external.api.resp.bean.ApiWfTrackingRespBean;
 import th.co.locus.jlo.external.api.resp.bean.ApiWorkflowResponseBean;
 import th.co.locus.jlo.external.api.resp.bean.AssignedUserRespBean;
 import th.co.locus.jlo.external.api.resp.bean.AssignmentRespBean;
@@ -28,10 +34,71 @@ import th.co.locus.jlo.external.api.resp.bean.WorkflowRespBean;
 @RequestMapping("workflow-service")
 public class ApiWorkflowController extends BaseController {
 	
+	@Autowired
+	private ApiWfTrackingService apiWfTrackingService;
+	@Autowired
+	private ApiWorkflowService apiWorkflowService;
+	
+	
+	@ApiOperation(value="API for create workflow tracking")
+	@PostMapping(value="/v1/wftracking/create",produces = "application/json")
+	public ApiResponse<ApiWfTrackingRespBean> createWorkflowtracking(@RequestBody ApiRequest<ApiWfTrackingRequestBean> request) {
+		try {
+			ServiceResult<ApiWfTrackingRespBean> resultService=this.apiWfTrackingService.createWfTracking(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@ApiOperation(value="API for get workflow tracking by transaction id and system id")
+	@PostMapping(value="/v1/wftracking/getByTransactionId",produces = "application/json")
+	public ApiResponse<List<ApiWfTrackingRespBean>> getWftrackingByTransactionId(@RequestBody ApiRequest<ApiWfTrackingRequestBean> request) {
+		try {
+			ServiceResult<List<ApiWfTrackingRespBean>> resultService=this.apiWfTrackingService.getWfTrackingByTransactionid(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@ApiOperation(value="API for delete workflow tracking by tracking id and system id")
+	@PostMapping(value="/v1/wftracking/deleteByTrackingId",produces = "application/json")
+	public ApiResponse<ApiWfTrackingRespBean> deleteWfTrackingBytrackingId(@RequestBody ApiRequest<ApiWfTrackingRequestBean> request) {
+		try {
+			ServiceResult<ApiWfTrackingRespBean> resultService=this.apiWfTrackingService.deleteWftrackingById(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@ApiOperation(value="API for get workflow")
+	@PostMapping(value="/v1/workflow/getWorkflow",produces = "application/json")
+	public ApiResponse<ApiWorkflowResponseBean> getWorkflowBySystemAndAmount(@RequestBody ApiRequest<ApiWorkflowRequestBean> request) {
+		try {
+			ServiceResult<ApiWorkflowResponseBean> resultService=this.apiWorkflowService.getWorkflow(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(), resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
 	
 	@ApiOperation(value = "API for Query เรียก Workflow ตาม System และ Rule")
 	@PostMapping(value = "/v1/workflow/getWorkflowBySystem", produces = "application/json")
-	public ApiServiceResponse<ApiWorkflowResponseBean> getWorkflowBySystemAndAmount(
+	public ApiServiceResponse<ApiWorkflowResponseBean> getWorkflowBySystemAndAmountDemo(
 			@RequestBody ApiWorkflowRequestBean request) throws ParseException {
 		   ApiWorkflowResponseBean response = new ApiWorkflowResponseBean();
 
@@ -50,7 +117,7 @@ public class ApiWorkflowController extends BaseController {
 	        workflow1.setWorkflowName("Review Request");
 
 	        RuleRespBean rule1 = new RuleRespBean();
-	        rule1.setRuleType("greater_than");
+	        rule1.setConditionType("greater_than");
 	        rule1.setRuleValue1(1000);
 	        workflow1.setRule(rule1);
 
@@ -62,28 +129,28 @@ public class ApiWorkflowController extends BaseController {
 	        
 	        List<AssignmentRespBean> assignmentsList = new ArrayList<>();
 	        
-	        AssignmentRespBean assignment1 = new AssignmentRespBean();
-	        assignment1.setAssignmentId(20);
-	        assignment1.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
-
-	        AssignedUserRespBean assignedUser1 = new AssignedUserRespBean();
-	        assignedUser1.setUserId(101);
-	        assignedUser1.setUserName("John Doe");
-	        assignment1.setAssignedUser(assignedUser1); 
-	        
-	        assignmentsList.add(assignment1);
-	        
-	        AssignmentRespBean assignment2 = new AssignmentRespBean();
-	        assignment2.setAssignmentId(21);
-	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
-	        
-	        AssignedUserRespBean assignedUser2 = new AssignedUserRespBean();
-	        assignedUser2.setUserId(20);
-	        assignedUser2.setUserName("Apichat Hemmachad");
-	        assignment2.setAssignedUser(assignedUser2);
-	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+//	        AssignmentRespBean assignment1 = new AssignmentRespBean();
+//	        assignment1.setAssignmentId(20L);
+//	        assignment1.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+//
+//	        AssignedUserRespBean assignedUser1 = new AssignedUserRespBean();
+//	        assignedUser1.setUserId(101);
+//	        assignedUser1.setUserName("John Doe");
+//	        assignment1.setAssignedUser(assignedUser1); 
+//	        
+//	        assignmentsList.add(assignment1);
+//	        
+//	        AssignmentRespBean assignment2 = new AssignmentRespBean();
+//	        assignment2.setAssignmentId(21L);
+//	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
+//	        
+//	        AssignedUserRespBean assignedUser2 = new AssignedUserRespBean();
+//	        assignedUser2.setUserId(20);
+//	        assignedUser2.setUserName("Apichat Hemmachad");
+//	        assignment2.setAssignedUser(assignedUser2);
+//	        assignment2.setAssignDate(ZonedDateTime.parse("2024-12-01T10:00:00Z"));
 	      
-	        assignmentsList.add(assignment2);
+//	        assignmentsList.add(assignment2);
 	        
 	        task1.setAssignments(assignmentsList);
 

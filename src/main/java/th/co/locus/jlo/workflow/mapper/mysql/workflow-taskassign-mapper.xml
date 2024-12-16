@@ -26,7 +26,36 @@
 		left join tb_user upd on upd.ID=ass.UPDATED_BY
 		left join tb_user bk on bk.ID = ass.BACKUP_USER_ID 
 		where ass.TASK_ID=#{taskId} and ass.STATUS not in ('Cancelled')
-		ORDER BY ass.ASSIGNMENT_ID
+		ORDER BY ass.`SEQUENCE` 
+	</select>
+	
+	<select id="getWorkflowTaskAssignList" resultType="WorkflowTaskAssignModelBean">
+		select 
+			ass.ASSIGNMENT_ID as assignmentId
+			, ass.TASK_ID as taskId
+			, ass.USER_ID as userId
+			, concat(usr.FIRST_NAME,' ',usr.LAST_NAME) as userName 
+			, ass.BACKUP_USER_ID as backupUserId
+			, concat(bk.FIRST_NAME,' ',bk.LAST_NAME) as backupUserName
+			, ass.ASSIGNED_AT as AssignedAt
+			, ass.STATUS as status
+			, ass.PRIORITY as priority
+			, ass.DUE_DATE as dueDate
+			, ass.`SEQUENCE` as sequence
+			, ass.BU_ID as buId
+			, ass.CREATED_DATE as createdDate
+			, ass.CREATED_BY as createdBy
+			, concat(cr.FIRST_NAME,' ',cr.LAST_NAME) as createdByName
+			, ass.UPDATED_DATE as updatedDate
+			, ass.UPDATED_BY as updatedBy
+			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName 
+		from tb_wf_task_assignment ass
+		left join tb_user usr on usr.ID =ass.USER_ID  
+		left join tb_user cr on cr.ID=ass.CREATED_BY 
+		left join tb_user upd on upd.ID=ass.UPDATED_BY
+		left join tb_user bk on bk.ID = ass.BACKUP_USER_ID 
+		where ass.TASK_ID=#{taskId} and ass.STATUS not in ('Cancelled')
+		ORDER BY ass.`SEQUENCE` 
 	</select>
 	
 	<select id="getWorkflowTaskAssignDetail" resultType="WorkflowTaskAssignModelBean">

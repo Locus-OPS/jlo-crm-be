@@ -1,0 +1,62 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="apiworkflow">
+	
+	
+	<select id="getWfSystemById" resultType="SystemInfoRespBean">
+		select 
+		wf.SYSTEM_ID as systemId,
+		wf.SYSTEM_NAME as systemName,
+		wf.DESCRIPTION  as description
+		from tb_workflow_system wf
+		where SYSTEM_ID = #{systemId}
+	</select>
+	
+	<select id="getWorkflowById" resultType="WorkflowRespBean">
+		select 
+		wf.WORKFLOW_ID  as workflowId 
+		,wf.WORKFLOW_NAME as workflowName
+		from tb_workflow wf 
+		where wf.WORKFLOW_ID =#{workflowId}
+		limit 1
+	</select>
+	
+	<select id="getWorkflowTaskByWfId" resultType="TaskRespBean">
+		select 
+		task.TASK_ID  as taskId
+		,task.TASK_NAME as taskName
+		,task.DESCRIPTION  as description
+		,task.STATUS as status
+		from tb_wf_task task
+		where task.WORKFLOW_ID =#{workflowId} and task.STATUS not in ('Cancelled')
+		order by task.PRIORITY 
+	</select>
+	
+	<select id="getAssignUser" resultType="AssignedUserRespBean">
+		select 
+		u.ID as userId 
+		,concat(u.FIRST_NAME,' ',u.LAST_NAME) as userName
+		from tb_user u
+		where u.ID =#{userId}
+	</select>
+	
+	<select id="getWorkflowBySystemAmount" resultType="java.lang.Long">
+		select get_workflow(#{systemId}, #{amount}) as workflowId
+	</select>
+	
+	<select id="getRuleId" resultType="java.lang.Long">
+		SELECT get_wf_business_rule(#{workflowId}, #{systemId}, #{amount}) as ruleId
+	</select>
+	
+	<select id="getWfbusinessRule" resultType="RuleRespBean">
+		select 
+		 CONDITION_TYPE as conditionType
+		, CONDITION_VALUE_1 as ruleValue1
+		, CONDITION_VALUE_2 as ruleValue2
+		from tb_wf_business_rule rule
+		where rule.RULE_ID=#{ruleId}
+		limit 1;
+	</select>
+	
+	
+	
+</mapper>

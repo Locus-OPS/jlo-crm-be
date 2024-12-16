@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AssignedUserRespBean {
-	private int userId;
+	private Long userId;
 	private String userName;
 }

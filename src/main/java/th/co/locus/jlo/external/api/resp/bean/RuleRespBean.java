@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class RuleRespBean {
-	private String ruleType;
+	private String conditionType;
 	private Integer ruleValue1;
 	private Integer ruleValue2;
 }

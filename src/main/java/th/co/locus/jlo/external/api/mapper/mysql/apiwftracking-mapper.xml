@@ -1,0 +1,79 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="apiwftracking">
+	<select id="getWfTrackingbyTransactionId" resultType="ApiWfTrackingRespBean">
+		select 
+		    wt.TRACKING_ID as trackingId,
+		    wt.TRANSACTIon_ID as transactionId,
+		    wt.WORKFLOW_ID as workflowId,
+		    wt.TasK_ID as taskId,
+		    wt.asSIGNMENT_ID as assignmentId,
+		    a.user_id as assignmentName,
+		    wt.SYSTEM_ID as systemId,
+		    s.system_name as systemName,
+		    wt.EVENT_TYPE as eventType,
+		    wt.STATUS  as status,
+		    wt.TIMESTAMP as timestamps,
+		    wt.NOTES as notes,
+		    w.WORKFLOW_NAME as workflowName,
+		    t.TasK_NAME as taskName
+		from tb_workflow_tracking wt
+		join tb_workflow w on wt.WORKFLOW_ID = w.WORKFLOW_ID
+		join tb_wf_task t on wt.TasK_ID = t.TasK_ID
+		join tb_wf_task_assignment a on wt.asSIGNMENT_ID = a.asSIGNMENT_ID
+		join tb_workflow_system s on wt.SYSTEM_ID = s.SYSTEM_ID
+		where wt.TRANSACTION_ID =#{transactionId} and wt.SYSTEM_ID=#{systemId}
+		order by wt.TIMESTAMP
+	</select>
+	<select id="getWfTrackingbyTrackingId" resultType="ApiWfTrackingRespBean">
+		select 
+		    wt.TRACKING_ID as trackingId,
+		    wt.TRANSACTION_ID as transactionId,
+		    wt.WORKFLOW_ID as workflowId,
+		    wt.TasK_ID as taskId,
+		    wt.asSIGNMENT_ID as assignmentId,
+		    a.user_id as assignmentName,
+		    wt.SYSTEM_ID as systemId,
+		    s.system_name as systemName,
+		    wt.EVENT_TYPE as eventType,
+		    wt.STATUS  as status,
+		    wt.TIMESTAMP as timestamps,
+		    wt.NOTES as notes,
+		    w.WORKFLOW_NAME as workflowName,
+		    t.TasK_NAME as taskName
+		from tb_workflow_tracking wt
+		join tb_workflow w on wt.WORKFLOW_ID = w.WORKFLOW_ID
+		join tb_wf_task t on wt.TasK_ID = t.TasK_ID
+		join tb_wf_task_assignment a on wt.asSIGNMENT_ID = a.asSIGNMENT_ID
+		join tb_workflow_system s on wt.SYSTEM_ID = s.SYSTEM_ID
+		where wt.TRACKING_ID = #{trackingId} and wt.SYSTEM_ID =#{systemId}
+		limit 1
+	</select>
+	<insert id="createWfTracking" keyColumn="TRACKING_ID" keyProperty="trackingId" useGeneratedKeys="true">
+		INSERT INTO tb_workflow_tracking
+		(
+			TRANSACTION_ID
+			, WORKFLOW_ID
+			, TASK_ID
+			, ASSIGNMENT_ID
+			, SYSTEM_ID
+			, EVENT_TYPE
+			, STATUS
+			, `TIMESTAMP`
+			, NOTES
+		)
+		VALUES(
+			#{transactionId}
+			, #{workflowId}
+			, #{taskId}
+			, #{assignmentId}
+			, #{systemId}
+			, #{eventType}
+			, #{status}
+			, now()
+			, #{notes}
+		)
+	</insert>
+	<delete id="deleteWfTracking">
+		DELETE FROM tb_workflow_tracking WHERE TRACKING_ID=#{trackingId} and SYSTEM_ID=#{systemId}
+	</delete>
+</mapper>

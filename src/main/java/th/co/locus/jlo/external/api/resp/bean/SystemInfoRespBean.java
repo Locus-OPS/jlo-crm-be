@@ -6,4 +6,5 @@ import lombok.Data;
 public class SystemInfoRespBean {
 	private int systemId;
 	private String systemName;
+	private String description;
 }
