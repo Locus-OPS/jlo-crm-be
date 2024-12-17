@@ -1,9 +1,5 @@
 package th.co.locus.jlo.workflow.bean;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import th.co.locus.jlo.common.bean.BaseModelBean;
@@ -16,4 +12,6 @@ public class WorkflowModelBean extends BaseModelBean {
 	private String description;
 	private String status;
 	private Long priority;
+	private String systemId;
+	private String systemName;
 }

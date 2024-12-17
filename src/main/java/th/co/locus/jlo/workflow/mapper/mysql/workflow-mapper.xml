@@ -14,9 +14,12 @@
 		, wf.UPDATED_DATE as updatedDate
 		, wf.UPDATED_BY as updatedBy
 		, CONCAT(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, wf.SYSTEM_ID as systemId
+		, syst.SYSTEM_NAME as systemName
 		FROM tb_workflow wf
 		left join tb_user cr on wf.CREATED_BY = cr.ID 
 		left join tb_user upd on wf.UPDATED_BY =upd.ID 
+		left join tb_workflow_system syst on syst.SYSTEM_ID = wf.SYSTEM_ID 
 		where wf.STATUS=#{status}
 		<if test="workflowId!=null and workflowId!=''">
 			AND wf.WORKFLOW_ID=#{workflowId}
@@ -46,9 +49,12 @@
 		, wf.UPDATED_DATE as updatedDate
 		, wf.UPDATED_BY as updatedBy
 		, CONCAT(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
+		, wf.SYSTEM_ID as systemId
+		, syst.SYSTEM_NAME as systemName
 		FROM tb_workflow wf
 		left join tb_user cr on wf.CREATED_BY = cr.ID 
 		left join tb_user upd on wf.UPDATED_BY =upd.ID 
+		left join tb_workflow_system syst on syst.SYSTEM_ID = wf.SYSTEM_ID 
 		where wf.WORKFLOW_ID=#{workflowId}
 		limit 1
 	</select>
@@ -65,6 +71,7 @@
 			, CREATED_BY
 			, UPDATED_DATE
 			, UPDATED_BY
+			, SYSTEM_ID
 		)
 		values
 		(
@@ -77,6 +84,7 @@
 			, #{createdBy}
 			, Now()
 			, #{updatedBy}
+			, #{systemId}
 		)
 	</insert>
 	<update id="updateWorkflow">
@@ -88,6 +96,7 @@
 		, BU_ID=#{buId}
 		, UPDATED_DATE=now()
 		, UPDATED_BY=#{updatedBy}
+		, SYSTEM_ID =#{systemId}
 		WHERE WORKFLOW_ID=#{workflowId}
 	</update>
 </mapper>

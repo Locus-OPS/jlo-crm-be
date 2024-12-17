@@ -98,7 +98,6 @@
 			, BU_ID=#{buId}
 			, UPDATED_DATE=now()
 			, UPDATED_BY=#{updatedBy}
-			, SYSTEM_ID=#{systemId}
 		WHERE TASK_ID=#{taskId}
 	</update>
 </mapper>

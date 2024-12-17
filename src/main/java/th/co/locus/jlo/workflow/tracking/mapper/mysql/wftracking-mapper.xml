@@ -29,7 +29,7 @@
 		select 
 		twf.TASK_ID AS id
 		,twf.TASK_NAME as taskName
-		,CONCAT(user1.FIRST_NAME,' ',user1.LAST_NAME,', ',user2.FIRST_NAME,' ',user2.LAST_NAME ) AS label
+		,GROUP_CONCAT(user1.FIRST_NAME,' ',user1.LAST_NAME SEPARATOR ', ') as label
 		,ifnull((
 		 	select 
 		 	wt.STATUS
@@ -62,7 +62,6 @@
 		left join tb_wf_task twf on wf.WORKFLOW_ID = twf.WORKFLOW_ID 
 		left join tb_wf_task_assignment wfa on twf.TASK_ID = wfa.TASK_ID 
 		left join tb_user user1 on wfa.USER_ID =user1.ID 
-		left join tb_user user2 on wfa.BACKUP_USER_ID =user2.ID 
 		where wf.WORKFLOW_ID =#{workflowId} and twf.SYSTEM_ID=#{systemId}
 		and twf.STATUS !='Cancelled' and wfa.STATUS !='Cancelled'
 		group  by twf.TASK_ID

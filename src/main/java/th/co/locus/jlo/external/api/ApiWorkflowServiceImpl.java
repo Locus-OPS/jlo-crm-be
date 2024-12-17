@@ -49,7 +49,7 @@ public class ApiWorkflowServiceImpl extends BaseService implements ApiWorkflowSe
 						user.setUserId(assignee.getUserId());
 						user.setUserName(assignee.getUserName());
 						AssignmentRespBean assment=new AssignmentRespBean();
-						assment.setAssignmentId(assignee.getUserId());
+						assment.setAssignmentId(assignee.getAssignmentId());
 						assment.setAssignDate(assignee.getAssignedAt());
 						assment.setAssignedUser(user);
 						
