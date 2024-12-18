@@ -96,38 +96,38 @@ public class ApiWorkflowController extends BaseController {
 		}
 	}
 	
-	@ApiOperation(value = "API for Query เรียก Workflow ตาม System และ Rule")
-	@PostMapping(value = "/v1/workflow/getWorkflowBySystem", produces = "application/json")
-	public ApiServiceResponse<ApiWorkflowResponseBean> getWorkflowBySystemAndAmountDemo(
-			@RequestBody ApiWorkflowRequestBean request) throws ParseException {
-		   ApiWorkflowResponseBean response = new ApiWorkflowResponseBean();
-
-	        // Mockup data for SystemInfo
-	        SystemInfoRespBean systemInfo = new SystemInfoRespBean();
-	        systemInfo.setSystemId(2);
-	        systemInfo.setSystemName("Finance");
-	        response.setSystem(systemInfo);
-
-	        // Mockup data for workflows
-	        List<WorkflowRespBean> workflowsList = new ArrayList<>();
-
-	        // Workflow 1: Review Request
-	        WorkflowRespBean workflow1 = new WorkflowRespBean();
-	        workflow1.setWorkflowId(1);
-	        workflow1.setWorkflowName("Review Request");
-
-	        RuleRespBean rule1 = new RuleRespBean();
-	        rule1.setConditionType("greater_than");
-	        rule1.setRuleValue1(1000);
-	        workflow1.setRule(rule1);
-
-	        TaskRespBean task1 = new TaskRespBean();
-	        task1.setTaskId(10);
-	        task1.setTaskName("Review Task");
-	        task1.setDescription("Review the submitted allowance.");
-	        task1.setStatus("Pending");
-	        
-	        List<AssignmentRespBean> assignmentsList = new ArrayList<>();
+//	@ApiOperation(value = "API for Query เรียก Workflow ตาม System และ Rule")
+//	@PostMapping(value = "/v1/workflow/getWorkflowBySystem", produces = "application/json")
+//	public ApiServiceResponse<ApiWorkflowResponseBean> getWorkflowBySystemAndAmountDemo(
+//			@RequestBody ApiWorkflowRequestBean request) throws ParseException {
+//		   ApiWorkflowResponseBean response = new ApiWorkflowResponseBean();
+//
+//	        // Mockup data for SystemInfo
+//	        SystemInfoRespBean systemInfo = new SystemInfoRespBean();
+//	        systemInfo.setSystemId(2);
+//	        systemInfo.setSystemName("Finance");
+//	        response.setSystem(systemInfo);
+//
+//	        // Mockup data for workflows
+//	        List<WorkflowRespBean> workflowsList = new ArrayList<>();
+//
+//	        // Workflow 1: Review Request
+//	        WorkflowRespBean workflow1 = new WorkflowRespBean();
+//	        workflow1.setWorkflowId(1);
+//	        workflow1.setWorkflowName("Review Request");
+//
+//	        RuleRespBean rule1 = new RuleRespBean();
+//	        rule1.setConditionType("greater_than");
+//	        rule1.setRuleValue1(1000);
+//	        workflow1.setRule(rule1);
+//
+//	        TaskRespBean task1 = new TaskRespBean();
+//	        task1.setTaskId(10);
+//	        task1.setTaskName("Review Task");
+//	        task1.setDescription("Review the submitted allowance.");
+//	        task1.setStatus("Pending");
+//	        
+//	        List<AssignmentRespBean> assignmentsList = new ArrayList<>();
 	        
 //	        AssignmentRespBean assignment1 = new AssignmentRespBean();
 //	        assignment1.setAssignmentId(20L);
@@ -152,19 +152,19 @@ public class ApiWorkflowController extends BaseController {
 	      
 //	        assignmentsList.add(assignment2);
 	        
-	        task1.setAssignments(assignmentsList);
-
-	        List<TaskRespBean> tasksList = new ArrayList<>();
-	        tasksList.add(task1);
-	        workflow1.setTasks(tasksList);
-	        workflowsList.add(workflow1);
-
-	        // Set workflows to response
-	        response.setWorkflows(workflowsList);
-
-	        return ApiServiceResponse.success(response);
-		
-	}
+//	        task1.setAssignments(assignmentsList);
+//
+//	        List<TaskRespBean> tasksList = new ArrayList<>();
+//	        tasksList.add(task1);
+//	        workflow1.setTasks(tasksList);
+//	        workflowsList.add(workflow1);
+//
+//	        // Set workflows to response
+//	        response.setWorkflows(workflowsList);
+//
+//	        return ApiServiceResponse.success(response);
+//		
+//	}
 	
 	
 //	@GetMapping("/by-system-and-amount")
