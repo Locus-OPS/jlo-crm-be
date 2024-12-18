@@ -52,6 +52,8 @@ public class WorkflowServiceImpl extends BaseService implements WorkflowService 
 		try {
 			int result=commonDao.update("workflow.updateWorkflow", bean);
 			if(result>0) {
+				commonDao.update("workflow.updateSytemIdWfBusinessRule", bean);
+				commonDao.update("workflow.updateSytemIdWfTask", bean);
 				return success(bean);
 			}
 			return fail("500","Unable to edit data.");

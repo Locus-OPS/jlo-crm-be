@@ -99,4 +99,21 @@
 		, SYSTEM_ID =#{systemId}
 		WHERE WORKFLOW_ID=#{workflowId}
 	</update>
+	
+	<update id="updateSytemIdWfBusinessRule">
+		UPDATE tb_wf_business_rule
+		SET SYSTEM_ID=#{systemId}
+		,UPDATED_DATE=now()
+		,UPDATED_BY=#{updatedBy}
+		WHERE WORKFLOW_ID=#{workflowId}
+	</update>
+	
+	<update id="updateSytemIdWfTask">
+		UPDATE tb_wf_task
+		SET UPDATED_DATE=now()
+		,UPDATED_BY=#{updatedBy}
+		,SYSTEM_ID=#{systemId}
+		WHERE WORKFLOW_ID=#{workflowId}
+	</update>
+	
 </mapper>
