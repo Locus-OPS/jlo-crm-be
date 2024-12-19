@@ -276,4 +276,58 @@ public class WorkflowController extends BaseController {
 		}
 	}
 	
+	@PostMapping(value="/getWorkflowSystemPageList",produces = "application/json")
+	public ApiPageResponse<List<WorkflowSystemModelBean>> getWfsystemPageList(@RequestBody ApiPageRequest<WorkflowSystemModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			ServiceResult<Page<WorkflowSystemModelBean>>  resultService=this.workflowSystemService.getWfsytemPageList(request.getData(),pageRequest);
+			if(resultService.isSuccess()) {
+				return ApiPageResponse.success(resultService.getResult().getContent(), resultService.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(resultService.getResponseCode(), resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiPageResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/createWorkflowSystem",produces = "application/json")
+	public ApiResponse<WorkflowSystemModelBean> createWorkflowSystem(@RequestBody ApiRequest<WorkflowSystemModelBean> request) {
+		try {
+			ServiceResult<WorkflowSystemModelBean> resultService=this.workflowSystemService.createWfSystem(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/updateWorkflowSystem",produces = "application/json")
+	public ApiResponse<WorkflowSystemModelBean> updateWorkflowSystem(@RequestBody ApiRequest<WorkflowSystemModelBean> request) {
+		try {
+			ServiceResult<WorkflowSystemModelBean> resultService=this.workflowSystemService.updateWfsystem(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getWorkflowSystemDetail",produces = "application/json")
+	public ApiResponse<WorkflowSystemModelBean> getWorkflowSystemDetail(@RequestBody ApiRequest<WorkflowSystemModelBean> request) {
+		try {
+			ServiceResult<WorkflowSystemModelBean> resultService=this.workflowSystemService.getWfsystemDetail(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
+		
+	}
+	
 }

@@ -10,4 +10,5 @@ public class WorkflowSystemModelBean extends BaseModelBean {
 	private String systemId;
 	private String systemName;
 	private String description;
+	private String isActive;
 }

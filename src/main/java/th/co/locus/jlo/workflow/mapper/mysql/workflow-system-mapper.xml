@@ -9,4 +9,65 @@
 		where IS_ACTIVE='Active'
 		order by SYSTEM_ID 
 	</select>
+	<select id="serachWorkflowSystemList" resultType="WorkflowSystemModelBean">
+		select 
+			SYSTEM_ID as systemId
+			, SYSTEM_NAME as systemName
+			, DESCRIPTION as description
+			, IS_ACTIVE as isActive
+		from tb_workflow_system
+		where IS_ACTIVE =#{isActive}
+		<if test="systemId!=null and systemId!=''">
+			and SYSTEM_ID=#{systemId}
+		</if>
+		<if test="systemName!=null and systemName!=''">
+			<bind name="bSystemName" value="'%' + systemName + '%'" />
+			and SYSTEM_NAME like #{bSystemName}
+		</if>
+		<if test="description!=null and description!=''">
+			<bind name="bDescription" value="'%' + description + '%'" />
+			and DESCRIPTION like #{bDescription}
+		</if>
+		order by SYSTEM_ID 
+	</select>
+	<select id="getWorkflowSystemDetail" resultType="WorkflowSystemModelBean">
+		select 
+			SYSTEM_ID as systemId
+			, SYSTEM_NAME as systemName
+			, DESCRIPTION as description
+			, IS_ACTIVE as isActive
+		from tb_workflow_system
+		where SYSTEM_ID =#{systemId}
+		limit 1
+	</select>
+	<insert id="createWorkflowSystem" keyColumn="SYSTEM_ID" keyProperty="systemId" useGeneratedKeys="true">
+		INSERT INTO tb_workflow_system
+		(
+		 SYSTEM_NAME
+		, DESCRIPTION
+		, IS_ACTIVE
+		, CREATED_BY
+		, CREATED_DATE
+		, UPDATED_BY
+		, UPDATED_DATE
+		)
+		VALUES(
+		 #{systemName}
+		, #{description}
+		, 'Active'
+		, #{createdBy}
+		, now()
+		, #{updatedBy}
+		, now()
+		)
+	</insert>
+	<update id="updateWorkflowSystem">
+		UPDATE tb_workflow_system
+		SET SYSTEM_NAME=#{systemName}
+		, DESCRIPTION=#{description}
+		, IS_ACTIVE=#{isActive}
+		, UPDATED_BY=#{updatedBy}
+		, UPDATED_DATE=now()
+		WHERE SYSTEM_ID=#{systemId}
+	</update>
 </mapper>
