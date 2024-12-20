@@ -1,5 +1,7 @@
 package th.co.locus.jlo.workflow;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +10,9 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import th.co.locus.jlo.workflow.bean.WorkflowModelBean;
+import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingGraphBean;
+import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingLinkBean;
+import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingNodeBean;
 
 @Slf4j
 @Service
@@ -60,6 +65,25 @@ public class WorkflowServiceImpl extends BaseService implements WorkflowService 
 		}catch(Exception ex) {
 			return fail("500","Unable to edit data.");
 		}
+	}
+
+	@Override
+	public ServiceResult<WorkflowTrackingGraphBean> getWorkflowGraphPreview(WorkflowModelBean bean) {
+		try {
+			WorkflowTrackingGraphBean graph=new WorkflowTrackingGraphBean();
+			List<WorkflowTrackingNodeBean> nodeList=commonDao.selectList("workflow.getWfNodeList",bean);
+			if(nodeList.size()>0) {
+				graph.setNode(nodeList);
+			}
+			List<WorkflowTrackingLinkBean> linkList=commonDao.selectList("workflow.getWfLinkList",bean);
+			if(linkList.size()>0) {
+				graph.setLink(linkList);
+			}
+			return success(graph);
+		}catch(Exception ex) {
+			return fail("500",ex.getMessage());
+		}
+		
 	}
 
 }

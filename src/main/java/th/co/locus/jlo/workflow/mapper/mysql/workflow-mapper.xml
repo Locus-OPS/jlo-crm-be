@@ -116,4 +116,40 @@
 		WHERE WORKFLOW_ID=#{workflowId}
 	</update>
 	
+	<select id="getWfNodeList" resultType="WorkflowTrackingNodeBean">
+		select 
+		twf.TASK_ID AS id
+		,twf.TASK_NAME as taskName
+		,GROUP_CONCAT(user1.FIRST_NAME,' ',user1.LAST_NAME SEPARATOR ', ') as label
+		,'Pending' as status
+		,'assets/img/profile_image_not_found.png' as avatarUrl
+		from tb_workflow wf
+		left join tb_wf_task twf on wf.WORKFLOW_ID = twf.WORKFLOW_ID 
+		left join tb_wf_task_assignment wfa on twf.TASK_ID = wfa.TASK_ID 
+		left join tb_user user1 on wfa.USER_ID =user1.ID 
+		where wf.WORKFLOW_ID =#{workflowId} and twf.SYSTEM_ID=#{systemId}
+		and twf.STATUS !='Cancelled' and wfa.STATUS !='Cancelled'
+		group  by twf.TASK_ID,twf.TASK_NAME
+		order by twf.PRIORITY 
+	</select>
+	<select id="getWfLinkList" resultType="WorkflowTrackingLinkBean">
+		select wf.* from (
+			select 
+			twf.TASK_ID as source
+			,ifnull((
+				select 
+				subtwf.TASK_ID
+				from tb_workflow subwf
+				join tb_wf_task subtwf on subwf.WORKFLOW_ID=subtwf.WORKFLOW_ID
+				where subwf.WORKFLOW_ID=wf.WORKFLOW_ID and subtwf.STATUS not in('Cancelled') and subtwf.PRIORITY>twf.PRIORITY
+				order by subtwf.PRIORITY 
+				limit 1
+			),null) as target
+			, '' as label
+			from tb_workflow wf
+			join tb_wf_task twf on wf.WORKFLOW_ID =twf.WORKFLOW_ID 
+			where wf.WORKFLOW_ID =#{workflowId} and twf.SYSTEM_ID=#{systemId} and twf.STATUS not in('Cancelled') 
+			order by twf.PRIORITY
+		) wf where wf.target is not null
+	</select>
 </mapper>

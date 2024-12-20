@@ -23,6 +23,7 @@ import th.co.locus.jlo.workflow.bean.WorkFlowTaskModelBean;
 import th.co.locus.jlo.workflow.bean.WorkflowModelBean;
 import th.co.locus.jlo.workflow.bean.WorkflowSystemModelBean;
 import th.co.locus.jlo.workflow.bean.WorkflowTaskAssignModelBean;
+import th.co.locus.jlo.workflow.tracking.bean.WorkflowTrackingGraphBean;
 
 @Slf4j
 @RestController
@@ -328,6 +329,19 @@ public class WorkflowController extends BaseController {
 			return ApiResponse.fail("500",ex.getMessage());
 		}
 		
+	}
+	
+	@PostMapping(value="/getWorkflowGraphPreview",produces = "application/json")
+	public ApiResponse<WorkflowTrackingGraphBean> getWorkflowGraphPreview(@RequestBody ApiRequest<WorkflowModelBean> request) {
+		try {
+			ServiceResult<WorkflowTrackingGraphBean>  resultService=this.workflowService.getWorkflowGraphPreview(request.getData());
+			if(resultService.isSuccess()) {
+				return ApiResponse.success(resultService.getResult());
+			}
+			return ApiResponse.fail(resultService.getResponseCode(),resultService.getResponseDescription());
+		}catch(Exception ex) {
+			return ApiResponse.fail("500",ex.getMessage());
+		}
 	}
 	
 }
