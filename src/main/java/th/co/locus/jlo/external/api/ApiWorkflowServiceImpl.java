@@ -45,14 +45,18 @@ public class ApiWorkflowServiceImpl extends BaseService implements ApiWorkflowSe
 					List<AssignmentRespBean> assignList=new ArrayList<>();
 					List<WorkflowTaskAssignModelBean> assigneeList=commonDao.selectList("workflowtaskassign.getWorkflowTaskAssignList", Map.of("taskId",task.getTaskId()));
 					for (WorkflowTaskAssignModelBean assignee : assigneeList) {
-						AssignedUserRespBean user=new AssignedUserRespBean();
-						user.setUserId(assignee.getUserId());
-						user.setUserName(assignee.getUserName());
 						AssignmentRespBean assment=new AssignmentRespBean();
 						assment.setAssignmentId(assignee.getAssignmentId());
 						assment.setAssignDate(assignee.getAssignedAt());
-						assment.setAssignedUser(user);
 						
+						AssignedUserRespBean user=commonDao.selectOne("apiworkflow.getAssignedUser", assignee);
+						if(user!=null) {
+							assment.setAssignedUser(user);
+						}
+						
+//						AssignedUserRespBean user=new AssignedUserRespBean();
+//						user.setUserId(assignee.getUserId());
+//						user.setUserName(assignee.getUserName());
 						assignList.add(assment);
 					}
 					task.setAssignments(assignList);

@@ -57,6 +57,19 @@
 		limit 1;
 	</select>
 	
+	<select id="getAssignedUser" resultType="AssignedUserRespBean">
+		SELECT 
+		ID as userId
+		, USER_ID as userName
+		, FIRST_NAME as firstName
+		, LAST_NAME as lastName
+		, EMAIL as email
+		, ROLE_CODE as roleCode
+		FROM tb_user
+		WHERE ID=#{userId}
+		limit 1
+	</select>
+	
 	
 	
 </mapper>
