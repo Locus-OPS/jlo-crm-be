@@ -34,7 +34,12 @@ public class ApiWorkflowServiceImpl extends BaseService implements ApiWorkflowSe
 			}
 			List<WorkflowRespBean> wfList = new ArrayList<>();
 			//Select Workflow
-			Long workflowId=commonDao.selectOne("apiworkflow.getWorkflowBySystemAmount",bean);
+			Long workflowId=null;
+			if(bean.getFinanceFlg().equals("true")) {
+				workflowId=commonDao.selectOne("apiworkflow.getWorkflowBySystemAmount",bean);
+			}else {
+				workflowId=commonDao.selectOne("apiworkflow.getWorkflowNonFinanceBySystemAmount",bean);
+			}
 			if(workflowId!=null) {
 				List<TaskRespBean> taskList = new ArrayList<>();
 				//Get Workflow

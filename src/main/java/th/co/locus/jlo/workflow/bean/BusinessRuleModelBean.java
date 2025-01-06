@@ -18,4 +18,5 @@ public class BusinessRuleModelBean extends BaseModelBean {
 	private String status;
 	private String systemId;
 	private String systemName;
+	private boolean financeFlg;
 }
