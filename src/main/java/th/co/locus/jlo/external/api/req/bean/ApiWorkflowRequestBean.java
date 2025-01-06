@@ -8,4 +8,5 @@ import lombok.Data;
 public class ApiWorkflowRequestBean { 
 	private String systemId; 
 	private BigDecimal amount;
+	private String financeFlg;
 }

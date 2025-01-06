@@ -18,6 +18,7 @@
 			, concat(upd.FIRST_NAME,' ',upd.LAST_NAME) as updatedByName
 			, br.SYSTEM_ID as systemId
 			, tws.SYSTEM_NAME as systemName 
+			, br.IS_FINANCE_FLG as financeFlg
 		from tb_wf_business_rule br
 		left join tb_user cr on cr.ID =br.CREATED_BY 
 		left join tb_user upd on upd.ID =br.UPDATED_BY 
@@ -40,6 +41,7 @@
 		, UPDATED_DATE
 		, UPDATED_BY
 		, SYSTEM_ID
+		, IS_FINANCE_FLG
 		)
 		VALUES(
 		 #{workflowId}
@@ -54,6 +56,7 @@
 		, now()
 		, #{updatedBy}
 		, #{systemId}
+		, #{financeFlg}
 		)
     </insert>
     
@@ -68,6 +71,7 @@
 		, BU_ID=#{buId}
 		, UPDATED_DATE=now()
 		, UPDATED_BY=#{updatedBy}
+		, IS_FINANCE_FLG=#{financeFlg}
 		WHERE RULE_ID=#{ruleId}
     </update>
 	

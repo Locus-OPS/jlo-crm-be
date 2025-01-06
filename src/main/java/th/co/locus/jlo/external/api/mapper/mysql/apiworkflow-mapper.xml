@@ -42,6 +42,9 @@
 	<select id="getWorkflowBySystemAmount" resultType="java.lang.Long">
 		select get_workflow(#{systemId}, #{amount}) as workflowId
 	</select>
+		<select id="getWorkflowNonFinanceBySystemAmount" resultType="java.lang.Long">
+		select get_workflow_nonfinance(#{systemId}, #{amount}) as workflowId
+	</select>
 	
 	<select id="getRuleId" resultType="java.lang.Long">
 		SELECT get_wf_business_rule(#{workflowId}, #{systemId}, #{amount}) as ruleId
