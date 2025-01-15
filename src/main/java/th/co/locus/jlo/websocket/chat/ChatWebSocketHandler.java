@@ -1,9 +1,11 @@
 package th.co.locus.jlo.websocket.chat;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -24,6 +26,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 	
 	// Map to store username to WebSocketSession (1:1 chat)
 	private final Map<String, WebSocketSession> users = new HashMap<>();
+	
+    // เก็บ WebSocket sessions และข้อมูลเกี่ยวกับห้องสนทนา
+    private final Map<WebSocketSession, String> sessions = new ConcurrentHashMap<>();
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -35,7 +40,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 			users.put(username, session); // Add to users map
 			rooms.putIfAbsent("general", new HashSet<>());
 			rooms.get("general").add(session);
-			session.sendMessage(new TextMessage("Welcome to the general room!"));
+			session.sendMessage(new TextMessage("Welcome to JLO CRM Broadcast!"));
+			// broadcastToAll("A new user has joined the chat!");
 		} else {
 			session.close();
 		}
@@ -58,7 +64,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 				String privateMessage = parts[2];
 				sendPrivateMessage(session, targetUsername, privateMessage);
 				log.debug("private targetUsername{}  privateMessage{}",targetUsername,privateMessage);
-			} else {
+			}else if (payload.startsWith("/broadcast")) {
+		        // เรียกใช้ broadcastToAll
+		        String broadcastMessage = payload.substring(11); // ตัด "/broadcast "
+		        broadcastToAll("Broadcast: " + broadcastMessage);
+		    }  else {
 				session.sendMessage(new TextMessage("Invalid private message format. Use: /private username message"));
 			}
 		} else {
@@ -116,6 +126,19 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 			}
 		}
 	}
+	
+	 // Method สำหรับ Broadcast ไปยังทุกคนในระบบ
+    private void broadcastToAll(String message) {
+    	
+        sessions.keySet().forEach(session -> {
+            try {
+                session.sendMessage(new TextMessage(message));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 	private String getUsernameFromSession(WebSocketSession session) {
 		// Example: Assume the username is passed as a query parameter "username"
