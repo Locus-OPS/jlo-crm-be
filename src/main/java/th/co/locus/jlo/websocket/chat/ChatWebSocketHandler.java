@@ -35,7 +35,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 			users.put(username, session); // Add to users map
 			rooms.putIfAbsent("general", new HashSet<>());
 			rooms.get("general").add(session);
-			session.sendMessage(new TextMessage("Welcome to the general room!"));
+//			session.sendMessage(new TextMessage("Welcome to the general room!"));
 		} else {
 			session.close();
 		}

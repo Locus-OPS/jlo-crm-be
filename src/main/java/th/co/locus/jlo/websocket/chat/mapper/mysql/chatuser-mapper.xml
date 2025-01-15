@@ -1,0 +1,28 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatuser">
+	<select id="getUserList" resultType="ChatUserModelbean">
+		SELECT
+       	U.ID AS id
+		,U.USER_ID AS userId
+		,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS userChatName
+		,U.EMAIL AS email
+		,U.PICTURE_URL AS pictureUrl
+		,R.ROLE_NAME AS roleName
+		,P.POS_NAME AS positionName    
+		FROM TB_USER U
+        LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		WHERE 1=1 
+		<if test="userChatName!=null and userChatName!=''">
+			<bind name="bUserChatName" value="'%' + userChatName + '%'" />
+			and CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) like #{bUserChatName}
+		</if>
+		and U.ID NOT IN (#{currentUserId})
+		order by U.FIRST_NAME,U.LAST_NAME ASC
+	</select>
+</mapper>
