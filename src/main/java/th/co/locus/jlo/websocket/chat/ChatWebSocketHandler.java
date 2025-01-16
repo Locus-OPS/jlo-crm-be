@@ -102,7 +102,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		rooms.putIfAbsent(roomName, new HashSet<>());
 		rooms.get(roomName).add(session);
 
-		session.sendMessage(new TextMessage("You joined room: " + roomName));
+//		session.sendMessage(new TextMessage("You joined room: " + roomName));
 	}
 
 	private void sendPrivateMessage(WebSocketSession sender, String targetUsername, String message) throws Exception {
@@ -134,13 +134,22 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		String senderRoom = rooms.entrySet().stream().filter(entry -> entry.getValue().contains(sender))
 				.map(Map.Entry::getKey).findFirst().orElse("general");
 
+		String senderUsername = getUsernameFromSession(sender);
 		// Broadcast message to everyone in the room
 		for (WebSocketSession session : rooms.getOrDefault(senderRoom, new HashSet<>())) {
 			if (session.isOpen() && !session.equals(sender)) {
-				String senderUsername = getUsernameFromSession(sender);
+				
 				session.sendMessage(new TextMessage("[From " + senderUsername + "]: " + message));
 			}
 		}
+		
+		ChatMessageModelBean msg=new ChatMessageModelBean();
+		msg.setSenderId(Long.valueOf(senderUsername));
+		msg.setRoomId(Long.valueOf(senderRoom));
+		msg.setMessageType("public");
+		msg.setMessageText(message);
+		msg.setMessageStatus("sent");
+		chatService.createChatMessage(msg);
 	}
 	
 	 // Method สำหรับ Broadcast ไปยังทุกคนในระบบ
