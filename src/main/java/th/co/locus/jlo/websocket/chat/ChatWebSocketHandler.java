@@ -7,12 +7,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 
 /**
  * @author Apichat
@@ -20,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
+	
+	@Autowired
+	private ChatWebService chatService;
 
 	// Map to store users in each room (group chat)
 	private final Map<String, Set<WebSocketSession>> rooms = new HashMap<>();
@@ -40,7 +45,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 			users.put(username, session); // Add to users map
 			rooms.putIfAbsent("general", new HashSet<>());
 			rooms.get("general").add(session);
-			session.sendMessage(new TextMessage("Welcome to JLO CRM Broadcast!"));
+			//session.sendMessage(new TextMessage("Welcome to JLO CRM Broadcast!"));
 			// broadcastToAll("A new user has joined the chat!");
 		} else {
 			session.close();
@@ -103,13 +108,24 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 	private void sendPrivateMessage(WebSocketSession sender, String targetUsername, String message) throws Exception {
 		log.debug("sendPrivateMessage {} ,{}",targetUsername,message);
 		WebSocketSession targetSession = users.get(targetUsername);
-
+		String senderUsername = getUsernameFromSession(sender);
 		if (targetSession != null && targetSession.isOpen()) {
-			String senderUsername = getUsernameFromSession(sender);
+			
 			targetSession.sendMessage(new TextMessage("[Private from " + senderUsername + "]: " + message));
-		} else {
-			sender.sendMessage(new TextMessage("User " + targetUsername + " is not available."));
-		}
+		} 
+//		else {
+//			sender.sendMessage(new TextMessage("User " + targetUsername + " is not available."));
+//		}
+		//Save Message to Database
+		ChatMessageModelBean msg=new ChatMessageModelBean();
+		msg.setSenderId(Long.valueOf(senderUsername));
+		msg.setTargetId(Long.valueOf(targetUsername));
+		msg.setMessageType("private");
+		msg.setMessageText(message);
+		msg.setMessageStatus("sent");
+		chatService.createChatMessage(msg);
+		
+		
 	}
 
 	private void broadcastMessage(WebSocketSession sender, String message) throws Exception {

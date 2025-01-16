@@ -1,0 +1,100 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatweb">
+	<select id="getChatRoomList" resultType="ChatRoomModelBean">
+		SELECT 
+		room_id as roomId
+		, room_name as roomName
+		, created_at as createdAt
+		FROM tb_msg_rooms
+		order by room_name 
+	</select>
+	
+	<select id="getChatRoomListByUserId" resultType="ChatRoomModelBean">
+		select 
+		ur.room_id  as roomId 
+		,r.room_name as roomName
+		,ur.joined_at as createdAt
+		from tb_msg_user_rooms ur
+		join tb_msg_rooms r on ur.room_id = r.room_id 
+		where ur.user_id =#{currentUserId}
+	</select>
+	
+	<insert id="createChatRoom" keyColumn="room_id" keyProperty="roomId" useGeneratedKeys="true">
+		INSERT INTO tb_msg_rooms
+		(room_name, created_at)
+		VALUES(#{roomName}, now());
+	</insert>
+	
+	<insert id="addUsertoRoom">
+		INSERT INTO tb_msg_user_rooms(user_id, room_id, joined_at)
+		values
+		(
+			#{userId}
+			, #{roomId}
+			, now()
+		)
+	</insert>
+	
+	<insert id="createChatMessage" keyColumn="message_id" keyProperty="messageId" useGeneratedKeys="true">
+		INSERT INTO tb_msg_messages
+		(sender_id, room_id, target_id, message_text, message_type, created_at)
+		VALUES( #{senderId}, #{roomId}, #{targetId}, #{messageText}, #{messageType}, now())
+	</insert>
+	
+	<select id="getPrivateChatMessageList" resultType="ChatMessageModelBean">
+		SELECT 
+		msg.message_id as messageId
+		, msg.sender_id as senderId
+		, msg.room_id as roomId
+		, msg.target_id as targetId
+		, msg.message_text as messageText
+		, msg.message_type as messageType
+		, msg.message_status as messageStatus
+		, msg.created_at as createdAt
+		FROM tb_msg_messages msg
+		where msg.message_type ='private'
+		and ((msg.sender_id=#{senderId} and msg.target_id=#{targetId}) or (msg.sender_id=#{targetId} and msg.target_id=#{senderId}))
+		order by msg.created_at  desc 
+	</select>
+	
+	<select id="getPublicChatMessageList" resultType="ChatMessageModelBean">
+		SELECT 
+		msg.message_id as messageId
+		, msg.sender_id as senderId
+		, concat(sd.FIRST_NAME,' ',sd.LAST_NAME) as senderName
+		, sd.PICTURE_URL  as pictureUrl
+		, msg.room_id as roomId
+		, msg.target_id as targetId
+		, msg.message_text as messageText
+		, msg.message_type as messageType
+		, msg.message_status as messageStatus
+		, msg.created_at as createdAt
+		FROM tb_msg_messages msg
+		join tb_user sd on msg.sender_id = sd.ID 
+		where msg.message_type ='public'
+		and msg.room_id = #{roomId}
+		order by msg.created_at  desc 
+	</select>
+	
+	<select id="getBroadcastChatMessageList" resultType="ChatMessageModelBean">
+		SELECT 
+		msg.message_id as messageId
+		, msg.sender_id as senderId
+		, concat(sd.FIRST_NAME,' ',sd.LAST_NAME) as senderName
+		, sd.PICTURE_URL  as pictureUrl
+		, msg.room_id as roomId
+		, msg.target_id as targetId
+		, msg.message_text as messageText
+		, msg.message_type as messageType
+		, msg.message_status as messageStatus
+		, msg.created_at as createdAt
+		FROM tb_msg_messages msg
+		join tb_user sd on msg.sender_id = sd.ID 
+		where msg.message_type ='broadcast'
+		and msg.room_id = #{roomId}
+		order by msg.created_at  desc 
+	</select>
+	
+	
+	
+</mapper>

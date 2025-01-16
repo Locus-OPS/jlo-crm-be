@@ -25,4 +25,7 @@
 		and U.ID NOT IN (#{currentUserId})
 		order by U.FIRST_NAME,U.LAST_NAME ASC
 	</select>
+	
+	
+
 </mapper>
