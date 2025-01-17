@@ -95,6 +95,42 @@
 		order by msg.created_at  desc 
 	</select>
 	
-	
+	<select id="getChatList" resultType="ChatListModelBean">
+		select	
+		target_user.targetId as id
+		,u.PICTURE_URL as pictureUrl
+		,concat(u.FIRST_NAME,' ',u.LAST_NAME) as chatName
+		,target_user.messageId as lastMessageId
+		,ms.message_text as messageText 
+		,ms.message_status as messageStatus
+		,'private' as messageType
+		,ms.created_at as createdAt
+		from (
+		   select 
+		   subtarget_user.targetId
+		   ,max(subtarget_user.messageId) as messageId
+		   from (
+				select 
+				ms.target_id as targetId 
+				,max(ms.message_id) as messageId
+				from tb_msg_messages ms
+				where ms.sender_id =#{currentUser}
+				and message_type ='private'
+				group by ms.target_id 
+				union 
+				select 
+				ms.sender_id as targetId 
+				,max(ms.message_id) as messageId
+				from tb_msg_messages ms
+				where ms.target_id =#{currentUser}
+				and message_type ='private'
+				group by ms.sender_id
+			) as subtarget_user
+			group by subtarget_user.targetId
+		) as target_user
+		join tb_user u on target_user.targetId=u.id 
+		join tb_msg_messages ms on target_user.messageId=ms.message_id
+		order by ms.created_at desc
+	</select>
 	
 </mapper>

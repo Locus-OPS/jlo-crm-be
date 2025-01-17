@@ -20,6 +20,7 @@ import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.system.user.UserService;
 import th.co.locus.jlo.system.user.bean.UserDataModelBean;
 import th.co.locus.jlo.system.user.bean.UserListCriteriaModelBean;
+import th.co.locus.jlo.websocket.chat.bean.ChatListModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomModelBean;
@@ -134,6 +135,21 @@ public class ChatWebController extends BaseController {
 		try {
 			PageRequest pageRequest = getPageRequest(request);
 			ServiceResult<Page<ChatMessageModelBean>> result=chatWebService.getBroadcastChatmessage(request.getData(), pageRequest);
+			if(result.isSuccess()) {
+				return ApiPageResponse.success(result.getResult().getContent(), result.getResult().getTotalElements());
+			}
+			return ApiPageResponse.fail(result.getResponseCode(),result.getResponseDescription());
+		}catch(Exception e) {
+			return ApiPageResponse.fail("500",e.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/getchatlist",produces = "application/json")
+	public ApiPageResponse<List<ChatListModelBean>> getChatList(@RequestBody ApiPageRequest<ChatListModelBean> request) {
+		try {
+			PageRequest pageRequest = getPageRequest(request);
+			request.getData().setCurrentUser(getUserId());
+			ServiceResult<Page<ChatListModelBean>> result=chatWebService.getChatList(request.getData(), pageRequest);
 			if(result.isSuccess()) {
 				return ApiPageResponse.success(result.getResult().getContent(), result.getResult().getTotalElements());
 			}
