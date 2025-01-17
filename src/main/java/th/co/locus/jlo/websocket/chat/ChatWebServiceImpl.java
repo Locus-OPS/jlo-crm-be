@@ -9,6 +9,7 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
+import th.co.locus.jlo.websocket.chat.bean.ChatListModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomModelBean;
@@ -108,6 +109,15 @@ public class ChatWebServiceImpl extends BaseService implements ChatWebService {
 			PageRequest pageRequest) {
 		try {
 			return success(commonDao.selectPage("chatweb.getBroadcastChatMessageList", bean, pageRequest));
+		}catch(Exception e) {
+			return fail("500",e.getMessage());
+		}
+	}
+
+	@Override
+	public ServiceResult<Page<ChatListModelBean>> getChatList(ChatListModelBean bean,PageRequest pageRequest) {
+		try {
+			return success(commonDao.selectPage("chatweb.getChatList", bean, pageRequest));
 		}catch(Exception e) {
 			return fail("500",e.getMessage());
 		}
