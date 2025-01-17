@@ -19,8 +19,8 @@ public class WebSocketChatConfig implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//		registry.addHandler(chatHandler, "/chat").setAllowedOrigins("*");
-		registry.addHandler(chatHandler, "/jlo-crm-backend/chat").setAllowedOrigins("*");
+		registry.addHandler(chatHandler, "/chat").setAllowedOrigins("*");
+		//registry.addHandler(chatHandler, "/jlo-crm-backend/chat").setAllowedOrigins("*");
 
 	}
 //	  @Override

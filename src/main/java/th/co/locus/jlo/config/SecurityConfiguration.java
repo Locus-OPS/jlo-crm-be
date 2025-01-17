@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     };
     private static final String[] JLO_WHITELIST = {
             "/message-channel/**", "/api/landing/**","/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
-            ,"/workflow-service/v1/**","/jlo-crm-backend/chat/**"
+            ,"/workflow-service/v1/**","/chat/**"
     };
 
     @Bean
