@@ -21,8 +21,8 @@
 	
 	<insert id="createChatRoom" keyColumn="room_id" keyProperty="roomId" useGeneratedKeys="true">
 		INSERT INTO tb_msg_rooms
-		(room_name, created_at,CREATED_DATE)
-		VALUES(#{roomName}, now(),now());
+		(room_name, created_at,CREATED_DATE,CREATED_BY)
+		VALUES(#{roomName}, now(),now(),#{currentUserId});
 	</insert>
 	
 	<insert id="addUsertoRoom">
