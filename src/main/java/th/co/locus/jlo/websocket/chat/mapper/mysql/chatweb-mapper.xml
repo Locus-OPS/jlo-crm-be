@@ -21,8 +21,8 @@
 	
 	<insert id="createChatRoom" keyColumn="room_id" keyProperty="roomId" useGeneratedKeys="true">
 		INSERT INTO tb_msg_rooms
-		(room_name, created_at)
-		VALUES(#{roomName}, now());
+		(room_name, created_at,CREATED_DATE)
+		VALUES(#{roomName}, now(),now());
 	</insert>
 	
 	<insert id="addUsertoRoom">
@@ -96,41 +96,69 @@
 	</select>
 	
 	<select id="getChatList" resultType="ChatListModelBean">
-		select	
-		target_user.targetId as id
-		,u.PICTURE_URL as pictureUrl
-		,concat(u.FIRST_NAME,' ',u.LAST_NAME) as chatName
-		,target_user.messageId as lastMessageId
-		,ms.message_text as messageText 
-		,ms.message_status as messageStatus
-		,'private' as messageType
-		,ms.created_at as createdAt
-		from (
-		   select 
-		   subtarget_user.targetId
-		   ,max(subtarget_user.messageId) as messageId
-		   from (
-				select 
-				ms.target_id as targetId 
-				,max(ms.message_id) as messageId
-				from tb_msg_messages ms
-				where ms.sender_id =#{currentUser}
-				and message_type ='private'
-				group by ms.target_id 
-				union 
-				select 
-				ms.sender_id as targetId 
-				,max(ms.message_id) as messageId
-				from tb_msg_messages ms
-				where ms.target_id =#{currentUser}
-				and message_type ='private'
-				group by ms.sender_id
-			) as subtarget_user
-			group by subtarget_user.targetId
-		) as target_user
-		join tb_user u on target_user.targetId=u.id 
-		join tb_msg_messages ms on target_user.messageId=ms.message_id
-		order by ms.created_at desc
+		select 
+		*
+		from(
+			select	
+			target_user.targetId as id
+			,u.PICTURE_URL as pictureUrl
+			,concat(u.FIRST_NAME,' ',u.LAST_NAME) as chatName
+			,target_user.messageId as lastMessageId
+			,ms.message_text as messageText 
+			,ms.message_status as messageStatus
+			,'private' as messageType
+			,ms.created_at as createdAt
+			from (
+			   select 
+			   subtarget_user.targetId
+			   ,max(subtarget_user.messageId) as messageId
+			   from (
+					select 
+					ms.target_id as targetId 
+					,max(ms.message_id) as messageId
+					from tb_msg_messages ms
+					where ms.sender_id =#{currentUser}
+					and message_type ='private'
+					group by ms.target_id 
+					union 
+					select 
+					ms.sender_id as targetId 
+					,max(ms.message_id) as messageId
+					from tb_msg_messages ms
+					where ms.target_id =#{currentUser}
+					and message_type ='private'
+					group by ms.sender_id
+				) as subtarget_user
+				group by subtarget_user.targetId
+			) as target_user
+			join tb_user u on target_user.targetId=u.id 
+			join tb_msg_messages ms on target_user.messageId=ms.message_id
+			
+			union
+			
+			select 
+			room.room_id as id
+			,'./assets/img/chatgroup.png' as pictureUrl
+			,room.room_name as chatName
+			,room.messageId as lastMessageId
+			,ms.message_text as messageText
+			,ms.message_status as messageStatus
+			,'public' as messageType
+			,ms.created_at as createdAt
+			from (select 
+			ms.room_id
+			,r.room_name 
+			,max(message_id) as messageId 
+			from tb_msg_messages ms
+			join tb_msg_rooms r on ms.room_id =r.room_id 
+			where ms.room_id  in (select ur.room_id from tb_msg_user_rooms ur where ur.user_id=#{currentUser})
+			and ms.message_type ='public'
+			group by ms.room_id,r.room_name 
+			) room
+			join tb_msg_messages ms on ms.message_id =room.messageId
+		) chat
+		order by chat.createdAt desc
+		
 	</select>
 	
 </mapper>
