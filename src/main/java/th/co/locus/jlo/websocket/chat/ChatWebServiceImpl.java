@@ -1,7 +1,5 @@
 package th.co.locus.jlo.websocket.chat;
-
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -49,7 +47,23 @@ public class ChatWebServiceImpl extends BaseService implements ChatWebService {
 	public ServiceResult<ChatRoomModelBean> createChatRoom(ChatRoomModelBean bean) {
 		try {
 			int result=commonDao.insert("chatweb.createChatRoom", bean);
+
 			if(result>0) {
+				ChatRoomMemberModelBean member=new ChatRoomMemberModelBean();
+				member.setRoomId(bean.getRoomId());
+				member.setUserId(bean.getCurrentUserId());
+				this.addUsertoRoom(member);
+				
+				List<ChatUserModelbean> userList=bean.getUserList();
+				for (ChatUserModelbean user : userList) {
+					if(!user.getChecked()) {
+						continue;
+					}
+					ChatRoomMemberModelBean member1=new ChatRoomMemberModelBean();
+					member1.setRoomId(bean.getRoomId());
+					member1.setUserId(user.getId());
+					this.addUsertoRoom(member1);
+				}
 				return success(bean);
 			}
 			return fail("500","Unable to create chat room.");

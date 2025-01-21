@@ -13,4 +13,5 @@ public class ChatUserModelbean {
 	private String positionName;
 	private String message;
 	private Long currentUserId;
+	private Boolean checked=false;
 }

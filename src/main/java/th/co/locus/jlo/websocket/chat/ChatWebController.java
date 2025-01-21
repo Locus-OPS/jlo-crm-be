@@ -3,7 +3,6 @@ package th.co.locus.jlo.websocket.chat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +16,6 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
-import th.co.locus.jlo.system.user.UserService;
-import th.co.locus.jlo.system.user.bean.UserDataModelBean;
-import th.co.locus.jlo.system.user.bean.UserListCriteriaModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatListModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
@@ -66,6 +62,7 @@ public class ChatWebController extends BaseController {
 	@PostMapping(value="/createchatroom",produces = "application/json")
 	public ApiResponse<ChatRoomModelBean> createChatRoom(@RequestBody ApiRequest<ChatRoomModelBean> request) {
 		try {
+			request.getData().setCurrentUserId(getUserId());
 			ServiceResult<ChatRoomModelBean>  result=chatWebService.createChatRoom(request.getData());
 			if(result.isSuccess()) {
 				return ApiResponse.success(result.getResult());
