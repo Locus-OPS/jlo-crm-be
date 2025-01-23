@@ -17,6 +17,7 @@ public class ChatMessageModelBean {
 	private String messageText;
 	private String messageType;
 	private String messageStatus;
-	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+//	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date createdAt;
 }

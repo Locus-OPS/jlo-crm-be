@@ -41,6 +41,44 @@
 		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
 		WHERE U.USER_ID = #{username}
 	</select>
+	<select id="getUserById" resultType="userLoginDTO"> 
+     SELECT
+		    U.ID
+		    ,U.USER_ID
+		    ,U.FIRST_NAME
+		    ,U.LAST_NAME 
+		    ,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS DISPLAY_NAME
+		    ,U.NICKNAME
+		    ,U.ROLE_CODE
+		    ,R.ROLE_NAME
+		    ,U.USE_YN
+		    ,U.POS_ID
+		    ,P.POS_NAME
+		    ,U.BU_ID
+		    ,B.BU_NAME
+		    ,U.DIV_ID
+		    ,D.DEPARTMENT_NAME AS DIV_NAME	
+			,U.TEAM_ID
+            ,T.TEAM_NAME AS TEAM_NAME
+		    ,U.EMAIL
+            ,U.LOGIN_TYPE
+            ,U.PASSWORD
+            ,U.PICTURE_URL            
+			,CONCAT(COALESCE(u1.FIRST_NAME,''), ' ',COALESCE(u1.LAST_NAME,'')) AS createdByName
+			,U.CREATED_DATE AS createdDate 
+            ,CONCAT(COALESCE(u2.FIRST_NAME,''), ' ',COALESCE( u2.LAST_NAME,'')) AS updatedByName
+			,U.UPDATED_DATE AS updatedDate
+            
+		FROM TB_USER U   
+		LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		WHERE U.ID = #{id}
+	</select>
 	<insert id="insertLoginAttempt">
 		INSERT INTO TB_USER_LOGIN_ATTEMPT
 		(	

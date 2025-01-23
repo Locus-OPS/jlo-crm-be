@@ -1,6 +1,8 @@
 package th.co.locus.jlo.websocket.chat;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,10 +15,12 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
+import th.co.locus.jlo.system.user.UserService;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
+import th.co.locus.jlo.system.user.dto.UserLoginDTO;
+import th.co.locus.jlo.common.bean.ServiceResult;
 
 /**
  * @author Apichat
@@ -27,6 +31,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 	
 	@Autowired
 	private ChatWebService chatService;
+	@Autowired
+	private UserService userService;
 
 	// Map to store users in each room (group chat)
 	private final Map<String, Set<WebSocketSession>> rooms = new HashMap<>();
@@ -111,30 +117,53 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		log.debug("sendPrivateMessage {} ,{}",targetUsername,message);
 		WebSocketSession targetSession = users.get(targetUsername);
 		String senderUsername = getUsernameFromSession(sender);
-		if (targetSession != null && targetSession.isOpen()) {
+		try {
 			
-			targetSession.sendMessage(new TextMessage("[Private from " + senderUsername + "]: " + message));
-//			Gson gson = new Gson();
-//			gson.toJson(1);            // ==> 1
-//			gson.toJson("abcd");       // ==> "abcd"
-//			gson.toJson(new Long(10)); // ==> 10
-//			int[] values = { 1 };
-//			gson.toJson(values);       // ==> [1]
-			
-//			targetSession.sendMessage(new TextMessage("{\"userId\":\""+senderUsername+"\",\"message\":\""+message+"\"}"));
-			
-		} 
-//		else {
-//			sender.sendMessage(new TextMessage("User " + targetUsername + " is not available."));
-//		}
-		//Save Message to Database
-		ChatMessageModelBean msg=new ChatMessageModelBean();
-		msg.setSenderId(Long.valueOf(senderUsername));
-		msg.setTargetId(Long.valueOf(targetUsername));
-		msg.setMessageType("private");
-		msg.setMessageText(message);
-		msg.setMessageStatus("sent");
-		chatService.createChatMessage(msg);
+			if (targetSession != null && targetSession.isOpen()) {
+				
+//				targetSession.sendMessage(new TextMessage("[Private from " + senderUsername + "]: " + message));
+				
+				 // รับเวลาปัจจุบัน
+		        LocalDateTime now = LocalDateTime.now();
+		        // กำหนดฟอร์แมตวันที่
+		        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		        // แปลงเวลาปัจจุบันเป็น String
+		        String formattedDate = now.format(formatter);
+		        
+				StringBuilder jsonBuilder = new StringBuilder();
+				jsonBuilder.append("{")
+		           .append("\"messageId\":\"0\",")
+		           .append("\"senderId\":\""+senderUsername+"\",")
+		           .append("\"senderName\":\""+"Sathaporn"+"\",")
+		           .append("\"pictureUrl\":\""+"pictureUrl"+"\",")
+		           .append("\"roomId\":\"\",")
+		           .append("\"targetId\":\""+targetUsername+"\",")
+		           .append("\"messageText\":\""+message+"\",")
+		           .append("\"messageType\":\"private\",")
+		           .append("\"messageStatus\":\"sent\",")
+		           .append("\"createdAt\":\""+formattedDate+"\"")
+		           .append("}");
+				String jsonString = jsonBuilder.toString();
+
+				targetSession.sendMessage(new TextMessage(jsonString));
+
+				
+			} 
+//			else {
+//				sender.sendMessage(new TextMessage("User " + targetUsername + " is not available."));
+//			}
+		}catch(Exception ex) {
+			log.error(ex.getMessage());
+		}finally {
+			//Save Message to Database
+			ChatMessageModelBean msg=new ChatMessageModelBean();
+			msg.setSenderId(Long.valueOf(senderUsername));
+			msg.setTargetId(Long.valueOf(targetUsername));
+			msg.setMessageType("private");
+			msg.setMessageText(message);
+			msg.setMessageStatus("sent");
+			chatService.createChatMessage(msg);
+		}
 		
 		
 	}
@@ -144,23 +173,60 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		// Find the room the sender is in
 		String senderRoom = rooms.entrySet().stream().filter(entry -> entry.getValue().contains(sender))
 				.map(Map.Entry::getKey).findFirst().orElse("general");
-
 		String senderUsername = getUsernameFromSession(sender);
-		// Broadcast message to everyone in the room
-		for (WebSocketSession session : rooms.getOrDefault(senderRoom, new HashSet<>())) {
-			if (session.isOpen() && !session.equals(sender)) {
-				
-				session.sendMessage(new TextMessage("[From " + senderUsername + "]: " + message));
-			}
-		}
 		
-		ChatMessageModelBean msg=new ChatMessageModelBean();
-		msg.setSenderId(Long.valueOf(senderUsername));
-		msg.setRoomId(Long.valueOf(senderRoom));
-		msg.setMessageType("public");
-		msg.setMessageText(message);
-		msg.setMessageStatus("sent");
-		chatService.createChatMessage(msg);
+        try {
+   		 	// รับเวลาปัจจุบัน
+            LocalDateTime now = LocalDateTime.now();
+            // กำหนดฟอร์แมตวันที่
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            // แปลงเวลาปัจจุบันเป็น String
+            String formattedDate = now.format(formatter);
+            
+            String senderName="",pictureUrl="";
+            ServiceResult<UserLoginDTO> senderResult=userService.getUserById(senderUsername);
+            if(senderResult.isSuccess()) {
+            	if(senderResult.getResult()!=null) {
+            		senderName=senderResult.getResult().getFirstName()+" "+senderResult.getResult().getLastName();
+            		pictureUrl=senderResult.getResult().getPictureUrl()==null? "":senderResult.getResult().getPictureUrl();
+            	}
+            }
+            
+    		// Broadcast message to everyone in the room
+    		for (WebSocketSession session : rooms.getOrDefault(senderRoom, new HashSet<>())) {
+    			if (session.isOpen() && !session.equals(sender)) {
+    				StringBuilder jsonBuilder = new StringBuilder();
+    				jsonBuilder.append("{")
+    		           .append("\"messageId\":\"0\",")
+    		           .append("\"senderId\":\""+senderUsername+"\",")
+    		           .append("\"senderName\":\""+senderName+"\",")
+    		           .append("\"pictureUrl\":\""+pictureUrl+"\",")
+    		           .append("\"roomId\":\""+senderRoom+"\",")
+    		           .append("\"targetId\":\"\",")
+    		           .append("\"messageText\":\""+message+"\",")
+    		           .append("\"messageType\":\"public\",")
+    		           .append("\"messageStatus\":\"sent\",")
+    		           .append("\"createdAt\":\""+formattedDate+"\"")
+    		           .append("}");
+    				String jsonString = jsonBuilder.toString();
+    				session.sendMessage(new TextMessage(jsonString));
+    				//session.sendMessage(new TextMessage("[From " + senderUsername + "]: " + message));
+    			}
+    		}
+        }catch(Exception ex) {
+        	log.error(ex.getMessage());
+        }finally {
+    		ChatMessageModelBean msg=new ChatMessageModelBean();
+    		msg.setSenderId(Long.valueOf(senderUsername));
+    		msg.setRoomId(Long.valueOf(senderRoom));
+    		msg.setMessageType("public");
+    		msg.setMessageText(message);
+    		msg.setMessageStatus("sent");
+    		chatService.createChatMessage(msg);
+		}
+
+		
+
 	}
 	
 	 // Method สำหรับ Broadcast ไปยังทุกคนในระบบ

@@ -67,7 +67,7 @@
 		msg.message_id as messageId
 		, msg.sender_id as senderId
 		, concat(sd.FIRST_NAME,' ',sd.LAST_NAME) as senderName
-		, sd.PICTURE_URL  as pictureUrl
+		, ifnull(sd.PICTURE_URL,'')  as pictureUrl
 		, msg.room_id as roomId
 		, msg.target_id as targetId
 		, msg.message_text as messageText
@@ -86,7 +86,7 @@
 		msg.message_id as messageId
 		, msg.sender_id as senderId
 		, concat(sd.FIRST_NAME,' ',sd.LAST_NAME) as senderName
-		, sd.PICTURE_URL  as pictureUrl
+		, ifnull(sd.PICTURE_URL,'')  as pictureUrl
 		, msg.room_id as roomId
 		, msg.target_id as targetId
 		, msg.message_text as messageText
@@ -100,7 +100,7 @@
 		order by msg.created_at  desc 
 	</select>
 	
-	<select id="getChatList" resultType="ChatListModelBean">
+	<select id="getChatList" resultType="ChatMessageListModelBean">
 		select 
 		*
 		from(

@@ -13,6 +13,7 @@ import th.co.locus.jlo.system.user.dto.UserLoginDTO;
 public interface UserService {
 
 	public ServiceResult<UserLoginDTO> getUserLoginByLoginId(String loginId);
+	public ServiceResult<UserLoginDTO> getUserById(String id);
 	public void insertUserLoginAttempt(UserLoginAttemptModelBean obj);
 	public ServiceResult<Page<UserDataModelBean>> getUserList(UserListCriteriaModelBean criteria, PageRequest pageRequest);
 	public ServiceResult<UserDataModelBean> updateUser(UserDataModelBean user);

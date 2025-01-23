@@ -93,4 +93,10 @@ public class UserServiceImpl extends BaseService implements UserService {
 		return success(commonDao.selectPage("user.getUserLoginLogByUserId", criteria, pageRequest));
 	}
 
+	@Override
+	public ServiceResult<UserLoginDTO> getUserById(String id) {
+		
+		return success(commonDao.selectOne("user.getUserById", Map.of("id",id)));
+	}
+
 }
