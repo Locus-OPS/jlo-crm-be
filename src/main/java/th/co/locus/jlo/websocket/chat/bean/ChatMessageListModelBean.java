@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
-public class ChatListModelBean {
+public class ChatMessageListModelBean {
 	private Long id;
 	private String pictureUrl;
 	private String chatName;

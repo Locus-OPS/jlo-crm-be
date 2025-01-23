@@ -16,7 +16,7 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
-import th.co.locus.jlo.websocket.chat.bean.ChatListModelBean;
+import th.co.locus.jlo.websocket.chat.bean.ChatMessageListModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomModelBean;
@@ -142,11 +142,11 @@ public class ChatWebController extends BaseController {
 	}
 	
 	@PostMapping(value="/getchatlist",produces = "application/json")
-	public ApiPageResponse<List<ChatListModelBean>> getChatList(@RequestBody ApiPageRequest<ChatListModelBean> request) {
+	public ApiPageResponse<List<ChatMessageListModelBean>> getChatList(@RequestBody ApiPageRequest<ChatMessageListModelBean> request) {
 		try {
 			PageRequest pageRequest = getPageRequest(request);
 			request.getData().setCurrentUser(getUserId());
-			ServiceResult<Page<ChatListModelBean>> result=chatWebService.getChatList(request.getData(), pageRequest);
+			ServiceResult<Page<ChatMessageListModelBean>> result=chatWebService.getChatList(request.getData(), pageRequest);
 			if(result.isSuccess()) {
 				return ApiPageResponse.success(result.getResult().getContent(), result.getResult().getTotalElements());
 			}

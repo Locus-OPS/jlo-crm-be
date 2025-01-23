@@ -13,6 +13,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.google.gson.Gson;
+
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 
@@ -112,6 +114,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		if (targetSession != null && targetSession.isOpen()) {
 			
 			targetSession.sendMessage(new TextMessage("[Private from " + senderUsername + "]: " + message));
+//			Gson gson = new Gson();
+//			gson.toJson(1);            // ==> 1
+//			gson.toJson("abcd");       // ==> "abcd"
+//			gson.toJson(new Long(10)); // ==> 10
+//			int[] values = { 1 };
+//			gson.toJson(values);       // ==> [1]
+			
+//			targetSession.sendMessage(new TextMessage("{\"userId\":\""+senderUsername+"\",\"message\":\""+message+"\"}"));
+			
 		} 
 //		else {
 //			sender.sendMessage(new TextMessage("User " + targetUsername + " is not available."));
