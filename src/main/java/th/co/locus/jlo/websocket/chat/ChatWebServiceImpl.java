@@ -12,6 +12,7 @@ import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatUserModelbean;
+import th.co.locus.jlo.websocket.chat.bean.ChatUserStatusModelBean;
 
 @Service
 public class ChatWebServiceImpl extends BaseService implements ChatWebService {
@@ -132,6 +133,23 @@ public class ChatWebServiceImpl extends BaseService implements ChatWebService {
 	public ServiceResult<Page<ChatMessageListModelBean>> getChatList(ChatMessageListModelBean bean,PageRequest pageRequest) {
 		try {
 			return success(commonDao.selectPage("chatweb.getChatList", bean, pageRequest));
+		}catch(Exception e) {
+			return fail("500",e.getMessage());
+		}
+	}
+
+	@Override
+	public ServiceResult<ChatUserStatusModelBean> updateUserStatus(ChatUserStatusModelBean bean) {
+		try {
+			ChatUserStatusModelBean userStatus=commonDao.selectOne("chatweb.getUserStatus", bean);
+			if(userStatus!=null) {
+				commonDao.update("chatweb.updateUserStatus", bean);
+			}else {
+				commonDao.insert("chatweb.createUserStatus", bean);
+			}
+			
+			return success(commonDao.selectOne("chatweb.getUserStatus", userStatus));
+			
 		}catch(Exception e) {
 			return fail("500",e.getMessage());
 		}

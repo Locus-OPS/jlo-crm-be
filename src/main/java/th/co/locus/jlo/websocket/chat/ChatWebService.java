@@ -6,6 +6,7 @@ import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.websocket.chat.bean.ChatUserModelbean;
+import th.co.locus.jlo.websocket.chat.bean.ChatUserStatusModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageListModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.websocket.chat.bean.ChatRoomMemberModelBean;
@@ -22,4 +23,6 @@ public interface ChatWebService {
 	ServiceResult<Page<ChatMessageModelBean>> getPublicChatmessage(ChatMessageModelBean bean,PageRequest pageRequest);
 	ServiceResult<Page<ChatMessageModelBean>> getBroadcastChatmessage(ChatMessageModelBean bean,PageRequest pageRequest);
 	ServiceResult<Page<ChatMessageListModelBean>> getChatList(ChatMessageListModelBean bean,PageRequest pageRequest);
+	ServiceResult<ChatUserStatusModelBean> updateUserStatus(ChatUserStatusModelBean bean);
+	
 }

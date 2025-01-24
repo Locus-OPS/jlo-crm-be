@@ -16,4 +16,5 @@ public class ChatRoomModelBean {
 	public Long currentUserId;
 	public List<ChatUserModelbean> userList;
 	public Boolean checked=false;
+	public Long totalMember;
 }

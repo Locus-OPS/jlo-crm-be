@@ -14,6 +14,7 @@
 		ur.room_id  as roomId 
 		,r.room_name as roomName
 		,ur.joined_at as createdAt
+		,(select count(*) from tb_msg_user_rooms subr where subr.room_id=r.room_id) as totalMember
 		from tb_msg_user_rooms ur
 		join tb_msg_rooms r on ur.room_id = r.room_id 
 		where ur.user_id =#{currentUserId}
@@ -113,6 +114,8 @@
 			,ms.message_status as messageStatus
 			,'private' as messageType
 			,ms.created_at as createdAt
+			,ifnull(tmus.is_online,false) as isOnline
+			,tmus.last_seen as lastSeen
 			from (
 			   select 
 			   subtarget_user.targetId
@@ -138,6 +141,7 @@
 			) as target_user
 			join tb_user u on target_user.targetId=u.id 
 			join tb_msg_messages ms on target_user.messageId=ms.message_id
+			left join tb_msg_user_status tmus on tmus.user_id=target_user.targetId
 			
 			union
 			
@@ -150,6 +154,8 @@
 			,ms.message_status as messageStatus
 			,'public' as messageType
 			,ms.created_at as createdAt
+			,false as isOnline
+			,null as lastSeen
 			from (select 
 			ms.room_id
 			,r.room_name 
@@ -169,6 +175,24 @@
 		</if>
 		order by chat.createdAt desc
 		
+	</select>
+	
+	<insert id="createUserStatus">
+		INSERT INTO tb_msg_user_status
+		(user_id, is_online, last_seen)
+		VALUES(#{userId}, #{isOnline}, now())
+	</insert>
+	
+	<update id="updateUserStatus">
+		UPDATE tb_msg_user_status
+		SET is_online=#{isOnline}, last_seen=now()
+		WHERE user_id=#{userId};
+	</update>
+	
+	<select id="getUserStatus" resultType="ChatUserStatusModelBean">
+		SELECT user_id, is_online, last_seen
+		FROM tb_msg_user_status
+		WHERE user_id=#{userId}
 	</select>
 	
 </mapper>

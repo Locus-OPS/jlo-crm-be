@@ -18,4 +18,7 @@ public class ChatMessageListModelBean {
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private Date createdAt;
 	private Long currentUser;
+	private Boolean isOnline;
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private Date lastSeen;
 }

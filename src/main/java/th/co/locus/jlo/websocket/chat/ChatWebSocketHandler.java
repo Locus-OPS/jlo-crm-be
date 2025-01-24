@@ -21,7 +21,7 @@ import th.co.locus.jlo.system.user.UserService;
 import th.co.locus.jlo.websocket.chat.bean.ChatMessageModelBean;
 import th.co.locus.jlo.system.user.dto.UserLoginDTO;
 import th.co.locus.jlo.common.bean.ServiceResult;
-
+import th.co.locus.jlo.websocket.chat.bean.ChatUserStatusModelBean;
 /**
  * @author Apichat
  */
@@ -55,6 +55,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 			rooms.get("general").add(session);
 			//session.sendMessage(new TextMessage("Welcome to JLO CRM Broadcast!"));
 			// broadcastToAll("A new user has joined the chat!");
+			ChatUserStatusModelBean status=new ChatUserStatusModelBean();
+			status.setUserId(username==null? 0:Long.parseLong(username));
+			status.setIsOnline(true);
+			chatService.updateUserStatus(status);
+			
 		} else {
 			session.close();
 		}
@@ -98,6 +103,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 		String username = getUsernameFromSession(session);
 		if (username != null) {
 			users.remove(username);
+			
+			ChatUserStatusModelBean userStatus=new ChatUserStatusModelBean();
+			userStatus.setUserId(username==null? 0:Long.parseLong(username));
+			userStatus.setIsOnline(false);
+			chatService.updateUserStatus(userStatus);
 		}
 		rooms.values().forEach(sessions -> sessions.remove(session));
 	}

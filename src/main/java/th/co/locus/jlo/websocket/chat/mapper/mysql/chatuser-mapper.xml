@@ -8,7 +8,9 @@
 		,U.EMAIL AS email
 		,U.PICTURE_URL AS pictureUrl
 		,R.ROLE_NAME AS roleName
-		,P.POS_NAME AS positionName    
+		,P.POS_NAME AS positionName 
+		,ifnull(tmus.is_online,false) as isOnline
+		,tmus.last_seen as lastSeen
 		FROM TB_USER U
         LEFT JOIN tb_department D ON U.DIV_ID = D.ID
         LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
@@ -17,6 +19,7 @@
 		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
 		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
 		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		left join tb_msg_user_status tmus on tmus.user_id=U.ID
 		WHERE 1=1 
 		<if test="userChatName!=null and userChatName!=''">
 			<bind name="bUserChatName" value="'%' + userChatName + '%'" />
