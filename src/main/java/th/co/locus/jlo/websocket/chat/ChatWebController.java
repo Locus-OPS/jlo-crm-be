@@ -73,6 +73,20 @@ public class ChatWebController extends BaseController {
 		}
 	}
 	
+	@PostMapping(value="/getchatroombyid",produces = "application/json")
+	public ApiResponse<ChatRoomModelBean> getChatRoomById(@RequestBody ApiRequest<ChatRoomModelBean> request) {
+		try {
+			request.getData().setCurrentUserId(getUserId());
+			ServiceResult<ChatRoomModelBean> result=chatWebService.getChatRoomById(request.getData());
+			if(result.isSuccess()) {
+				return ApiResponse.success(result.getResult());
+			}
+			return ApiResponse.fail(result.getResponseCode(),result.getResponseDescription());
+		}catch(Exception e) {
+			return ApiResponse.fail("500",e.getMessage());
+		}
+	}
+	
 	@PostMapping(value="/addusertochatroom",produces = "application/json")
 	public ApiResponse<ChatRoomMemberModelBean> addUsertoChatRoom(@RequestBody ApiRequest<ChatRoomMemberModelBean> request) {
 		try {
@@ -86,10 +100,39 @@ public class ChatWebController extends BaseController {
 		}
 	}
 	
+	@PostMapping(value = "/updatechatroom",produces = "application/json")
+	public ApiResponse<ChatRoomModelBean> updateChatRoom(@RequestBody ApiRequest<ChatRoomModelBean> request) {
+		try {
+			request.getData().setCurrentUserId(getUserId());
+			ServiceResult<ChatRoomModelBean> result=chatWebService.updateChatRoom(request.getData());
+			if(result.isSuccess()) {
+				return ApiResponse.success(result.getResult());
+			}
+			return ApiResponse.fail(result.getResponseCode(),result.getResponseDescription());
+		}catch(Exception e) {
+			return ApiResponse.fail("500",e.getMessage());
+		}
+	}
+	
+	
 	@PostMapping(value="/createchatmessage",produces = "application/json")
 	public ApiResponse<ChatMessageModelBean> createChatMessage(@RequestBody ApiRequest<ChatMessageModelBean> request) {
 		try {
 			ServiceResult<ChatMessageModelBean> result=chatWebService.createChatMessage(request.getData());
+			if(result.isSuccess()) {
+				return ApiResponse.success(result.getResult());
+			}
+			return ApiResponse.fail(result.getResponseCode(),result.getResponseDescription());
+		}catch(Exception e) {
+			return ApiResponse.fail("500",e.getMessage());
+		}
+	}
+	
+	@PostMapping(value="/deletechatroom",produces = "application/json")
+	public ApiResponse<ChatRoomModelBean> deleteChatroom(@RequestBody ApiRequest<ChatRoomModelBean> request)
+	{
+		try {
+			ServiceResult<ChatRoomModelBean> result=chatWebService.deleteChatRoom(request.getData());
 			if(result.isSuccess()) {
 				return ApiResponse.success(result.getResult());
 			}

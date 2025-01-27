@@ -1,5 +1,6 @@
 package th.co.locus.jlo.websocket.chat;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -153,6 +154,65 @@ public class ChatWebServiceImpl extends BaseService implements ChatWebService {
 		}catch(Exception e) {
 			return fail("500",e.getMessage());
 		}
+	}
+
+	@Override
+	public ServiceResult<ChatRoomModelBean> updateChatRoom(ChatRoomModelBean bean) {
+		try {
+			int result=commonDao.update("chatweb.updateChatRoom", bean);
+			if(result>0) {
+				commonDao.delete("chatweb.deleteUserFromRoom", bean);
+				
+				List<ChatUserModelbean> userList=bean.getUserList();
+				for (ChatUserModelbean user : userList) {
+					if(!user.getChecked()) {
+						continue;
+					}
+					ChatRoomMemberModelBean member1=new ChatRoomMemberModelBean();
+					member1.setRoomId(bean.getRoomId());
+					member1.setUserId(user.getId());
+					this.addUsertoRoom(member1);
+				}
+				return success(bean);
+			}
+			return fail("500","Unable to update chat room.");
+		}catch(Exception e) {
+			return fail("500",e.getMessage());
+		}
+	
+	}
+
+	@Override
+	public ServiceResult<ChatRoomModelBean> getChatRoomById(ChatRoomModelBean bean) {
+		try {
+			ChatRoomModelBean chatRoom=commonDao.selectOne("chatweb.getChatRoom", bean);
+			if(chatRoom!=null) {
+				List<ChatUserModelbean> userRoomList=commonDao.selectList("chatweb.getUsersListFromRoomId", Map.of("roomId",bean.getRoomId()));
+				if(userRoomList.size()>0) {
+					chatRoom.setUserList(userRoomList);
+				}
+				return success(chatRoom);
+			}
+			return fail("500","Not found chat room.");
+		}catch(Exception e) {
+			return fail("500",e.getMessage());
+		}
+	}
+
+	@Override
+	public ServiceResult<ChatRoomModelBean> deleteChatRoom(ChatRoomModelBean bean) {
+		try {
+			int result=commonDao.delete("chatweb.deleteChatRoom", bean);
+			if(result>0) {
+				commonDao.delete("chatweb.deleteChatMessage", bean);
+				commonDao.delete("chatweb.deleteUserFromRoom", bean);
+				return success(bean);
+			}
+			return fail("500","Unable to delete chat room.");
+		}catch(Exception e) {
+			return fail("500",e.getMessage());
+		}
+		
 	}
 
 }

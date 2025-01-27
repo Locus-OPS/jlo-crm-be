@@ -17,6 +17,9 @@ public interface ChatWebService {
 	ServiceResult<List<ChatRoomModelBean>> getChatRoomList();
 	ServiceResult<Page<ChatRoomModelBean>> getChatRoomListByUserId(ChatRoomModelBean bean,PageRequest pageRequest);
 	ServiceResult<ChatRoomModelBean> createChatRoom(ChatRoomModelBean bean);
+	ServiceResult<ChatRoomModelBean> updateChatRoom(ChatRoomModelBean bean);
+	ServiceResult<ChatRoomModelBean> getChatRoomById(ChatRoomModelBean bean);
+	ServiceResult<ChatRoomModelBean> deleteChatRoom(ChatRoomModelBean bean);
 	ServiceResult<ChatRoomMemberModelBean> addUsertoRoom(ChatRoomMemberModelBean bean);
 	ServiceResult<ChatMessageModelBean> createChatMessage(ChatMessageModelBean bean);
 	ServiceResult<Page<ChatMessageModelBean>> getPrivateChatmessage(ChatMessageModelBean bean,PageRequest pageRequest);
@@ -24,5 +27,6 @@ public interface ChatWebService {
 	ServiceResult<Page<ChatMessageModelBean>> getBroadcastChatmessage(ChatMessageModelBean bean,PageRequest pageRequest);
 	ServiceResult<Page<ChatMessageListModelBean>> getChatList(ChatMessageListModelBean bean,PageRequest pageRequest);
 	ServiceResult<ChatUserStatusModelBean> updateUserStatus(ChatUserStatusModelBean bean);
+	
 	
 }

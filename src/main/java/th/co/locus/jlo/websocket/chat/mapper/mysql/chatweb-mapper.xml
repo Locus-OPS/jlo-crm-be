@@ -25,11 +25,33 @@
 		order by r.room_name
 	</select>
 	
+	<select id="getChatRoom" resultType="ChatRoomModelBean">
+		SELECT 
+		r.room_id as roomId
+		, r.room_name as roomName
+		, r.description
+		,(select count(*) from tb_msg_user_rooms subr where subr.room_id=r.room_id) as totalMember
+		,r.CREATED_BY as createdBy
+		,r.UPDATED_BY as updatedBy
+		FROM tb_msg_rooms r
+		where r.room_id =#{roomId}
+		limit 1
+	</select>
+	
 	<insert id="createChatRoom" keyColumn="room_id" keyProperty="roomId" useGeneratedKeys="true">
 		INSERT INTO tb_msg_rooms
 		(room_name, created_at,CREATED_DATE,CREATED_BY)
 		VALUES(#{roomName}, now(),now(),#{currentUserId});
 	</insert>
+	
+	<update id="updateChatRoom">
+		UPDATE tb_msg_rooms
+		SET room_name=#{roomName}
+		, description=#{description}
+		, UPDATED_BY=#{currentUserId}
+		, UPDATED_DATE=now()
+		WHERE room_id=#{roomId}
+	</update>
 	
 	<insert id="addUsertoRoom">
 		INSERT INTO tb_msg_user_rooms(user_id, room_id, joined_at)
@@ -41,6 +63,17 @@
 		)
 	</insert>
 	
+	<delete id="deleteUserFromRoom">
+		DELETE FROM tb_msg_user_rooms
+		WHERE room_id=#{roomId};
+	</delete>
+	
+	<delete id="deleteChatRoom">
+		DELETE FROM tb_msg_rooms WHERE room_id=#{roomId};
+	</delete>
+	<delete id="deleteChatMessage">
+		DELETE FROM tb_msg_messages WHERE room_id=#{roomId};
+	</delete>
 	<insert id="createChatMessage" keyColumn="message_id" keyProperty="messageId" useGeneratedKeys="true">
 		INSERT INTO tb_msg_messages
 		(sender_id, room_id, target_id, message_text, message_type, created_at)
@@ -193,6 +226,37 @@
 		SELECT user_id, is_online, last_seen
 		FROM tb_msg_user_status
 		WHERE user_id=#{userId}
+	</select>
+	
+	<select id="getUsersListFromRoomId" resultType="ChatUserModelbean">
+		SELECT
+       	U.ID AS id
+		,U.USER_ID AS userId
+		,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS userChatName
+		,U.EMAIL AS email
+		,U.PICTURE_URL AS pictureUrl
+		,R.ROLE_NAME AS roleName
+		,P.POS_NAME AS positionName 
+		,ifnull(tmus.is_online,false) as isOnline
+		,tmus.last_seen as lastSeen
+		, case when userroom.user_id is not null then true else false end as checked
+		FROM TB_USER U
+        LEFT JOIN tb_department D ON U.DIV_ID = D.ID
+        LEFT JOIN tb_department_team T ON U.TEAM_ID = T.ID
+		LEFT JOIN TB_BUSINESS_UNIT B ON B.BU_ID = U.BU_ID
+		LEFT JOIN TB_POSITION P ON U.POS_ID = P.POS_ID
+		LEFT JOIN TB_ROLE R ON U.ROLE_CODE = R.ROLE_CODE
+		LEFT JOIN TB_USER u1 ON U.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON U.UPDATED_BY = u2.ID
+		left join tb_msg_user_status tmus on tmus.user_id=U.ID
+		left join (
+			select
+			ur.user_id
+			from tb_msg_user_rooms ur
+			where ur.room_id=#{roomId}
+		) userroom on userroom.user_id=U.ID
+		WHERE 1=1
+		order by U.FIRST_NAME,U.LAST_NAME
 	</select>
 	
 </mapper>
