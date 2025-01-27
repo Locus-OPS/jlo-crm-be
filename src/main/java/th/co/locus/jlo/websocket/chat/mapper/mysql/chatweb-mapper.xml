@@ -93,6 +93,9 @@
 		FROM tb_msg_messages msg
 		where msg.message_type ='private'
 		and ((msg.sender_id=#{senderId} and msg.target_id=#{targetId}) or (msg.sender_id=#{targetId} and msg.target_id=#{senderId}))
+		<if test="lastMessageId!=0">
+			<![CDATA[ and msg.message_id<#{lastMessageId}]]>
+		</if>
 		order by msg.created_at  desc 
 	</select>
 	
@@ -112,6 +115,9 @@
 		join tb_user sd on msg.sender_id = sd.ID 
 		where msg.message_type ='public'
 		and msg.room_id = #{roomId}
+		<if test="lastMessageId!=0">
+			<![CDATA[ and msg.message_id<#{lastMessageId}]]>
+		</if>
 		order by msg.created_at  desc 
 	</select>
 	
@@ -140,7 +146,7 @@
 		from(
 			select	
 			target_user.targetId as id
-			,u.PICTURE_URL as pictureUrl
+			,ifnull(u.PICTURE_URL,'') as pictureUrl
 			,concat(u.FIRST_NAME,' ',u.LAST_NAME) as chatName
 			,target_user.messageId as lastMessageId
 			,ms.message_text as messageText 

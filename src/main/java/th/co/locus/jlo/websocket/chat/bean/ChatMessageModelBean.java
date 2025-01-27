@@ -20,4 +20,5 @@ public class ChatMessageModelBean {
 //	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	@JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date createdAt;
+	private Long lastMessageId=0L;
 }

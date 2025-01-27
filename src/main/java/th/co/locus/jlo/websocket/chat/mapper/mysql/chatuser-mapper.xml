@@ -6,7 +6,7 @@
 		,U.USER_ID AS userId
 		,CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS userChatName
 		,U.EMAIL AS email
-		,U.PICTURE_URL AS pictureUrl
+		,ifnull(U.PICTURE_URL,'') AS pictureUrl
 		,R.ROLE_NAME AS roleName
 		,P.POS_NAME AS positionName 
 		,ifnull(tmus.is_online,false) as isOnline
