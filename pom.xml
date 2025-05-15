@@ -19,14 +19,14 @@
 	</properties>
 
 	<repositories>
-		<repository>
+		<!--<repository>
 			<id>locus-repo-private</id>
 			<url>http://192.168.10.179:8081/nexus/repository/maven-public/</url>
-		</repository>
-		<repository>
+		</repository>-->
+		<!--<repository>
 			<id>locus-repo-public</id>
 			<url>http://jlo.locus.co.th/nexus/repository/maven-public/</url>
-		</repository>
+		</repository>-->
 	</repositories>
 	<parent>
 		<groupId>th.co.locus.jlo</groupId>
@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>th.co.locus.jlo</groupId>
 			<artifactId>jlo-common-lib</artifactId>
-			<version>1.2.6</version>
+			<version>1.2.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
