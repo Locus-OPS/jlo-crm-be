@@ -18,6 +18,7 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 	</properties>
 
+	<!--
 	<repositories>
 		<repository>
 			<id>locus-repo-private</id>
@@ -28,6 +29,8 @@
 			<url>http://jlo.locus.co.th/nexus/repository/maven-public/</url>
 		</repository>
 	</repositories>
+	-->
+
 	<parent>
 		<groupId>th.co.locus.jlo</groupId>
 		<artifactId>jlo-starter-parent</artifactId>
@@ -37,7 +40,7 @@
 		<dependency>
 			<groupId>th.co.locus.jlo</groupId>
 			<artifactId>jlo-common-lib</artifactId>
-			<version>1.2.6</version>
+			<version>1.2.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
