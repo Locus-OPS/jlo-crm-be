@@ -1,0 +1,106 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="claim-process">
+	<select id="searchClaimProcess" resultType="ClaimProcessModelBean">
+		SELECT
+		DE.`ID`,
+		DE.`ITEM_DATE`,
+		DE.`ITEM_NAME`,
+		DE.`QUANTITY`,
+		DE.`UNIT_COST`,
+		DE.`TOTAL_COST`,
+		DE.`DISCOUNT`,
+		DE.`AMOUNT`,
+		DE.`GENERIC_NAME`,
+		DE.`STRENGTH`,
+		DE.`DOSAGE_NO`,
+		DE.`DOSAGE_UNIT`,
+		DE.`UNIT_NAME`,
+		DE.`ITEM_CATEGORY`,
+		DE.`CREATED_DATE`,
+		DE.`CREATED_BY`,
+		DE.`UPDATED_DATE`,
+		DE.`UPDATED_BY`,
+		CONCAT(COALESCE(u1.FIRST_NAME, ''), ' ', COALESCE(u1.LAST_NAME, '')) AS createdByName,
+		CONCAT(COALESCE(u2.FIRST_NAME, ''), ' ', COALESCE( u2.LAST_NAME, '')) AS updatedByName
+
+		FROM tb_data_extraction DE
+		LEFT JOIN TB_USER u1 ON DE.CREATED_BY = u1.ID
+		LEFT JOIN TB_USER u2 ON DE.UPDATED_BY = u2.ID
+
+		<where>
+			<if test="attId != null and attId != ''">
+				AND DE.ATT_ID = #{attId}
+			</if>
+			<if test="itemName != null and itemName != ''">
+				<bind name="pItemName" value="'%' + itemName + '%'" />
+				AND DE.ITEM_NAME like #{pItemName}
+			</if>
+			<if test="itemCategory != null and itemCategory != ''">
+				AND DE.ITEM_CATEGORY = #{itemCategory}
+			</if>
+		</where>
+
+		<choose>
+			<when test="sortColumn != null and sortColumn != ''">
+				<if test="sortColumn == 'attId'">
+					ORDER BY DE.ATT_ID ${sortDirection}
+				</if>
+				<if test="sortColumn == 'itemName'">
+					ORDER BY DE.ITEM_NAME ${sortDirection}
+				</if>
+				<if test="sortColumn == 'itemCategory'">
+					ORDER BY DE.ITEM_CATEGORY ${sortDirection}
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY DE.ATT_ID ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findDataExtractionById" resultType="ClaimProcessModelBean">
+		SELECT * FROM TB_DATA_EXTRACTION DE
+		WHERE DE.ID = #{id}
+	</select>
+
+	<select id="findDataExtractionByAttId" resultType="ClaimProcessModelBean">
+		SELECT * FROM TB_DATA_EXTRACTION DE
+		WHERE DE.ATT_ID = #{attId}
+	</select>
+
+	<insert id="createDataExtraction">
+		INSERT INTO TB_DATA_EXTRACTION
+		('PROMPT_METHOD', CODE_ID, CODE_NAME, PARENT_TYPE, PARENT_ID, ETC1, ETC2, ETC3, ETC4,
+		ETC5, DESCRIPTION, SEQ, ACTIVE_FLAG, BU_ID, 
+		CREATED_BY, CREATED_DATE, UPDATED_BY, UPDATED_DATE)
+		VALUES
+		(#{codeType}, #{codeId}, #{codeName}, #{parentType}, #{parentId}, #{etc1}, #{etc2},
+		#{etc3}, #{etc4}, #{etc5}, #{description}, #{seq}, #{activeFlag},
+		#{buId}, 
+		#{createdBy}, NOW(), #{createdBy}, NOW())
+	</insert>
+
+	<update id="updateDataExtraction">
+		UPDATE TB_DATA_EXTRACTION
+		SET
+		CODE_NAME = #{codeName}
+		, PARENT_TYPE = #{parentType}
+		, PARENT_ID = #{parentId}
+		, ETC1 = #{etc1}
+		, ETC2 = #{etc2}
+		, ETC3 = #{etc3}
+		, ETC4 = #{etc4}
+		, ETC5 = #{etc5}
+		, SEQ = #{seq}
+		, DESCRIPTION = #{description}
+		, ACTIVE_FLAG = #{activeFlag}
+		, UPDATED_BY = #{updatedBy}
+		, UPDATED_DATE = NOW()
+		WHERE
+		ID = #{id}
+		AND ATT_ID = #{attId}
+	</update>
+</mapper>
