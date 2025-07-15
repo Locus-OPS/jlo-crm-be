@@ -9,7 +9,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<name>JLO CRM</name>
 	<description>JLO CRM</description>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java.version>17</java.version>
