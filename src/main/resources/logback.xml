@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<property name="LOG_FOLDER" value="${catalina.home}/logs" />
+	<property name="LOG_FOLDER" value="/home/ec2-user/jlocrm/logs" />
 	<property name="LOG_NAME" value="application.log" />
 	<property name="LOG_ARCHIVE" value="${LOG_FOLDER}/archive" />
 	<logger name="org.springframework.web" level="ERROR" />
