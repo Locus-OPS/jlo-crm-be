@@ -27,22 +27,27 @@ public class SecurityConfiguration {
     };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http
+				// Disable CSRF
+				.csrf(csrf -> csrf.disable())
+
+                // Defines authorization for each URL.
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers(JLO_WHITELIST).permitAll()
                         .requestMatchers(String.format("%s/**", lineWebhookPath)).permitAll()
                         .anyRequest().authenticated()
-                )
+				)
+
+                // Defines a resource server with JWT validation.
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
