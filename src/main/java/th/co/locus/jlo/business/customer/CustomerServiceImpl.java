@@ -1,5 +1,6 @@
 package th.co.locus.jlo.business.customer;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -8,7 +9,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
@@ -122,7 +122,7 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 			CustomerVerifyData verify = new CustomerVerifyData();
 			String genKey = new String(OTP(6));
 			verify.setKey(genKey);
-			verify.setVerify(Base64Utils.encodeToString(genKey.getBytes()));
+			verify.setVerify(Base64.getEncoder().encodeToString(genKey.getBytes()));
 			verify.setEmail(data.getEmail());
 			verify.setRef(RandomStringUtils.random(10, true, false));
 
@@ -156,7 +156,7 @@ public class CustomerServiceImpl extends BaseService implements CustomerService 
 	}
 
 	private static boolean checkOTP(CustomerVerifyData data) {
-		String verify = new String(Base64Utils.decode(data.getVerify().getBytes()));
+		String verify = new String(Base64.getDecoder().decode(data.getVerify().getBytes()));
 		if (data.getKey().equals(verify)) {
 			return true;
 		}
