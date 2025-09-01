@@ -4,7 +4,7 @@
 # Example build image command from this Dockerfile:
 #   docker build -t jlo-crm-be .
 # Example start container command:
-#   docker run -d --name jlo-crm-be -p 8080:8080 -e TZ=Asia/Bangkok -v C:/test2/logs:/home/ec2-user/jlocrm/logs -v C:/test2/attachment:/opt/attachment jlo-crm-be
+#   docker run -d --name jlo-crm-be -p 8080:8080 -e PORT=8080 -e TZ=Asia/Bangkok -v C:/test2/logs:/home/ec2-user/jlocrm/logs -v C:/test2/attachment:/opt/attachment jlo-crm-be
 
 # ================= STAGE 1: Build Java Spring application as JAR file =================
 # Build an image that has both Maven and Java 17 to build the project.
