@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<property name="LOG_FOLDER" value="/home/ec2-user/jlocrm/logs" />
+	<springProperty scope="context" name="LOG_FOLDER" source="log.folder" />
+	<springProperty scope="context" name="LOG_ARCHIVE" source="log.archive.folder" />
 	<property name="LOG_NAME" value="application.log" />
-	<property name="LOG_ARCHIVE" value="${LOG_FOLDER}/archive" />
 	<logger name="org.springframework.web" level="ERROR" />
 	<logger name="org.springframework.boot" level="ERROR" />
 	<logger name="org.quartz" level="ERROR" />
@@ -59,21 +59,11 @@
 			<appender-ref ref="STDOUT" />
 			<appender-ref ref="FILE" />
 		</root>
-		<root level="DEBUG">
-			<appender-ref ref="STDOUT" />
-			<appender-ref ref="FILE" />
-		</root>
 	</springProfile>
-	<springProfile name="sit">
+	<springProfile name="sit,uat">
 		<root level="INFO">
 			<appender-ref ref="FILE" />
 			<appender-ref ref="STDOUT" />
-		</root>
-	</springProfile>
-	<springProfile name="uat">
-		<root level="INFO">
-			<appender-ref ref="STDOUT" />
-			<appender-ref ref="FILE" />
 		</root>
 	</springProfile>
 

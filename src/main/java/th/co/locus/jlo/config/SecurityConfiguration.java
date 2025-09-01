@@ -25,6 +25,10 @@ public class SecurityConfiguration {
             "/message-channel/**", "/api/landing/**","/api/customer/profile_image/**", "/api/user/profile_image/**" , "/api/email-template/email_template_image/**"
             ,"/workflow-service/v1/**","/chat/**"
     };
+    
+    private static final String[] HEALTH_CHECK_WHITELIST = {
+    		"/actuator/health"
+    };
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,6 +41,7 @@ public class SecurityConfiguration {
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers(JLO_WHITELIST).permitAll()
+                        .requestMatchers(HEALTH_CHECK_WHITELIST).permitAll()
                         .requestMatchers(String.format("%s/**", lineWebhookPath)).permitAll()
                         .anyRequest().authenticated()
 				)
