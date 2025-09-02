@@ -83,6 +83,7 @@ public class SelectorController extends BaseController {
 	 * @param selectorList the selector list before filer
 	 * @return the filtering with the BU_ID
 	 */
+	@SuppressWarnings("unused")
 	private List<SelectorModelBean> filterListWithBuId(List<SelectorModelBean> selectorList) {
 		return selectorList.stream().filter(selector -> getBuId() == selector.getBuId()).collect(Collectors.toList());
 	}

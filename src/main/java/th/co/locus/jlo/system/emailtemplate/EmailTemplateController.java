@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
-import th.co.locus.jlo.business.customer.bean.CustomerData;
 import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
@@ -36,8 +35,6 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.controller.BaseController;
 import th.co.locus.jlo.common.util.CommonUtil;
-import th.co.locus.jlo.kb.KbService;
-import th.co.locus.jlo.kb.modelbean.KbDocumentModelBean;
 import th.co.locus.jlo.system.emailtemplate.bean.EmailTemplateModelBean;
 import th.co.locus.jlo.system.file.FileService;
 import th.co.locus.jlo.system.file.modelbean.FileModelBean;

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import th.co.locus.jlo.common.bean.SortingModelBean;
-;
+
 
 /**
  * @author Mr.BoonOom

@@ -1,0 +1,14 @@
+{
+	"properties": [
+		{
+			"name": "log.folder",
+			"type": "java.lang.String",
+			"description": "Path of log folder"
+		},
+		{
+			"name": "log.archive.folder",
+			"type": "java.lang.String",
+			"description": "Path of log archive folder"
+		}
+	]
+}

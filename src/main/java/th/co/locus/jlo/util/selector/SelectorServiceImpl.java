@@ -14,8 +14,8 @@ import th.co.locus.jlo.common.util.selector.bean.SelectorModelBean;
 @Service
 public class SelectorServiceImpl extends BaseService implements SelectorService {
 
-	private static int DEFAULT_MINUTE = 10;
-	private static TimeUnit DEFAULT_UNIT = TimeUnit.SECONDS;
+//	private static int DEFAULT_MINUTE = 10;
+//	private static TimeUnit DEFAULT_UNIT = TimeUnit.SECONDS;
 
 	@PostConstruct
 	public void init() {

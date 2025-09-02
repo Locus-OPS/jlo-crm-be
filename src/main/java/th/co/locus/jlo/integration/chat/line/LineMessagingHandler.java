@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.linecorp.bot.messaging.model.PushMessageRequest;
 import com.linecorp.bot.messaging.model.ReplyMessageRequest;
 import com.linecorp.bot.messaging.model.TextMessage;
 import com.linecorp.bot.messaging.model.UserProfileResponse;
@@ -51,15 +50,15 @@ public class LineMessagingHandler {
             requestBody.get("events").forEach(o -> {
                 try {
                     Event event = om.treeToValue(o, Event.class);
-                    if (event instanceof MessageEvent) {
-                        handleMessageContent(channelKey, ((MessageEvent) event).message(), event.source());
-                    } else if (event instanceof FollowEvent) {
+                    if (event instanceof MessageEvent messageEvent) {
+                        handleMessageContent(channelKey, messageEvent.message(), event.source());
+                    } else if (event instanceof FollowEvent followEvent) {
                         UserProfileResponse profile = lineMessagingClient.getProfile(channelKey, event.source().userId()).get().body();
                         log.info("Profile {}", profile);
                         saveChatUser(channelKey, profile);
 
-                        if (((FollowEvent) event).follow().isUnblocked()) {
-                            ReplyMessageRequest replyMessage = new ReplyMessageRequest(((FollowEvent) event).replyToken(), List.of(new TextMessage.Builder("Welcome back, " + profile.displayName()).build()), false);
+                        if (followEvent.follow().isUnblocked()) {
+                            ReplyMessageRequest replyMessage = new ReplyMessageRequest(followEvent.replyToken(), List.of(new TextMessage.Builder("Welcome back, " + profile.displayName()).build()), false);
                             lineMessagingClient.replyMessage(channelKey, replyMessage);
                         }
                     } else if (event instanceof UnfollowEvent) {
@@ -85,12 +84,14 @@ public class LineMessagingHandler {
         }
     }
 
-    private MessageContent getMessageContent(JsonNode event) throws JsonProcessingException {
+    @SuppressWarnings("unused")
+	private MessageContent getMessageContent(JsonNode event) throws JsonProcessingException {
         ObjectMapper om = getObjectMapper();
         return om.treeToValue(event.get("message"), MessageContent.class);
     }
 
-    private Source getSource(JsonNode event) throws JsonProcessingException {
+    @SuppressWarnings("unused")
+	private Source getSource(JsonNode event) throws JsonProcessingException {
         ObjectMapper om = getObjectMapper();
         return om.treeToValue(event.get("source"), Source.class);
     }

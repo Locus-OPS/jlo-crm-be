@@ -4,7 +4,6 @@ import th.co.locus.jlo.system.holiday.bean.HolidayModelBean;
 
 import java.util.List;
 
-import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 
 public interface HolidayService {

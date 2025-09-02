@@ -112,7 +112,7 @@ public class EmailCommonController extends BaseController {
 			//subjectReq = (StringUtils.isEmpty(emailInfo.getSubjectEmail()) ? " no subject " : emailInfo.getSubjectEmail());
 			//messageDesc = (StringUtils.isEmpty(emailInfo.getBodyEmail()) ? "" : emailInfo.getBodyEmail());
 
-			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
+//			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
 			
 			 
 			emailTo = emailInfo.getToEmail().replaceAll("\\s", "");
@@ -252,7 +252,7 @@ public class EmailCommonController extends BaseController {
 				emailInfo.setBodyEmail(messageDesc);
 			}
 					 
-			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
+//			String templateName = EMAIL_TEMPLATE_ACTIVITY_NOTIC;
 			
 			log.info("fromEmail "+fromEmail);
 			log.info("arrayEmailTo "+arrayEmailTo);

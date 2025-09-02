@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers(JLO_WHITELIST).permitAll()
                         .requestMatchers(HEALTH_CHECK_WHITELIST).permitAll()
-                        .requestMatchers(String.format("%s/**", lineWebhookPath)).permitAll()
+                        .requestMatchers("%s/**".formatted(lineWebhookPath)).permitAll()
                         .anyRequest().authenticated()
 				)
 

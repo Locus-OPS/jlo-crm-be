@@ -22,26 +22,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.consulting.bean.ConsultingModelBean;
-import th.co.locus.jlo.business.landingpage.bean.LandingPageModelBean;
 import th.co.locus.jlo.business.landingpage.bean.SearchLandingPageModelBean;
 import th.co.locus.jlo.business.qustionnaire.QustionnaireService;
 import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
-import th.co.locus.jlo.business.smartlink.SmartLinkController;
 import th.co.locus.jlo.business.smartlink.SmartLinkService;
 import th.co.locus.jlo.business.smartlink.bean.SmartLinkModelBean;
-import th.co.locus.jlo.common.annotation.ReadPermission;
 import th.co.locus.jlo.common.bean.ApiRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
 import th.co.locus.jlo.common.bean.ServiceResult;
-import th.co.locus.jlo.common.controller.BaseController;
-import th.co.locus.jlo.common.util.CommonUtil;
-import th.co.locus.jlo.system.codebook.CodebookService;
 import th.co.locus.jlo.system.file.FileService;
-import th.co.locus.jlo.system.internationalization.InternationalizationService;
 
 /**
  * 
@@ -50,14 +42,6 @@ import th.co.locus.jlo.system.internationalization.InternationalizationService;
 @RestController
 @RequestMapping("api/landing")
 public class LandingPageController {
-	@Autowired
-	private CodebookService codebookService;
-
-	@Autowired
-	private InternationalizationService internationalizationService;
-
-	@Autowired
-	private LandingPageService landingPageService;
 
 	@Autowired
 	private SmartLinkService smartLinkService;

@@ -24,8 +24,6 @@ import th.co.locus.jlo.common.util.ExcelTemplateBuilder;
 import th.co.locus.jlo.util.JloExcelTemplate;
 import java.util.function.Consumer;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -184,11 +182,12 @@ public class QuestionnaireDashboardServiceImpl extends BaseService  implements Q
 	public ServiceResult<ByteArrayOutputStream> exportQuestionnaireSummaryList(QuestionnaireHeaderModelBean bean) {
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("E MMM dd yyyy HH:mm:ss O");
-			 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//			DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("E MMM dd yyyy HH:mm:ss O");
+//			DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			ExcelModelBean excelData = new ExcelModelBean();
-			QuestionnaireHeaderModelBean headerQtn=commonDao.selectOne("questionnaire.findQuestionnaireById", Map.of("id",bean.getId()));
-			
+			QuestionnaireHeaderModelBean headerQtn = commonDao.selectOne("questionnaire.findQuestionnaireById",
+					Map.of("id", bean.getId()));
+
 			//ดึงคำถาม
 			List<QuestionnaireQuestionModelBean> questionList=commonDao.selectList("questionnaire.getQuestionnaireQuestionList", Map.of("headerId",bean.getId()));
 			excelData.setContentValue("ชื่อ");

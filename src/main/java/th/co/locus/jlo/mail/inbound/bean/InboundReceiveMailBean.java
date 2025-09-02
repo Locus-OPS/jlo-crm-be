@@ -1,5 +1,6 @@
 package th.co.locus.jlo.mail.inbound.bean;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import lombok.Data;
@@ -11,7 +12,8 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class InboundReceiveMailBean extends BaseModelBean implements Serializable {
-	
+
+	@Serial
 	private static final long serialVersionUID = 5439212822221212607L;
 	private Long id;
 	private String formEmail;

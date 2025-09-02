@@ -2,7 +2,7 @@ package th.co.locus.jlo.mail.receiver.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -215,10 +215,11 @@ public class ReceiveMailServiceImpl extends BaseService implements ReceiveMailSe
 	
  
 
+	@SuppressWarnings("unused")
 	private void createDirectoryIfNotExists(String directoryPath) {
-		if (!Files.exists(Paths.get(directoryPath))) {
+		if (!Files.exists(Path.of(directoryPath))) {
 			try {
-				Files.createDirectories(Paths.get(directoryPath));
+				Files.createDirectories(Path.of(directoryPath));
 			} catch (IOException e) {
 				log.error("An error occurred during create folder: {}", directoryPath, e);
 			}

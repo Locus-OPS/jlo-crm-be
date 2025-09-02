@@ -32,11 +32,13 @@ public class Test {
 		return emailSubject.contains("#CASE");
 	}
 
+	@SuppressWarnings("unused")
 	private static String generateHashKeyUID() {
 		System.out.println(UUID.randomUUID().toString().length());
 		return UUID.randomUUID().toString();
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean checkExpiryDate(Date input) throws ParseException {
 
 //	 	String input = "2024-08-22 16:50:10";//"2024-08-21 17:46:58";

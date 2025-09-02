@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.smartlink.bean.SaveSmartLinkModelBean;
 import th.co.locus.jlo.business.smartlink.bean.SmartLinkModelBean;
-import th.co.locus.jlo.common.annotation.WritePermission;
 import th.co.locus.jlo.common.bean.ApiPageRequest;
 import th.co.locus.jlo.common.bean.ApiResponse;
 import th.co.locus.jlo.common.bean.ServiceResult;
@@ -77,14 +76,14 @@ public class SmartLinkController extends BaseController {
 					.filter(cb -> cb.getCodeType().equals("LANDING_URL"))
 					.collect(Collectors.toList());
 			if (!urlCodebookList.isEmpty())
-				bean.setUrlLink(urlCodebookList.get(0).getEtc1());
+				bean.setUrlLink(urlCodebookList.getFirst().getEtc1());
 
 			List<CodebookModelBean> expireCodebookList = codebookList.stream()
 					.filter(cb -> cb.getCodeType().equals("LANDING_EXPIRE"))
 					.collect(Collectors.toList());
 			if (!expireCodebookList.isEmpty()) {
 				try {
-					bean.setExpireDay(Integer.parseInt(expireCodebookList.get(0).getEtc1()));
+					bean.setExpireDay(Integer.parseInt(expireCodebookList.getFirst().getEtc1()));
 				} catch (NumberFormatException e) {
 					log.info(e.getMessage());
 				}

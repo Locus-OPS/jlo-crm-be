@@ -1,6 +1,5 @@
 package th.co.locus.jlo.mail.inbound.bean;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

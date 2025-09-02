@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import freemarker.template.utility.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.cases.bean.CaseModelBean;
 import th.co.locus.jlo.business.cases.bean.SearchCaseModelBean;
@@ -53,7 +52,7 @@ public class CaseServiceImpl extends BaseService implements CaseService {
 			log.info("result > " + result);
 			if (result != null) {
 				
-				int resultInsert = commonDao.insert("consulting.createRelConsulting", bean);
+				commonDao.insert("consulting.createRelConsulting", bean);
 				
 				//สร้าง Notification ให้ Owner
 				CaseNotificationLogModelbean caseNoti=new CaseNotificationLogModelbean();

@@ -3,6 +3,7 @@
  */
 package th.co.locus.jlo.business.consulting.bean;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import lombok.Data;
@@ -17,6 +18,7 @@ public class ConsultingModelBean extends BaseModelBean implements Serializable {
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String id;

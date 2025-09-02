@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Maps;
-
 import lombok.extern.log4j.Log4j2;
 import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireAnswerModelBean;
@@ -18,9 +16,7 @@ import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;
 import th.co.locus.jlo.common.service.BaseService;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Arrays;
-import java.util.HashMap;
 
 @Log4j2
 @Service

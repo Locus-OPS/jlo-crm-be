@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import th.co.locus.jlo.business.qustionnaire.bean.QuesionnaireRepondentResponseModelBean;
-import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireAnswerModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireHeaderModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireQuestionModelBean;
 import th.co.locus.jlo.business.qustionnaire.bean.QuestionnaireRepondentsModelBean;

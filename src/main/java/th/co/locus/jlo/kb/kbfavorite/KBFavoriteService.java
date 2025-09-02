@@ -1,7 +1,5 @@
 package th.co.locus.jlo.kb.kbfavorite;
 
-import java.util.List;
-
 import th.co.locus.jlo.common.bean.Page;
 import th.co.locus.jlo.common.bean.PageRequest;
 import th.co.locus.jlo.common.bean.ServiceResult;

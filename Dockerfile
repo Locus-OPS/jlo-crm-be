@@ -4,11 +4,11 @@
 # Example build image command from this Dockerfile:
 #   docker build -t jlo-crm-be .
 # Example start container command:
-#   docker run -d --name jlo-crm-be -p 8080:8080 -e PORT=8080 -e TZ=Asia/Bangkok -v C:/test2/logs:/tmp/logs -v C:/test2/attachment:/opt/attachment jlo-crm-be
+#   docker run -d --name jlo-crm-be -p 8080:8080 -e PORT=8080 -e TZ=Asia/Bangkok -v C:/test2/attachment:/opt/attachment jlo-crm-be
 
 # ================= STAGE 1: Build Java Spring application as JAR file =================
-# Build an image that has both Maven and Java 17 to build the project.
-FROM maven:3.8-openjdk-17 AS build
+# Build an image that has both Maven and Java 21 to build the project.
+FROM maven:3-eclipse-temurin-21-alpine AS build
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -26,8 +26,8 @@ COPY ./jlo-crm-be ./jlo-crm-be
 RUN cd jlo-crm-be && mvn clean package
 
 # ================= STAGE 2: Runtime =================
-# Use an image that only has JRE 17, which is much smaller for running the application.
-FROM eclipse-temurin:17-jre-alpine
+# Use an image that only has JRE 21, which is much smaller for running the application.
+FROM eclipse-temurin:21-jre-alpine
 
 # Set the working directory inside the container.
 WORKDIR /app

@@ -63,6 +63,7 @@ public class SmartLinkServiceImpl extends BaseService implements SmartLinkServic
 		
 		
 	}
+	@SuppressWarnings("unused")
 	private String generateHashKey(Long headerId) { 
 		char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 		Random rnd = new Random();

@@ -69,7 +69,7 @@ public class MailReceiverConfiguration {
 	}
 
 	private String getImapUrl() {
-		return String.format("imaps://%s:%s@%s:%s/%s", this.username, this.password, this.host, this.port,
+		return "imaps://%s:%s@%s:%s/%s".formatted(this.username, this.password, this.host, this.port,
 				this.mailbox);
 	}
 

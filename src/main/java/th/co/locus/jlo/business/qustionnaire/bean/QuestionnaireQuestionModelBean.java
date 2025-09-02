@@ -1,5 +1,6 @@
 package th.co.locus.jlo.business.qustionnaire.bean;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import th.co.locus.jlo.common.bean.BaseModelBean;
 @Data
 public class QuestionnaireQuestionModelBean extends BaseModelBean implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
