@@ -42,8 +42,8 @@ COPY --from=build /app/jlo-crm-be/target/*.jar app.jar
 
 # Best Practice: Create a specific user to run the application (not using root).
 # This enhances security by not running the application as the root user.
-RUN addgroup --system spring && adduser --system --ingroup spring spring
-USER spring
+#RUN addgroup --system spring && adduser --system --ingroup spring spring
+#USER spring
 
 # Set spring profile active to "dev".
 ENV SPRING_PROFILES_ACTIVE=dev

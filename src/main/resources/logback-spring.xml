@@ -50,14 +50,11 @@
 	</logger>
 
 	<root level="INFO">
-		<!-- <appender-ref ref="FILE" /> -->
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
 	</root>
 	<springProfile name="dev">
 		<root level="INFO">
 			<appender-ref ref="STDOUT" />
-			<appender-ref ref="FILE" />
 		</root>
 	</springProfile>
 	<springProfile name="sit,uat">
