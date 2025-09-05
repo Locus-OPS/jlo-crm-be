@@ -32,21 +32,20 @@ FROM eclipse-temurin:21-jre-alpine
 # Set the working directory inside the container.
 WORKDIR /app
 
-# 3. Create folders for logs and attachments.
-RUN mkdir -p /tmp/logs
+# 3. Create folders for attachments.
 RUN mkdir -p /opt/attachment
 
 # Copy the built .jar file from the build stage to the runtime stage
 # and rename it to app.jar for easier execution
 COPY --from=build /app/jlo-crm-be/target/*.jar app.jar
 
-# Best Practice: Create a specific user to run the application (not using root).
-# This enhances security by not running the application as the root user.
-#RUN addgroup --system spring && adduser --system --ingroup spring spring
-#USER spring
-
-# Set spring profile active to "dev".
+# Set default environment variables
 ENV SPRING_PROFILES_ACTIVE=dev
+ENV PORT=8080
+ENV TZ=Asia/Bangkok
+
+# Attachment path
+VOLUME /opt/attachment
 
 # Inform Docker that the container will run the application with this command.
 ENTRYPOINT ["java", "-jar", "app.jar"]

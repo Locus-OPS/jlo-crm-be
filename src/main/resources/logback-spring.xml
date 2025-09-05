@@ -52,6 +52,8 @@
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
+	<!-- For Development and Cloud Run -->
+	<!-- For Cloud Run, do not write log to file -->
 	<springProfile name="dev">
 		<root level="INFO">
 			<appender-ref ref="STDOUT" />
