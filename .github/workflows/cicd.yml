@@ -1,0 +1,56 @@
+name: ci-cd-cloud-run
+on:
+  push: { branches: [ "main" ] }    # deploy เมื่อ push เข้า main
+  pull_request: { branches: [ "main" ] }  # PR = รันเทสอย่างเดียว
+
+env:
+  PROJECT_ID: your-project-id
+  REGION: asia-southeast1
+  SERVICE: jlo-crm-be        # เช่น jlo-crm-be
+  REPO: apps                        # ชื่อ Artifact Registry repo
+  IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}
+  SMOKE_PATH: /actuator/health      # เปลี่ยนตามแอป
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    permissions: { contents: read, id-token: write }  # OIDC/WIF
+    steps:
+      - uses: actions/checkout@v4
+
+      # (ถ้าใช้ Maven/Java) รันเทส
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17', cache: maven }
+      - run: mvn -B -ntp -DskipITs=true test
+
+      # Auth ไป GCP แบบ keyless (WIF)
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+        with: { project_id: ${{ env.PROJECT_ID }} }
+
+      - name: Docker login to Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build & Push
+        run: |
+          docker build -t $IMAGE .
+          docker push $IMAGE
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy $SERVICE \
+            --image $IMAGE \
+            --region $REGION \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --quiet
+
+      - name: Smoke test (optional)
+        run: |
+          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          curl -fsS "$URL${SMOKE_PATH}"
