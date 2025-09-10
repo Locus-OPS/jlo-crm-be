@@ -1,0 +1,60 @@
+name: ci-cd-cloud-run
+
+on:
+  push:
+    branches: [ "gcloud" ]        # push เข้า gcloud = deploy
+
+env:
+  PROJECT_ID: ntt-oceanlife-poc
+  REGION: asia-southeast1
+  SERVICE: jlo-crm-be-cicd
+  REPO: locus-app-repo
+  IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write           # จำเป็นสำหรับ WIF (OIDC)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Auth ไป GCP แบบ keyless (WIF)
+      - name: Auth to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Install gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build image
+        run: docker build -t $IMAGE .
+
+      - name: Push image
+        run: docker push $IMAGE
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy $SERVICE \
+            --image $IMAGE \
+            --region $REGION \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --quiet
+
+      # (ทางเลือก) ทดสอบสุขภาพหลัง deploy
+      - name: Smoke test
+        run: |
+          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          echo "Checking $URL${SMOKE_PATH}"
+          curl -fsS "$URL${SMOKE_PATH}" || (echo "Smoke test failed" && exit 1)
