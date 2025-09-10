@@ -5,10 +5,10 @@ on:
     branches: [ "gcloud" ]        # push เข้า gcloud = deploy
 
 env:
-  PROJECT_ID: <YOUR_PROJECT_ID>
+  PROJECT_ID: ntt-oceanlife-poc
   REGION: asia-southeast1
-  SERVICE: jlo-crm-be
-  REPO: apps
+  SERVICE: jlo-crm-be-cicd
+  REPO: locus-app-repo
   SMOKE_PATH: /actuator/health  # เปลี่ยนได้ตามแอปของคุณ
 
 jobs:
