@@ -1,10 +1,10 @@
 name: ci-cd-cloud-run
 on:
-  push: { branches: [ "main" ] }    # deploy เมื่อ push เข้า main
-  pull_request: { branches: [ "main" ] }  # PR = รันเทสอย่างเดียว
+  push: { branches: [ "" ] }    # deploy เมื่อ push เข้า gcloud
+  pull_request: { branches: [ "" ] }  # PR = รันเทสอย่างเดียว
 
 env:
-  PROJECT_ID: your-project-id
+  PROJECT_ID: java-locus
   REGION: asia-southeast1
   SERVICE: jlo-crm-be        # เช่น jlo-crm-be
   REPO: apps                        # ชื่อ Artifact Registry repo
