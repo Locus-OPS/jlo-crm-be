@@ -3,9 +3,11 @@
 	<springProperty scope="context" name="LOG_FOLDER" source="log.folder" />
 	<springProperty scope="context" name="LOG_ARCHIVE" source="log.archive.folder" />
 	<property name="LOG_NAME" value="application.log" />
+	<property name="API_LOG_NAME" value="api.log" />
 	<logger name="org.springframework.web" level="ERROR" />
 	<logger name="org.springframework.boot" level="ERROR" />
 	<logger name="org.quartz" level="ERROR" />
+	
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -14,6 +16,28 @@
 			</pattern>
 		</encoder>
 	</appender>
+	
+	<appender name="JsonConsole"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+	        	<providers>
+	        		<pattern>
+	        			<pattern>
+	        				{
+	        					"date_time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX}",
+								"level": "%p",
+								"traceId": "%X{traceId:-}",
+								"class": "%C{1}",
+								"thread-name": "%thread",
+								"user-id": "%X{user-id}",
+								"message": "%m"
+	        				}
+	        			</pattern>
+	        		</pattern>
+	        	</providers>
+	        </encoder>
+    </appender>
+	
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${LOG_FOLDER}/${LOG_NAME}</file>
@@ -33,6 +57,82 @@
 			</pattern>
 		</encoder>
 	</appender>
+	
+	<springProfile name="dev,locus,sit,uat,prod">
+		<appender name="ApiLogFile"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			Write JSON requests and responses that are communicating with other channels
+	        <file>${LOG_FOLDER}/${API_LOG_NAME}</file>
+	        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+	        	<providers>
+	        		<pattern>
+	        			<pattern>
+	        				{
+	        					"date_time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX}",
+								"level": "%p",
+								"traceId": "%X{traceId:-}",
+								"user-id": "%X{user-id}",
+								"request-method": "%X{request-method}",
+								"request-ip": "%X{request-ip}",
+								"request-body": "%X{request-body}",
+								"request-header": "%X{request-header}",
+								"request-date": "%X{request-date}",
+								"request-uri": "%X{request-uri}",
+								"response-code": "%X{response-code}",
+								"response-body": "%X{response-body}",
+								"response-header": "%X{response-header}",
+								"response-date": "%X{response-date}"
+	        				}
+	        			</pattern>
+	        		</pattern>
+	        	</providers>
+	        </encoder>
+	        <rollingPolicy
+	            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+	            Roll over daily and when the file reaches 20 MegaBytes
+	            <fileNamePattern>${LOG_ARCHIVE}/api_backofficeweb-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+	            Total files to keep, keep for 7 days, estimate that 1 day has 10 files, so keep on 70 files.
+				<maxHistory>60</maxHistory>
+				total size of all archive files
+				<totalSizeCap>2GB</totalSizeCap>
+	            each archived file's size
+	            <maxFileSize>50MB</maxFileSize>
+	            
+	            <timeBasedFileNamingAndTriggeringPolicy
+	                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	            </timeBasedFileNamingAndTriggeringPolicy>
+	        </rollingPolicy>
+	    </appender>
+    </springProfile>
+	
+	<appender name="ApiLogConsole"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+	        	<providers>
+	        		<pattern>
+	        			<pattern>
+	        				{
+	        					"date_time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX}",
+								"level": "%p",
+								"traceId": "%X{traceId:-}",
+								"user-id": "%X{user-id}",
+								"request-method": "%X{request-method}",
+								"request-ip": "%X{request-ip}",
+								"request-body": "%X{request-body}",
+								"request-header": "%X{request-header}",
+								"request-date": "%X{request-date}",
+								"request-uri": "%X{request-uri}",
+								"response-code": "%X{response-code}",
+								"response-body": "%X{response-body}",
+								"response-header": "%X{response-header}",
+								"response-date": "%X{response-date}"
+	        				}
+	        			</pattern>
+	        		</pattern>
+	        	</providers>
+	        </encoder>
+    </appender>
+	
 	<!-- DriverSpy -->
 	<logger name="jdbc" level="OFF" />
 
@@ -48,21 +148,37 @@
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
+	
+	<logger name="api.log" level="INFO" additivity="false">
+        <springProfile name="cloud">
+            <appender-ref ref="ApiLogConsole" />
+        </springProfile>
+
+        <springProfile name="dev,locus,sit,uat,prod">
+            <appender-ref ref="ApiLogFile" />
+        </springProfile>
+    </logger>
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
-	<!-- For Development and Cloud Run -->
-	<!-- For Cloud Run, do not write log to file -->
+	<!-- For Development -->
 	<springProfile name="dev">
 		<root level="INFO">
 			<appender-ref ref="STDOUT" />
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+	<!-- For Cloud Run, do not write log to file, print to JSON format -->
+	<springProfile name="cloud">
+		<root level="INFO">
+			<appender-ref ref="JsonConsole" />
 		</root>
 	</springProfile>
 	<springProfile name="sit,uat">
 		<root level="INFO">
-			<appender-ref ref="FILE" />
 			<appender-ref ref="STDOUT" />
+			<appender-ref ref="FILE" />
 		</root>
 	</springProfile>
 

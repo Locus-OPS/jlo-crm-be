@@ -11,8 +11,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Configuration 
-@Profile({"dev","sit","uat","prod"})
+@Configuration
+@Profile({ "dev", "locus", "cloud", "sit", "uat", "prod" })
 public class SwaggerConfiguration {
 
     @Bean

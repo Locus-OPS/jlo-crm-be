@@ -73,7 +73,63 @@
 			<artifactId>line-bot-webhook</artifactId>
 			<version>8.6.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder -->
+		<!-- Write log in JSON format -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>8.1</version>
+		</dependency>
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+				<activatedProperties>dev</activatedProperties>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>locus</id>
+			<properties>
+				<build.profile.id>locus</build.profile.id>
+				<activatedProperties>locus</activatedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>cloud</id>
+			<properties>
+				<build.profile.id>cloud</build.profile.id>
+				<activatedProperties>cloud</activatedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>sit</id>
+			<properties>
+				<build.profile.id>sit</build.profile.id>
+				<activatedProperties>sit</activatedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>uat</id>
+			<properties>
+				<build.profile.id>uat</build.profile.id>
+				<activatedProperties>uat</activatedProperties>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<build.profile.id>prod</build.profile.id>
+				<activatedProperties>prod</activatedProperties>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<build>
 		<plugins>
 			<plugin>

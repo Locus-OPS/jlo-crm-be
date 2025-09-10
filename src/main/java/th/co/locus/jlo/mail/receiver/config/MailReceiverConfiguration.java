@@ -41,8 +41,7 @@ public class MailReceiverConfiguration {
 
 	@Value("${mail.imap.mailbox}")
 	private String mailbox;
-	
-	
+
 	private final ReceiveMailService receiveMailService;
 
 	public MailReceiverConfiguration(ReceiveMailService receiveMailService) {
@@ -62,7 +61,7 @@ public class MailReceiverConfiguration {
 	}
 
 	@Bean()
-	@InboundChannelAdapter(channel = "receiveEmailChannel", poller = @Poller(fixedDelay = "${mail.imap.poller.fixedDelay}", taskExecutor = "asyncTaskExecutor"),autoStartup ="${mail.imap.receive.autoStartup}")
+	@InboundChannelAdapter(channel = "receiveEmailChannel", poller = @Poller(fixedDelay = "${mail.imap.poller.fixedDelay}", taskExecutor = "asyncTaskExecutor"), autoStartup = "${mail.imap.receive.autoStartup}")
 	public MailReceivingMessageSource mailMessageSource(MailReceiver mailReceiver) {
 		MailReceivingMessageSource mailReceivingMessageSource = new MailReceivingMessageSource(mailReceiver);
 		return mailReceivingMessageSource;
