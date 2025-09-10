@@ -4,9 +4,9 @@ on:
   pull_request: { branches: [ "" ] }  # PR = รันเทสอย่างเดียว
 
 env:
-  PROJECT_ID: java-locus
+  PROJECT_ID: ntt-oceanlife-poc
   REGION: asia-southeast1
-  SERVICE: jlo-crm-be        # เช่น jlo-crm-be
+  SERVICE: jlo-crm-be-ci-cd        # เช่น jlo-crm-be
   REPO: apps                        # ชื่อ Artifact Registry repo
   IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}
   SMOKE_PATH: /actuator/health      # เปลี่ยนตามแอป
