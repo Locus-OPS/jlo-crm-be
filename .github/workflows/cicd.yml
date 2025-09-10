@@ -5,21 +5,26 @@ on:
     branches: [ "gcloud" ]        # push เข้า gcloud = deploy
 
 env:
-  PROJECT_ID: ntt-oceanlife-poc
+  PROJECT_ID: <YOUR_PROJECT_ID>
   REGION: asia-southeast1
-  SERVICE: jlo-crm-be-cicd
-  REPO: locus-app-repo
-  IMAGE: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}
+  SERVICE: jlo-crm-be
+  REPO: apps
+  SMOKE_PATH: /actuator/health  # เปลี่ยนได้ตามแอปของคุณ
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write           # จำเป็นสำหรับ WIF (OIDC)
+      id-token: write          # จำเป็นสำหรับ WIF (OIDC)
 
     steps:
       - uses: actions/checkout@v4
+
+      # คำนวณค่า IMAGE ที่นี่ แล้ว export ให้ทุก step ใช้ได้
+      - name: Compute image tag
+        run: |
+          echo "IMAGE=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}" >> $GITHUB_ENV
 
       # Auth ไป GCP แบบ keyless (WIF)
       - name: Auth to Google Cloud
@@ -37,24 +42,23 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build image
-        run: docker build -t $IMAGE .
+        run: docker build -t "$IMAGE" .
 
       - name: Push image
-        run: docker push $IMAGE
+        run: docker push "$IMAGE"
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy $SERVICE \
-            --image $IMAGE \
-            --region $REGION \
+          gcloud run deploy "$SERVICE" \
+            --image "$IMAGE" \
+            --region "$REGION" \
             --platform managed \
             --allow-unauthenticated \
             --port 8080 \
             --quiet
 
-      # (ทางเลือก) ทดสอบสุขภาพหลัง deploy
-      - name: Smoke test
+      - name: Smoke test (optional)
         run: |
-          URL=$(gcloud run services describe $SERVICE --region $REGION --format='value(status.url)')
+          URL=$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')
           echo "Checking $URL${SMOKE_PATH}"
-          curl -fsS "$URL${SMOKE_PATH}" || (echo "Smoke test failed" && exit 1)
+          curl -fsS "$URL${SMOKE_PATH}"
