@@ -1,0 +1,68 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches: [ gcloud ]
+
+env:
+  PROJECT_ID: ntt-oceanlife-poc
+  REGION: asia-southeast1
+  SERVICE_NAME: jlo-crm-be
+  IMAGE: asia-southeast1-docker.pkg.dev/ntt-oceanlife-poc/jlo-artifacts/jlo-crm-be
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - name: Checkout main service (jlo-crm-be)
+      uses: actions/checkout@v4
+      with:
+        repository: Locus-OPS/jlo-crm-be
+        path: jlo-crm-be
+
+    - name: Checkout jlo-starter-parent
+      uses: actions/checkout@v4
+      with:
+        repository: Locus-OPS/jlo-starter-parent
+        path: jlo-starter-parent
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: Checkout jlo-common-lib
+      uses: actions/checkout@v4
+      with:
+        repository: Locus-OPS/jlo-common-lib
+        path: jlo-common-lib
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+    - name: Auth to Google Cloud (Workload Identity Federation)
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: "projects/180096520787/locations/global/workloadIdentityPools/github-ci/providers/github-actions"
+        service_account: "github-deployer@ntt-oceanlife-poc.iam.gserviceaccount.com"
+
+    - name: Set up gcloud
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: Configure Docker for Artifact Registry
+      run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+
+    - name: Build and Push image
+      run: |
+        # Build context is the workspace root (has all 3 folders)
+        docker build -t $IMAGE -f jlo-crm-be/Dockerfile .
+        docker push $IMAGE
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy $SERVICE_NAME \
+          --image $IMAGE \
+          --region $REGION \
+          --platform managed \
+          --allow-unauthenticated
