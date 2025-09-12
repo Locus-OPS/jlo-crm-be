@@ -39,16 +39,16 @@ jobs:
         path: jlo-common-lib
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-    - name: Auth to Google Cloud (Workload Identity Federation)
+    - name: Auth with key (temporary)
       uses: google-github-actions/auth@v2
       with:
-        workload_identity_provider: "projects/180096520787/locations/global/workloadIdentityPools/github-ci/providers/github-actions"
-        service_account: "github-deployer@ntt-oceanlife-poc.iam.gserviceaccount.com"
+      credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Set up gcloud
       uses: google-github-actions/setup-gcloud@v2
       with:
-        project_id: ${{ env.PROJECT_ID }}
+      project_id: ntt-oceanlife-poc
+
 
     - name: Configure Docker for Artifact Registry
       run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
