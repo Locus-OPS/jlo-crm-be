@@ -39,11 +39,7 @@ jobs:
         path: jlo-common-lib
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-    - name: Auth to Google Cloud (Workload Identity Federation)
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: "projects/180096520787/locations/global/workloadIdentityPools/github-pool"
-        service_account: "github-deployer@ntt-oceanlife-poc.iam.gserviceaccount.com"
+
 
     - name: Set up gcloud
       uses: google-github-actions/setup-gcloud@v2
