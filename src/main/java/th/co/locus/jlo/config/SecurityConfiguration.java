@@ -28,6 +28,7 @@ public class SecurityConfiguration {
     
     private static final String[] HEALTH_CHECK_WHITELIST = {
     		"/actuator/health"
+    		, "/actuator/health/**"
     };
 
     @Bean
